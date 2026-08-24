@@ -119,35 +119,85 @@ basiert) benötigt. Prüfen, ob vorhanden; falls nicht:
 winget install --id Google.Chrome -e
 ```
 
-### 1.6 Screaming Frog SEO Spider
-Download/Installer von https://www.screamingfrog.co.uk/seo-spider/ , installieren.
-**Für vollen Funktionsumfang (Crawls über 500 URLs, MCP-Server) wird eine gültige
-Lizenz benötigt** — die Zugangsdaten dafür muss dir der Nutzer geben, frag danach,
-falls sie nicht schon in der Anwendung hinterlegt sind.
+### 1.6 Screaming Frog SEO Spider — Prüfungs- und Diagnoseweiche
 
-Nach Installation und Lizenzaktivierung: in Screaming Frog den eingebauten
-MCP-Server aktivieren. Das ist eine App-interne Konfiguration (Menü
-`Configuration` → Suche nach "MCP Server" bzw. Server/API-Zugriffs-Einstellungen —
-Menüstruktur kann je Version leicht variieren; wenn du es in der UI nicht findest,
-ist die Version zu alt, update auf die neueste Version über "Help → Check for Updates").
-Konfiguriere:
-- Port: `11435`
-- Root-Verzeichnis: ein Arbeitsordner für die MCP-Datei-Operationen des Spiders,
-  z. B. `%USERPROFILE%\seo_spider_mcp_server` (Ordner vorher anlegen)
-- Auto-Start: nach Geschmack (auf der Referenzmaschine deaktiviert, Server wird
-  bei Bedarf manuell/über den ersten Verbindungsversuch gestartet)
+Screaming Frog ist in den meisten Fällen auf diesem Rechner schon installiert,
+oft schon lange vor diesem Setup, eigenständig vom Nutzer. **Prüfe deshalb immer
+zuerst den Ist-Zustand, bevor du installierst oder Konfiguration änderst** — geh
+Schritt für Schritt vor, jeder Schritt entscheidet, was als Nächstes nötig ist.
 
-Diese Werte landen in `%USERPROFILE%\.ScreamingFrogSEOSpider\spider.config` als
-`mcpserver.port`, `mcpserver.root`, `mcpserver.auto_start`, `mcpserver.node_scripting`,
-`mcpserver.max_response_size_bytes` — falls die UI diese Optionen nicht direkt zeigt,
-kannst du sie bei geschlossener Anwendung auch direkt in dieser Datei setzen.
+**Schritt A — Ist Screaming Frog überhaupt installiert?**
+```bash
+ls "/c/Program Files (x86)/Screaming Frog SEO Spider" 2>/dev/null || ls "/c/Program Files/Screaming Frog SEO Spider" 2>/dev/null
+```
+- Gefunden → weiter zu Schritt B.
+- Nicht gefunden → installieren: Download-Installer von
+  https://www.screamingfrog.co.uk/seo-spider/ (winget-Paket existiert nicht
+  zuverlässig für dieses Tool, daher direkter Download). Danach weiter zu Schritt B.
 
-Test (Screaming Frog muss dafür laufen):
+**Schritt B — Läuft die Anwendung gerade?**
+```bash
+tasklist | grep -i "ScreamingFrogSEOSpider"
+```
+- Läuft → weiter zu Schritt C.
+- Läuft nicht → **hier ist echte Nutzerinteraktion nötig, nicht automatisierbar**:
+  Screaming Frog ist eine GUI-Anwendung und erwartet beim ersten Start in dieser
+  Session ggf. Lizenz-/Update-Dialoge. Bitte den Nutzer, die Anwendung einmal
+  manuell zu öffnen und offen zu lassen, dann mit Schritt C weiterfahren.
+
+**Schritt C — Ist der eingebaute MCP-Server konfiguriert?**
+```bash
+grep "^mcpserver\." "$USERPROFILE/.ScreamingFrogSEOSpider/spider.config" 2>/dev/null
+```
+Erwartet z. B.:
+```
+mcpserver.auto_start=false
+mcpserver.port=11435
+mcpserver.root=C:\Users\<user>\seo_spider_mcp_server
+mcpserver.node_scripting=false
+mcpserver.max_response_size_bytes=100000
+```
+- Zeilen vorhanden, `mcpserver.port` gesetzt → weiter zu Schritt D.
+- Zeilen fehlen oder Datei existiert nicht (ältere Version ohne MCP-Feature, oder
+  noch nie konfiguriert) — zwei Fälle, je nach Ergebnis von Schritt B:
+  - **Screaming Frog läuft nicht**: Werte direkt in der (geschlossenen App)
+    Config-Datei ergänzen — Ordner vorher anlegen:
+    ```bash
+    mkdir -p "$USERPROFILE/seo_spider_mcp_server"
+    ```
+    dann in `spider.config` die fünf Zeilen oben setzen (Root-Pfad an
+    `%USERPROFILE%` anpassen), Nutzer bitten, die Anwendung zu öffnen, weiter zu
+    Schritt D.
+  - **Screaming Frog läuft bereits**: die Config-Datei jetzt NICHT direkt
+    anfassen (wird beim Beenden der App ggf. überschrieben) — stattdessen dem
+    Nutzer die Fundstelle in der UI nennen (Menü `Configuration` → Suche nach
+    "MCP Server"/API-Zugriff; genaue Bezeichnung variiert je Version) und um
+    Aktivierung mit Port `11435` bitten. Existiert die Option in der UI gar
+    nicht, ist die installierte Version zu alt — Update nötig über
+    "Help → Check for Updates" (wieder Nutzerinteraktion), danach erneut prüfen.
+
+**Schritt D — Antwortet der Endpoint tatsächlich?**
 ```bash
 curl -s http://127.0.0.1:11435/mcp
 ```
-Eine JSON-Fehlermeldung über fehlende Header ("text/event-stream required...") ist
-hier bereits ein **Erfolgssignal** — sie zeigt, dass der Server antwortet.
+- JSON-Fehler über fehlende Header (`"text/event-stream required..."`) →
+  **Erfolgssignal**, der Server antwortet und ist erreichbar.
+- Verbindung abgelehnt/Timeout → in dieser Reihenfolge erneut prüfen:
+  1. Läuft die Anwendung noch (Schritt B)?
+  2. Steht `mcpserver.port` wirklich auf `11435` (Schritt C) — falls der Nutzer
+     einen anderen Port gewählt hat, muss auch der `seospider`-Block in Phase 3
+     diesen Port statt `11435` verwenden, nicht 11435 erzwingen.
+  3. Ist der Server in der UI wirklich aktiviert (nicht nur `auto_start=false`
+     gesetzt, sondern auch einmal gestartet)?
+  4. Firewall/Antivirus, das lokale Ports blockiert (selten) — im Log
+     `%USERPROFILE%\.ScreamingFrogSEOSpider\trace.txt` nach Fehlern suchen.
+
+**Lizenzhinweis (separat von der MCP-Konfiguration):** Ohne gültige Lizenz läuft
+Screaming Frog im Trial-Modus mit 500-URL-Crawl-Limit. Der MCP-Server lässt sich
+davon unabhängig konfigurieren und testen, aber tatsächliche Audit-Crawls über
+dieses Limit hinaus brauchen eine aktive Lizenz (`Licence` → `Enter Licence Key`
+in der UI). Lizenzdaten dafür vom Nutzer erfragen, falls noch nicht hinterlegt —
+das ist eine echte Entscheidung/Zugangsdaten-Frage, kein technischer Fehler.
 
 ### 1.7 Qdrant-Server (lokale Vektor-Datenbank für Memory + SEO-Wissensbasis)
 Lade das aktuelle Windows-Release von https://github.com/qdrant/qdrant/releases
