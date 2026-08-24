@@ -126,6 +126,15 @@ oft schon lange vor diesem Setup, eigenständig vom Nutzer. **Prüfe deshalb imm
 zuerst den Ist-Zustand, bevor du installierst oder Konfiguration änderst** — geh
 Schritt für Schritt vor, jeder Schritt entscheidet, was als Nächstes nötig ist.
 
+Port `11435` ist Screaming Frogs eigener, fester Standard-Port für den seit
+Version 24.0 nativ eingebauten MCP-Server (`Settings → MCP Server` in der App;
+das Feature existiert in älteren Versionen schlicht nicht). Die App spricht nur
+"streamable HTTP", Claude erwartet stdio — deshalb übersetzt `mcp-remote`
+dazwischen (Phase 3, `seospider`-Eintrag). **Wichtig:** Screaming Frog ist kein
+Hintergrunddienst — die Anwendung muss während der gesamten Session offen
+bleiben. Wird sie geschlossen, sind die MCP-Tools sofort weg, auch wenn Port und
+Root-Verzeichnis korrekt konfiguriert sind.
+
 **Schritt A — Ist Screaming Frog überhaupt installiert?**
 ```bash
 ls "/c/Program Files (x86)/Screaming Frog SEO Spider" 2>/dev/null || ls "/c/Program Files/Screaming Frog SEO Spider" 2>/dev/null
