@@ -27,6 +27,9 @@ CLAUDE.md
   seo-data-foundation/
     SKILL.md
 
+  seo-url-clustering/
+    SKILL.md
+
   seo-technical-file-diagnosis/
     SKILL.md
 
@@ -43,6 +46,15 @@ CLAUDE.md
     SKILL.md
 
   seo-scoring-recommendations/
+    SKILL.md
+
+  seo-report-generator/
+    SKILL.md
+    report_renderer.py
+    docx_helpers.py
+    report_config.py
+
+  redirect-map-builder/
     SKILL.md
 ```
 
