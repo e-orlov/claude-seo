@@ -42,8 +42,9 @@ Ein Git-Repo mit dem kompletten Werkzeugkasten wurde bereits vorbereitet:
 **Bewusst nicht im Repo** (und das ist beabsichtigt, nicht vergessen):
 - `clients/` — echte Kundendaten aus Audits. Bleiben pro Maschine lokal, nicht geteilt.
 - `knowledge/` — Buchauszüge ("The Art of SEO", 4th Ed.) und gescrapte Google-Docs-Inhalte,
-  die die SEO-Wissensbasis in Qdrant füttern. Urheberrechtlich nicht für Weitergabe per Git
-  geeignet — wird stattdessen lokal auf diesem Rechner neu erzeugt (siehe Phase 5).
+  die die SEO-Wissensbasis in Qdrant füttern. Urheberrechtlich nicht für Weitergabe per
+  öffentlichem Git-Repo geeignet — wird stattdessen separat als passwortgeschützte
+  `knowledge.zip` übertragen und lokal eingespielt (siehe Phase 6, letzter Schritt).
 
 ---
 
@@ -396,37 +397,11 @@ zurückkommt.
 
 ---
 
-## Phase 5 — SEO-Wissensbasis in Qdrant nachbilden (optional, aber empfohlen)
+## Phase 5 — Abschluss-Smoketest
 
-Die Skills rufen `qdrant-find` zu Beginn jeder Diagnose auf, um Hintergrundwissen
-aus "The Art of SEO" (4th Edition) und den Google Search Central Docs abzurufen.
-Dieser Inhalt wurde bewusst nicht mit dem Repo mitgeliefert (Urheberrecht). Um die
-gleiche Wissensbasis lokal aufzubauen:
-
-1. Beschaffe eine eigene, legal erworbene Kopie von "The Art of SEO" (4th Edition)
-   als PDF und lege sie z. B. unter `seo/knowledge/art-of-seo.pdf` ab.
-2. Nutze die im Repo enthaltenen Ingestion-Skripte:
-   ```bash
-   cd "$USERPROFILE/Claude-Projects/seo"
-   node scripts/extract_pdf.js knowledge/art-of-seo.pdf knowledge/art-of-seo.txt
-   node scripts/chunk_book.js
-   ```
-3. Lies die erzeugten Chunks und speichere sie über `qdrant-store` in die Collection
-   `claude_code_memory` (Tag-Konvention beibehalten, siehe Format-Beispiele im
-   Skript-Output).
-4. Für die Google Search Central Docs: rufe die relevanten Seiten unter
-   `developers.google.com/search`, `/crawling`, etc. per WebFetch ab und nutze
-   `scripts/chunk_googledocs.js` zum Chunking, dann ebenfalls via `qdrant-store`
-   ablegen.
-
-Dieser Schritt ist nicht blockierend — ohne ihn funktionieren alle Audit-Skills
-weiterhin, `qdrant-find` liefert dann nur weniger oder keine Hintergrundtreffer.
-
----
-
-## Phase 6 — Abschluss-Smoketest
-
-Führe zum Schluss einmal komplett durch und bestätige jeden Punkt:
+Führe an dieser Stelle einmal komplett durch und bestätige jeden Punkt — die
+Wissensbasis (Phase 6) folgt bewusst danach, weil sie optional/zeitaufwändig ist
+und alles andere unabhängig davon funktionieren muss:
 
 - [ ] `git`, `node`, `npm`, `python`, `uv` melden alle eine Version
 - [ ] `git clone` von `claude-seo` erfolgreich, Skills sichtbar
@@ -440,9 +415,80 @@ Führe zum Schluss einmal komplett durch und bestätige jeden Punkt:
 - [ ] Ein SEO-Skill (z. B. `seo-data-foundation`) lässt sich mit einer Testdatei
       anstoßen und arbeitet die erwarteten Schritte ab
 
-Berichte am Ende kurz, welche Punkte funktionieren, welche (falls vorhanden) noch
-offen sind (z. B. weil Screaming-Frog-Lizenzdaten fehlen oder die Wissensbasis aus
-Phase 5 bewusst übersprungen wurde), und was der Nutzer dafür noch beisteuern muss.
+Berichte kurz, welche Punkte funktionieren, welche (falls vorhanden) noch offen
+sind (z. B. weil Screaming-Frog-Lizenzdaten fehlen), und was der Nutzer dafür
+noch beisteuern muss.
+
+---
+
+## Phase 6 — SEO-Wissensbasis in Qdrant einspielen (letzter Schritt)
+
+Die Skills rufen `qdrant-find` zu Beginn jeder Diagnose auf, um Hintergrundwissen
+aus "The Art of SEO" (4th Edition) und den Google Search Central Docs abzurufen.
+Dieser Inhalt liegt nicht im Git-Repo (Urheberrecht, siehe Kontext-Abschnitt oben),
+sondern wird über eine separate, passwortgeschützte `knowledge.zip` übertragen, die
+der Nutzer bereits vorbereitet hat.
+
+**Schritt A — Datei anfordern.** Prüfe, ob die Datei schon da ist:
+```bash
+ls "$USERPROFILE/Claude-Projects/seo/knowledge.zip"
+```
+Falls nicht vorhanden: bitte den Nutzer explizit, `knowledge.zip` in den Ordner
+`%USERPROFILE%\Claude-Projects\seo\` zu legen (z. B. per USB-Stick oder sicherer
+Dateiübertragung — nicht per Git, das Archiv bleibt bewusst außerhalb des
+öffentlichen Repos). Erst weitermachen, wenn die Datei da ist.
+
+**Schritt B — Passwort erfragen.** Das ist eine echte Zugangsdaten-Frage, kein
+technischer Fehler — frag den Nutzer direkt nach dem Archiv-Passwort.
+
+**Schritt C — Entpacken.** Windows Explorer kann passwortgeschützte Zips nicht
+entpacken; nutze Python (aus Phase 1.3 bereits vorhanden):
+```bash
+cd "$USERPROFILE/Claude-Projects/seo"
+python -c "
+import zipfile, getpass
+pwd = input('Archiv-Passwort: ').encode()
+with zipfile.ZipFile('knowledge.zip') as z:
+    z.extractall('knowledge', pwd=pwd)
+print('Entpackt.')
+"
+```
+Falls das mit `NotImplementedError` oder einem Passwort-Fehler abbricht, ist das
+Archiv AES-verschlüsselt (z. B. 7-Zip-Standard) statt klassisch ZipCrypto-verschlüsselt
+— behebe das selbst, indem du `pyzipper` statt `zipfile` nutzt:
+```bash
+pip install pyzipper
+python -c "
+import pyzipper
+pwd = input('Archiv-Passwort: ').encode()
+with pyzipper.AESZipFile('knowledge.zip') as z:
+    z.extractall('knowledge', pwd=pwd)
+print('Entpackt.')
+"
+```
+
+**Schritt D — In Qdrant laden.** Das Archiv enthält bereits fertig gechunkte
+Dateien (u. a. `*-ingestion.ndjson`, `googledocs-chunks/*.json`) — nicht einzeln
+per `qdrant-store`-Tool-Aufruf laden (bei Tausenden Chunks viel zu langsam/teuer),
+sondern per Bulk-Loader-Skript aus dem Repo, das direkt gegen die Qdrant-REST-API
+embedded und schreibt:
+```bash
+pip install fastembed requests
+python global/scripts/bulk_load_qdrant.py knowledge
+```
+Das Skript meldet die Anzahl gefundener Dokumente und den Fortschritt in Batches.
+
+**Schritt E — Verifizieren.**
+```bash
+curl -s http://127.0.0.1:6333/collections/claude_code_memory | python -c "import sys,json; print(json.load(sys.stdin)['result']['points_count'])"
+```
+Erwartet: eine Punktzahl deutlich über 0 (Referenzmaschine: 3378). Optional einmal
+`qdrant-find` mit einer SEO-Fachfrage testen und prüfen, dass thematisch passende
+Treffer zurückkommen.
+
+Dieser Schritt ist nicht blockierend für alles davor — ohne ihn funktionieren alle
+Audit-Skills weiterhin, `qdrant-find` liefert dann nur weniger oder keine
+Hintergrundtreffer, bis das Archiv geliefert und eingespielt wurde.
 
 ## Hinweis zur Evidenz-Registry
 
