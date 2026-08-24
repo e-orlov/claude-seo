@@ -35,7 +35,11 @@ Ein Git-Repo mit dem kompletten Werkzeugkasten wurde bereits vorbereitet:
 - `global/skills/humanizer/SKILL.md` — Skill, der KI-typische Schreibmuster aus Texten entfernt
 - `.claude/skills/*` — elf SEO-Audit-Skills (Datenfundament, Clustering, technische/
   Content-/Backlink-/GEO-/Performance-Diagnose, Scoring, Report-Generator, Redirect-Map-Builder)
-- `generate_report.js`, `scripts/*.js` — Report- und Wissensbasis-Ingestion-Tooling
+- `scripts/*.js` — Wissensbasis-Ingestion-Tooling (PDF-Extraktion, Chunking)
+- `.claude/skills/seo-report-generator/` — der einzige zulässige Report-Renderer
+  (`report_renderer.py` + `docx_helpers.py` + `report_config.py`, Python/`python-docx`).
+  Jedes `.docx`-Reporting läuft ausschließlich hierüber, kein eigenständiges
+  Report-Script daneben (siehe CLAUDE.md "Report Infrastructure").
 - `global/scripts/qdrant_mcp_start.py`, `global/scripts/qdrant-server-config.yaml` —
   Start-Skript und Config für den lokalen Qdrant-Vektor-Server
 
@@ -277,7 +281,7 @@ ls "$USERPROFILE/Claude-Projects/seo/.claude/skills"
 Erwartet: 11 Skill-Ordner (u. a. `seo-data-foundation`, `seo-file-audit-orchestrator`,
 `seo-report-generator`, `seo-url-clustering`, `redirect-map-builder`, ...).
 
-Node-Abhängigkeiten installieren (für `generate_report.js` / Ingestion-Skripte):
+Node-Abhängigkeiten installieren (für die Ingestion-Skripte in `scripts/`):
 ```bash
 cd "$USERPROFILE/Claude-Projects/seo"
 npm install
