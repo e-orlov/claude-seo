@@ -7,9 +7,11 @@ __pycache__/
 clients/
 
 # Copyrighted book text + scraped doc corpus used to seed the local Qdrant
-# knowledge base. Regenerate locally via scripts/extract_pdf.js + chunk_*.js
-# against your own legally-owned copy instead of committing the content.
+# knowledge base. Never commit this — transferred out-of-band as a
+# password-protected knowledge.zip instead (see SETUP.md Phase 6).
 knowledge/
+knowledge.zip
+*.zip
 
 # Leftover/experimental local vector-store fragment, not the real Qdrant data
 storage/
