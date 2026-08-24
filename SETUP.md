@@ -425,21 +425,27 @@ noch beisteuern muss.
 
 Die Skills rufen `qdrant-find` zu Beginn jeder Diagnose auf, um Hintergrundwissen
 aus "The Art of SEO" (4th Edition) und den Google Search Central Docs abzurufen.
-Dieser Inhalt liegt nicht im Git-Repo (Urheberrecht, siehe Kontext-Abschnitt oben),
-sondern wird über eine separate, passwortgeschützte `knowledge.zip` übertragen, die
-der Nutzer bereits vorbereitet hat.
+Dieser Inhalt liegt bewusst nicht im Git-Repo, auch nicht passwortgeschützt gezippt
+— das Repo ist öffentlich, und ein Passwort verschleiert nur den Inhalt, verhindert
+aber nicht, dass GitHub die Archiv-Datei selbst öffentlich hostet. Übertragen wird
+`knowledge.zip` deshalb ausschließlich außerhalb von Git.
 
-**Schritt A — Datei anfordern.** Prüfe, ob die Datei schon da ist:
+**Schritt A — Datei und Passwort beim Repo-Admin anfordern.** Sowohl `knowledge.zip`
+als auch das zugehörige Archiv-Passwort müssen direkt beim Admin/Betreiber des
+`claude-seo`-Repos erfragt werden (nicht aus dem Repo selbst — dort liegt keines
+von beidem). Prüfe zuerst, ob die Datei schon da ist:
 ```bash
 ls "$USERPROFILE/Claude-Projects/seo/knowledge.zip"
 ```
-Falls nicht vorhanden: bitte den Nutzer explizit, `knowledge.zip` in den Ordner
-`%USERPROFILE%\Claude-Projects\seo\` zu legen (z. B. per USB-Stick oder sicherer
-Dateiübertragung — nicht per Git, das Archiv bleibt bewusst außerhalb des
-öffentlichen Repos). Erst weitermachen, wenn die Datei da ist.
+Falls nicht vorhanden: bitte den Nutzer explizit, beim Repo-Admin sowohl die Datei
+(abzulegen unter `%USERPROFILE%\Claude-Projects\seo\`, z. B. per USB-Stick oder
+sicherer Dateiübertragung) als auch das Passwort zu erfragen. Erst weitermachen,
+wenn die Datei da ist.
 
-**Schritt B — Passwort erfragen.** Das ist eine echte Zugangsdaten-Frage, kein
-technischer Fehler — frag den Nutzer direkt nach dem Archiv-Passwort.
+**Schritt B — Passwort sicherstellen.** Falls in Schritt A nur die Datei kam, aber
+noch kein Passwort genannt wurde: das ist eine echte Zugangsdaten-Frage, kein
+technischer Fehler — frag den Nutzer direkt danach, ebenfalls beim Repo-Admin zu
+erfragen, falls er es selbst nicht hat.
 
 **Schritt C — Entpacken.** Windows Explorer kann passwortgeschützte Zips nicht
 entpacken; nutze Python (aus Phase 1.3 bereits vorhanden):
