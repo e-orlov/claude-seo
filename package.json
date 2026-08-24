@@ -1,0 +1,17 @@
+{
+  "name": "seo",
+  "version": "1.0.0",
+  "description": "This package contains a project-level `CLAUDE.md` and a modular `.claude/skills/` structure for file-based SEO audits.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "docx": "^9.7.1",
+    "pdf-parse": "^1.1.1"
+  }
+}

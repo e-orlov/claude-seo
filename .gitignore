@@ -1,0 +1,20 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+
+# Real client audit data - never shared, stays local per machine
+clients/
+
+# Copyrighted book text + scraped doc corpus used to seed the local Qdrant
+# knowledge base. Regenerate locally via scripts/extract_pdf.js + chunk_*.js
+# against your own legally-owned copy instead of committing the content.
+knowledge/
+
+# Leftover/experimental local vector-store fragment, not the real Qdrant data
+storage/
+snapshots/
+.qdrant-initialized
+
+# Machine-specific Claude Code settings (absolute paths, permission history)
+.claude/settings.local.json
