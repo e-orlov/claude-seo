@@ -128,7 +128,7 @@ metric_coverage_report not available. Performance diagnosis runs in descriptive 
 
 ## Purpose
 
-Diagnose page performance from uploaded performance files only.
+Diagnose page performance from the data-foundation artifacts built from uploaded WebPageTest/Lighthouse/HAR files.
 
 Supported sources:
 - WebPageTest JSON

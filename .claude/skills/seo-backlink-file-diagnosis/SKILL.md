@@ -16,7 +16,7 @@ metadata:
 
 ## Purpose
 
-Analyze backlink profile quality and opportunities from uploaded backlink files only.
+Analyze backlink profile quality and opportunities from the data-foundation artifacts built from uploaded backlink files (Ahrefs exports).
 
 This skill uses:
 - Ahrefs backlinks exports

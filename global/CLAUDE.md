@@ -75,7 +75,7 @@ Tags: windows, junction, AppData, npm, sandbox, path
 1. Call `qdrant-find` with the topic/project name
 2. If results found: summarize briefly what you already know before proceeding
 3. If no results: proceed normally
-4. Check for `C:\Users\Evgeniy\.claude\qdrant-pending.md` — if it exists, store all entries via `qdrant-store` and delete the file.
+4. Check for `%USERPROFILE%\.claude\qdrant-pending.md` — if it exists, store all entries via `qdrant-store` and delete the file.
 
 **During a session** — store immediately after:
 - A successful installation or configuration
@@ -117,7 +117,7 @@ Do not ask "should I search memory?" — just search at session start and when c
 
 Whenever tabular or structured data enters the session — whether uploaded by the user (CSV, XLSX, JSON, Parquet) or fetched via any MCP tool (seospider, pandas-server, APIs, etc.) — **write it into DuckDB first before doing any analysis**.
 
-DB path: `C:\Users\Evgeniy\duckdb-data\main.duckdb`
+DB path: `%USERPROFILE%\duckdb-data\main.duckdb` (as configured for the `duckdb` MCP server on this machine — adjust if configured elsewhere)
 
 ### Rule: stage before you analyze
 

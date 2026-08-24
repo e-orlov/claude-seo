@@ -1,10 +1,12 @@
 ---
 name: seo-file-audit-orchestrator
 description: >
-  Orchestrates file-based SEO audits from uploaded exports only. Use for full audits,
-  multi-source SEO analysis, or when the user asks to analyze uploaded Screaming Frog,
-  GSC, GA4, Ahrefs, WebPageTest, Lighthouse or HAR files. Does not crawl, call APIs,
-  use OAuth, MCPs, browser tools or live data sources.
+  Orchestrates SEO audits in mixed mode: a live Screaming Frog MCP connection for
+  crawl/technical data, plus uploaded exports for everything else (Ahrefs, Semrush
+  AI Visibility mhtml, GSC, GA4, WebPageTest, Lighthouse, HAR). Use for full audits,
+  multi-source SEO analysis, or when the user asks to analyze a Screaming Frog
+  crawl (live or exported) together with other SEO exports. Does not call other
+  APIs, use OAuth, or use browser automation as part of the standard pipeline.
 user-invokable: true
 argument-hint: "[audit-scope or uploaded-files-folder]"
 license: MIT
@@ -17,11 +19,12 @@ metadata:
 
 ## Purpose
 
-Coordinate a complete file-based SEO audit from uploaded files.
+Coordinate a complete SEO audit in mixed mode.
 
-This skill does not fetch URLs, crawl websites, call APIs, use OAuth, use MCPs, or perform live external data collection.
+This skill does not call other APIs, use OAuth, or perform live external data collection beyond the one sanctioned source below.
 
-It only uses:
+It uses:
+- a live connection to Screaming Frog SEO Spider via its own MCP server (`seospider`), for crawl/technical data
 - uploaded files
 - local project files explicitly provided
 - derived intermediate artifacts
@@ -29,24 +32,25 @@ It only uses:
 ## When to Use
 
 Use this skill when the user asks for:
-- full SEO audit from uploaded files
-- technical SEO audit from Screaming Frog exports
-- content audit from crawl/GSC/GA4 exports
+- full SEO audit from a live Screaming Frog crawl, uploaded files, or both
+- technical SEO audit from a Screaming Frog crawl (live MCP connection or exports)
+- content audit from crawl/GSC/GA4 data
 - backlink audit from Ahrefs exports
+- GEO / AI-visibility audit from Semrush AI Visibility mhtml exports and other available data
 - performance audit from WebPageTest/Lighthouse/HAR exports
-- GEO / LLM Citation Readiness audit from available files
 - scoring across multiple SEO areas
-- prioritized recommendations from export data
+- prioritized recommendations from the assembled data basis
 
 ## Inputs
 
-Accept any combination of files.
+Accept any combination of a live Screaming Frog MCP connection and uploaded files.
 
 Expected but not required:
-- Screaming Frog CSV/XLSX exports and reports
+- Live Screaming Frog MCP connection (`seospider`), or Screaming Frog CSV/XLSX exports and reports
 - GSC CSV/XLSX exports
 - GA4 CSV/XLSX exports
 - Ahrefs CSV exports
+- Semrush AI Visibility `.mhtml` exports
 - WebPageTest JSON, Requests CSV, HAR, Lighthouse JSON
 - Additional manually prepared mapping, content, keyword or crawl files
 
@@ -58,8 +62,8 @@ Run the audit in this order.
 
 ### Phase 0: Data Staging
 
-Before any skill runs, all raw data must be loaded into DuckDB
-(`C:\Users\Evgeniy\duckdb-data\main.duckdb`).
+Before any skill runs, all raw data must be loaded into DuckDB (the path
+configured for the `duckdb` MCP server on this machine — see global `CLAUDE.md`).
 
 This phase is identical for MCP sources and file uploads — after Phase 0, the rest of the
 workflow is the same regardless of how the data arrived.

@@ -16,7 +16,7 @@ metadata:
 
 ## Purpose
 
-Diagnose content SEO issues and opportunities from uploaded files only.
+Diagnose content SEO issues and opportunities from the data-foundation artifacts (built from a live Screaming Frog crawl and/or uploaded crawl/GSC/GA4 files).
 
 This skill covers:
 - title tags

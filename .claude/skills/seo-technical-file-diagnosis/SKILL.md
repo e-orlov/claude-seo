@@ -16,7 +16,7 @@ metadata:
 
 ## Purpose
 
-Diagnose technical SEO issues from uploaded files only.
+Diagnose technical SEO issues from the data-foundation artifacts (built from a live Screaming Frog MCP crawl and/or uploaded exports).
 
 This skill covers:
 - crawlability

@@ -58,7 +58,7 @@ Work directory: `clients/<client_slug>/<date_slug>/work/`
 ### 0.2 DuckDB Session
 
 Use session_id `redirect-map` throughout.
-DB: `C:\Users\Evgeniy\duckdb-data\main.duckdb`
+DB: the path configured for the `duckdb` MCP server on this machine (see global `CLAUDE.md`)
 
 Before any query, check for stale tables from other clients:
 

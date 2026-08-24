@@ -128,7 +128,7 @@ metric_coverage_report not available. GEO diagnosis runs in descriptive mode.
 
 ## Purpose
 
-Diagnose Generative Engine Optimization and LLM citation readiness from uploaded files only.
+Diagnose Generative Engine Optimization and LLM citation readiness from the data-foundation artifacts, including uploaded Semrush AI Visibility `.mhtml` exports and a live Screaming Frog crawl where available.
 
 This skill evaluates whether the available data supports conclusions about how well pages are prepared to be:
 
