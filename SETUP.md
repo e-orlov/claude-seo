@@ -169,9 +169,25 @@ Test manuell:
 ```bash
 curl -s http://127.0.0.1:6333/collections
 ```
-Für dauerhaften Betrieb: als Windows Scheduled Task einrichten, der bei Anmeldung
-startet (Name z. B. `Qdrant-Server`), damit der Server nicht bei jedem Neustart
-manuell gestartet werden muss. Nutze `schtasks /create` oder den Task Scheduler.
+Ein dauerhaft laufender Scheduled Task ist **nicht nötig** — auf der Referenzmaschine
+gibt es aktuell keinen, trotzdem läuft der Server zuverlässig, weil
+`qdrant_mcp_start.py` (aus Phase 3) bei jeder Verbindung selbst prüft, ob Port 6333
+schon offen ist, und `qdrant.exe` sonst automatisch startet. Nur falls du lieber
+einen dauerhaft laufenden Prozess ab Systemstart willst, richte optional einen
+Scheduled Task ein (`schtasks /create` oder Task Scheduler).
+
+**Bekannte Eigenheiten, kein Bug:**
+- Mehrere gleichzeitig offene Claude-Code-Sessions erzeugen jeweils einen eigenen
+  `mcp-server-qdrant.exe`-Prozess, die alle gegen denselben `qdrant.exe`-Server auf
+  Port 6333 sprechen. Das ist normal und kein Zombie-Prozess-Problem, solange der
+  Server selbst antwortet (`curl http://127.0.0.1:6333/collections`).
+- Die eigentliche Unzuverlässigkeit lag nicht am Server, sondern an einer nicht
+  umsetzbaren Regel im alten `global/CLAUDE.md`: "bei ~70% Kontext-Füllstand
+  proaktiv `/compact` aufrufen" — dafür gibt es kein Werkzeug und keine Anzeige des
+  Füllstands, die Regel konnte nie greifen. Das aktuelle `global/CLAUDE.md` in
+  diesem Repo hat das bereits korrigiert: Memories werden jetzt sofort beim
+  Entstehen gespeichert statt auf einen (nie eintretenden) Kompaktierungs-Hinweis
+  zu warten.
 
 ---
 
