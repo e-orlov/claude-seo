@@ -4,16 +4,16 @@ This package contains a project-level `CLAUDE.md` and a modular `.claude/skills/
 
 ## Core Design
 
-This framework is intentionally different from URL/API/MCP-based SEO skill packages.
+Based on:
+- Screaming Frog MCP
+- chrome-devtools MCP
+- DuckDB MCP
+- Qdrant MCP
 
-It assumes:
-- no live crawling
-- no APIs
-- no OAuth
-- no MCPs
-- no DataForSEO / Ahrefs API / Google API calls
-- no hidden automation
-- uploaded files are the only data basis
+Data sources:
+- Screaming Frog
+- Ahrefs
+- Sumresh
 
 ## Included Files
 
