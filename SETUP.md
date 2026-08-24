@@ -21,7 +21,7 @@ sind. Ersetze ihn durch den tatsächlichen Benutzernamen dieses Rechners.
 ## Kontext: was hier eingerichtet wird
 
 Ein Git-Repo mit dem kompletten Werkzeugkasten wurde bereits vorbereitet:
-`https://github.com/e-orlov/claude-seo` (privates Repo). Es enthält:
+`https://github.com/e-orlov/claude-seo` (öffentliches Repo — Klonen ohne Login möglich). Es enthält:
 
 - `CLAUDE.md` — Projekt-Policy für datei-basierte SEO-Audits (strikt: keine Live-Crawls,
   keine APIs, keine OAuth, alles nur aus hochgeladenen Dateien)
@@ -193,15 +193,17 @@ Scheduled Task ein (`schtasks /create` oder Task Scheduler).
 
 ## Phase 2 — Git-Repo klonen
 
-GitHub-Zugangsdaten für `e-orlov` erhältst du vom Nutzer, falls Git Credential
-Manager nicht schon eine gültige Session hat. Klonen:
+Das Repo ist öffentlich — kein GitHub-Login, kein Git Credential Manager, keine
+Zugangsdaten nötig, solange nur geklont/gepullt wird (anonymer HTTPS-Zugriff reicht):
 ```bash
 mkdir -p "$USERPROFILE/Claude-Projects"
 cd "$USERPROFILE/Claude-Projects"
 git clone https://github.com/e-orlov/claude-seo.git seo
 ```
-Beim Push/Pull über HTTPS öffnet Git Credential Manager bei Bedarf automatisch
-einen Browser-Login für GitHub — folge dem Flow.
+Nur falls von diesem Rechner später auch **zurückgeschrieben** werden soll (Push),
+braucht es einen GitHub-Account mit Schreibrechten auf das Repo und einen
+Browser-Login über Git Credential Manager beim ersten Push. Für die reine
+Einrichtung hier ist das nicht relevant.
 
 Verifiziere:
 ```bash
