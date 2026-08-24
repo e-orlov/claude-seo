@@ -1,19 +1,25 @@
-# File-Based SEO Audit Skills for Claude Code
+# SEO Audit Skills for Claude Code
 
-This package contains a project-level `CLAUDE.md` and a modular `.claude/skills/` structure for file-based SEO audits.
+This package contains a project-level `CLAUDE.md` and a modular `.claude/skills/` structure for SEO audits, run in mixed mode (one sanctioned live connection plus file-based exports).
 
 ## Core Design
 
-Based on:
-- Screaming Frog MCP
-- chrome-devtools MCP
-- DuckDB MCP
-- Qdrant MCP
+This framework runs in **mixed mode**, not purely file-based:
 
-Data sources:
-- Screaming Frog
-- Ahrefs
-- Sumresh
+- **Screaming Frog** — crawl/technical data, either via a live connection to Screaming Frog's own built-in MCP server (`seospider`, port 11435 — the one sanctioned live source) or via uploaded exports
+- **Ahrefs** — backlink data via uploaded file exports
+- **Semrush AI Visibility** — GEO / AI-visibility data via uploaded `.mhtml` exports
+- **GSC / GA4 / WebPageTest / Lighthouse / HAR** — via uploaded file exports, as before
+
+Infrastructure, not audit data sources: DuckDB MCP for staging/querying tabular data, Qdrant MCP for persistent memory and the SEO background-knowledge base.
+
+chrome-devtools MCP is available but not part of the standard audit pipeline — the user invokes it explicitly for a specific one-off task (e.g. a live rendering/layout check), and its output only becomes audit evidence if the user asks for that.
+
+It assumes:
+- no OAuth
+- no Google / Ahrefs / Sistrix / Moz / DataForSEO API calls
+- no hidden automation
+- data basis is exactly the mixed set above — not arbitrary live lookups
 
 ## Included Files
 
@@ -76,8 +82,8 @@ seo-analysis-framework/
 
 ## Main Workflow
 
-1. Upload exports into an analysis folder.
-2. Ask Claude Code to use the file-based SEO audit framework.
+1. Upload exports into an analysis folder (or connect Screaming Frog's MCP server for live crawl data).
+2. Ask Claude Code to use the SEO audit framework.
 3. The framework first inventories files.
 4. It maps fields, checks data quality and normalizes URLs.
 5. It joins sources only when join coverage is sufficient.

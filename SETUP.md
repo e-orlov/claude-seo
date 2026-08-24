@@ -23,8 +23,13 @@ sind. Ersetze ihn durch den tatsächlichen Benutzernamen dieses Rechners.
 Ein Git-Repo mit dem kompletten Werkzeugkasten wurde bereits vorbereitet:
 `https://github.com/e-orlov/claude-seo` (öffentliches Repo — Klonen ohne Login möglich). Es enthält:
 
-- `CLAUDE.md` — Projekt-Policy für datei-basierte SEO-Audits (strikt: keine Live-Crawls,
-  keine APIs, keine OAuth, alles nur aus hochgeladenen Dateien)
+- `CLAUDE.md` — Projekt-Policy für SEO-Audits im **gemischten Modus**: eine
+  sanktionierte Live-Quelle (Screaming Frog per eigenem MCP-Server für
+  Crawl-Daten), alles andere dateibasiert (Ahrefs für Backlinks, Semrush-AI-
+  Visibility-`.mhtml`-Exporte für GEO, GSC/GA4/WebPageTest/Lighthouse/HAR wie
+  gewohnt). Keine sonstigen Live-APIs, kein OAuth, kein chrome-devtools als
+  Standard-Datenquelle (nur wenn der Nutzer es explizit für eine konkrete
+  Aufgabe anfragt).
 - `global/CLAUDE.md` — projektübergreifende Policy (Qdrant-Memory-Mechanik,
   DuckDB-Staging-Regel, Humanizer-Pflicht für alle Texte)
 - `global/skills/humanizer/SKILL.md` — Skill, der KI-typische Schreibmuster aus Texten entfernt

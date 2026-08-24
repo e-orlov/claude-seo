@@ -2,11 +2,11 @@
 
 ## Mission
 
-This project is a file-based SEO, technical SEO, content, backlink, GEO / LLM Citation Readiness and performance audit framework for Claude Code.
+This project is a SEO, technical SEO, content, backlink, GEO / LLM Citation Readiness and performance audit framework for Claude Code, operating in a **mixed mode**: a live connection to Screaming Frog SEO Spider via its own MCP server for crawl/technical data, plus uploaded file exports for everything else (Ahrefs for backlinks, Semrush AI Visibility `.mhtml` exports for GEO/AI-visibility, GSC, GA4, WebPageTest/Lighthouse/HAR for performance).
 
-The assistant must produce evidence-led diagnoses, scoring and recommendations from uploaded files only.
+The assistant must produce evidence-led diagnoses, scoring and recommendations from this mixed data basis — never from data that was neither uploaded, derived from an upload, nor pulled live via the sanctioned Screaming Frog MCP connection.
 
-The goal is not to crawl, fetch, automate, call APIs, use OAuth, use MCP tools, or orchestrate live external services. The goal is to transform uploaded exports and reports into a reliable decision basis with transparent data coverage, validated evidence, prioritized findings and practical recommendations.
+The goal is not to freely call arbitrary APIs, use OAuth, or orchestrate other live external services beyond the sanctioned Screaming Frog MCP connection. The goal is to transform uploaded exports/reports plus the live Screaming Frog crawl into a reliable decision basis with transparent data coverage, validated evidence, prioritized findings and practical recommendations.
 
 ## File Size Guideline
 
@@ -24,29 +24,28 @@ On-demand, call `qdrant-find` immediately whenever the user asks to analyze an i
 
 ## Non-Negotiable Operating Mode
 
-This project is strictly file-based.
+This project runs in mixed mode: one sanctioned live MCP connection (Screaming Frog) plus file-based exports for everything else. It is not a general-purpose live-tooling project — the exception is scoped to exactly one source.
 
 Allowed data basis:
 - Uploaded files
 - Local files explicitly present in the project workspace
 - Derived intermediate artifacts created from those files
+- A live connection to Screaming Frog SEO Spider via its own MCP server (`seospider`), for crawl/technical/on-page data
 
 Disallowed unless the user explicitly changes the project rules:
-- Live crawling
-- API calls
+- Live crawling or scraping outside the Screaming Frog MCP connection
+- API calls (Google APIs, Ahrefs API, Sistrix API, Moz API, DataForSEO, Semrush API, etc.)
 - OAuth flows
-- MCP tool use
-- DataForSEO, Google APIs, Ahrefs APIs, Sistrix APIs, Moz APIs or other live data sources
-- Browser automation
-- Firecrawl or crawler orchestration
+- Browser automation (chrome-devtools MCP) as part of the standard audit evidence pipeline — the user regulates its use themselves by explicitly prompting for a specific task; it is not invoked automatically as an audit data source and its output does not enter the evidence ledger unless the user asks for that
+- Firecrawl or generic crawler orchestration
 - Hidden background automation
-- Claims based on data that was not uploaded or derived from uploaded data
+- Claims based on data that was neither uploaded, derived from an upload, nor pulled live via the Screaming Frog MCP connection
 
-If a source is missing, report the gap. Do not replace it with live lookup.
+If a source is missing, report the gap. Do not replace it with a live lookup beyond the sanctioned Screaming Frog MCP connection.
 
 ## Skill Invocation Rules
 
-For larger SEO audits based on uploaded files, use the project skills in this order:
+For larger SEO audits based on the mixed data basis (uploaded files plus the live Screaming Frog MCP connection), use the project skills in this order:
 
 1. `seo-file-audit-orchestrator`
 2. `seo-data-foundation`
@@ -67,13 +66,13 @@ Do not skip inventory, source classification, field mapping, data quality checks
 
 ## No Live Tool Contamination
 
-This project is file-based.
+This project runs in mixed mode, with exactly one sanctioned live source: the Screaming Frog MCP connection (`seospider`). Data pulled through it is treated at parity with file-based evidence — same evidence ledger, same `E-NNN` IDs, no `live_external_source` special marking, because it is the regular path for crawl data, not an exception.
 
-Do not use live APIs, MCPs, OAuth connections, browser tools, crawlers or external SEO tools during an audit unless the user explicitly changes the rules for the current audit.
+Do not use any other live APIs, MCPs, OAuth connections, crawlers or external SEO tools during an audit unless the user explicitly changes the rules for the current audit.
 
-This applies even if tools are connected and visible in the environment, including but not limited to Sistrix, Screaming Frog MCP, Google APIs, DataForSEO, Firecrawl, Chrome DevTools, Ahrefs APIs, Moz APIs or any live crawler.
+This applies even if tools are connected and visible in the environment, including but not limited to Sistrix, Google APIs, DataForSEO, Firecrawl, Ahrefs APIs, Moz APIs or any live crawler. chrome-devtools MCP falls under this too, with one carve-out: the user may explicitly prompt for a specific chrome-devtools task (e.g. a live rendering/layout check) outside the standard pipeline — that stays a one-off action the user directs, not a standing audit data source, and its output only enters the evidence ledger if the user asks for that.
 
-If live data is explicitly enabled for a specific audit, separate it from uploaded-file evidence and label it as `live_external_source`.
+If live data beyond the Screaming Frog MCP connection is explicitly enabled for a specific audit, separate it from uploaded-file evidence and label it as `live_external_source`.
 
 ## Core Principle
 
@@ -82,7 +81,7 @@ Do not produce final diagnoses before the available data has been inventoried, p
 Use this operating model:
 
 ```text
-uploaded files
+uploaded files + live Screaming Frog MCP connection
 → file inventory + source classification          [seo-data-foundation]
 → encoding / delimiter detection                  [seo-data-foundation]
 → schema registry + header normalization          [seo-data-foundation]
@@ -115,6 +114,7 @@ Load better context.
 Expected sources may include, but are not limited to:
 
 ### Screaming Frog
+Supplied either as uploaded exports/reports, or as a live connection via Screaming Frog's own built-in MCP server (`seospider`, port 11435) — the sanctioned live source for this project (see Non-Negotiable Operating Mode). Both forms feed the same fields below and are treated at evidence parity.
 - All exports and reports
 - Internal / External
 - Response Codes
@@ -156,6 +156,11 @@ Expected sources may include, but are not limited to:
 - Link intersect
 - Best by links
 - Lost / new links, if exported
+
+### Semrush AI Visibility (GEO / AI performance)
+- Saved `.mhtml` exports of the Semrush AI Visibility report for the domain
+- Read as rendered content (tables, scores, mention/citation figures), not as a structured data export — extract figures conservatively and only cite what is actually legible in the saved page
+- Feeds the GEO / LLM Citation Readiness area (`seo-geo-file-diagnosis`) alongside crawl- and content-based GEO signals
 
 ### WebPageTest / Lighthouse / HAR
 - WebPageTest JSON
