@@ -7,7 +7,9 @@ This file loads in full every session, in every project. Keep it to global opera
 ## Qdrant Memory (MCP: qdrant-memory)
 
 Claude Code uses Qdrant as a persistent semantic memory store via the `qdrant-memory` MCP server.
-Collection: `claude_code_memory` | Path: `C:\qdrant-memory` | Embeddings: FastEmbed (all-MiniLM-L6-v2)
+Collection: `claude_code_memory` | Path: `C:\qdrant-server\storage` | Embeddings: FastEmbed (all-MiniLM-L6-v2)
+
+Note: `C:\qdrant-memory` is a stale, orphaned directory from an earlier setup (last written 2026-06-08) — the live server reads `C:\qdrant-server\config.yaml`, whose `storage_path` resolves to `C:\qdrant-server\storage`. Safe to delete the orphaned folder; do not confuse it with the real data.
 
 ---
 
@@ -89,15 +91,14 @@ Tags: windows, junction, AppData, npm, sandbox, path
 
 ### Context window management
 
-**Keep the context window under control throughout the session.**
+**There is no reliable way to detect an approaching compaction from inside a session.** There is no tool available to trigger `/compact` directly, and no readout of the exact context-fill percentage. Automatic compaction is system-triggered and can happen without any advance signal. A rule that depends on "notice ~70% full, then act" cannot actually be executed — treat that as a known dead end, not a workflow to attempt. The rules below are the real safeguard.
 
-- Long sessions with many large tool outputs (SQL results, NDJSON exports, file reads) fill the context fast.
-- When context reaches ~70 % full: run `/compact` proactively with a focus instruction, e.g. `/compact preserve all analysis results, report paths, and DuckDB table names`.
-- Do not wait until 100 % — at 100 % MCP tools (including qdrant-store) may become unavailable.
-- Before compacting: store any new Qdrant entries that have not been saved yet.
-- After compacting: verify MCP tools are still available by checking if qdrant-store responds.
+- **Zero-deferral rule**: call `qdrant-store` the moment a memory-worthy fact is established (installation, fix, decision, preference — see the table above) — never queue it for "later" or for "right before compacting." This is the only mechanism that reliably survives a compaction that arrives without warning.
+- **Periodic sweep, event-based, not percentage-based**: after finishing a named sub-task, after roughly every 10–15 tool calls in a row, and before starting a visibly new phase of work, pause and check whether anything from the last stretch should have been stored but wasn't. Trigger this off countable events, not off an unmeasurable fill level.
+- If the user manually runs `/compact` themselves, proactively suggest a focus instruction beforehand, e.g. `/compact preserve all analysis results, report paths, and DuckDB table names` — but treat this as a secondary safety net, not the primary one, since most compaction in practice is automatic and gives no such opportunity.
+- After noticing a compaction happened (e.g. the conversation now starts from a summary): verify `qdrant-store`/`qdrant-find` still respond, then do one memory sweep over the summary plus any remaining live context, in case something from before the cut was never stored.
 
-**Compact Instructions** (always preserve after compaction):
+**Always store these as soon as they're known — do not wait for a "preserve before compaction" moment that may never come**:
 - Active audit domain and date slug (e.g. sos-kartenshop.de / 2026-06)
 - DuckDB table names in use for the current audit
 - Report script paths under clients/<domain>/<date_slug>/work/
