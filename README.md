@@ -6,10 +6,10 @@ This package contains a project-level `CLAUDE.md` and a modular `.claude/skills/
 
 This framework runs in **mixed mode**, not purely file-based:
 
-- **Screaming Frog** — crawl/technical data, either via a live connection to Screaming Frog's own built-in MCP server (`seospider`, port 11435 — the one sanctioned live source) or via uploaded exports
+- **Screaming Frog** — crawl/technical data, either via a live connection to Screaming Frog's own built-in MCP server (`seospider`, port 11435 — the one sanctioned live source) or via uploaded exports. When the GSC, Analytics or PageSpeed Insights APIs are connected within Screaming Frog itself, that connector-enriched data (GSC, GA4, PSI/CrUX fields) rides along on the same crawl — live or exported, same as the rest of the crawl.
 - **Ahrefs** — backlink data via uploaded file exports
 - **Semrush AI Visibility** — GEO / AI-visibility data via uploaded `.mhtml` exports
-- **GSC / GA4 / WebPageTest / Lighthouse / HAR** — via uploaded file exports, as before
+- **Standalone GSC / GA4 / WebPageTest / Lighthouse / HAR exports** — via uploaded file exports, when not already pulled in through a Screaming Frog connector above
 
 Infrastructure, not audit data sources: DuckDB MCP for staging/querying tabular data, Qdrant MCP for persistent memory and the SEO background-knowledge base.
 

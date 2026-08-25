@@ -25,11 +25,13 @@ Ein Git-Repo mit dem kompletten Werkzeugkasten wurde bereits vorbereitet:
 
 - `CLAUDE.md` — Projekt-Policy für SEO-Audits im **gemischten Modus**: eine
   sanktionierte Live-Quelle (Screaming Frog per eigenem MCP-Server für
-  Crawl-Daten), alles andere dateibasiert (Ahrefs für Backlinks, Semrush-AI-
-  Visibility-`.mhtml`-Exporte für GEO, GSC/GA4/WebPageTest/Lighthouse/HAR wie
-  gewohnt). Keine sonstigen Live-APIs, kein OAuth, kein chrome-devtools als
-  Standard-Datenquelle (nur wenn der Nutzer es explizit für eine konkrete
-  Aufgabe anfragt).
+  Crawl-Daten — inklusive GSC-, GA4- und PageSpeed-Insights/CrUX-Feldern, wenn
+  diese APIs direkt in Screaming Frog verbunden sind), alles andere dateibasiert
+  (Ahrefs für Backlinks, Semrush-AI-Visibility-`.mhtml`-Exporte für GEO,
+  eigenständige GSC/GA4/WebPageTest/Lighthouse/HAR-Exporte, wenn nicht schon über
+  Screaming Frog mitgeliefert). Keine sonstigen Live-APIs, kein OAuth, kein
+  chrome-devtools als Standard-Datenquelle (nur wenn der Nutzer es explizit für
+  eine konkrete Aufgabe anfragt).
 - `global/CLAUDE.md` — projektübergreifende Policy (Qdrant-Memory-Mechanik,
   DuckDB-Staging-Regel, Humanizer-Pflicht für alle Texte)
 - `global/skills/humanizer/SKILL.md` — Skill, der KI-typische Schreibmuster aus Texten entfernt

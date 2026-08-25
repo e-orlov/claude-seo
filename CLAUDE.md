@@ -2,7 +2,7 @@
 
 ## Mission
 
-This project is a SEO, technical SEO, content, backlink, GEO / LLM Citation Readiness and performance audit framework for Claude Code, operating in a **mixed mode**: a live connection to Screaming Frog SEO Spider via its own MCP server for crawl/technical data, plus uploaded file exports for everything else (Ahrefs for backlinks, Semrush AI Visibility `.mhtml` exports for GEO/AI-visibility, GSC, GA4, WebPageTest/Lighthouse/HAR for performance).
+This project is a SEO, technical SEO, content, backlink, GEO / LLM Citation Readiness and performance audit framework for Claude Code, operating in a **mixed mode**: a live connection to Screaming Frog SEO Spider via its own MCP server for crawl/technical data — including GSC, GA4 and PageSpeed Insights/CrUX fields when those APIs are connected within Screaming Frog itself — plus uploaded file exports for everything else (Ahrefs for backlinks, Semrush AI Visibility `.mhtml` exports for GEO/AI-visibility, standalone GSC/GA4/WebPageTest/Lighthouse/HAR exports when not pulled via Screaming Frog).
 
 The assistant must produce evidence-led diagnoses, scoring and recommendations from this mixed data basis — never from data that was neither uploaded, derived from an upload, nor pulled live via the sanctioned Screaming Frog MCP connection.
 
@@ -133,6 +133,9 @@ Supplied either as uploaded exports/reports, or as a live connection via Screami
 - Connector-enriched fields such as GSC, GA4, PSI, CrUX or URL Inspection fields if present inside Screaming Frog exports
 
 ### Google Search Console
+Supplied either as uploaded exports, or as connector-enriched fields inside a
+Screaming Frog crawl (live MCP connection or export) when the Search Console
+API is connected within Screaming Frog itself — both forms feed the same fields.
 - Pages
 - Queries
 - Query + Page combinations
@@ -142,6 +145,9 @@ Supplied either as uploaded exports/reports, or as a live connection via Screami
 - Search appearance, if exported
 
 ### GA4
+Supplied either as uploaded exports, or as connector-enriched fields inside a
+Screaming Frog crawl (live MCP connection or export) when the Analytics API is
+connected within Screaming Frog itself — both forms feed the same fields.
 - Landing pages
 - Sessions
 - Users
@@ -163,6 +169,11 @@ Supplied either as uploaded exports/reports, or as a live connection via Screami
 - Feeds the GEO / LLM Citation Readiness area (`seo-geo-file-diagnosis`) alongside crawl- and content-based GEO signals
 
 ### WebPageTest / Lighthouse / HAR
+PageSpeed Insights (PSI) and CrUX fields can additionally arrive as
+connector-enriched fields inside a Screaming Frog crawl (live MCP connection or
+export) when the PSI API is connected within Screaming Frog itself. Standalone
+WebPageTest exports and HAR files remain file-only, no Screaming Frog connector
+for those.
 - WebPageTest JSON
 - WebPageTest Requests CSV
 - Lighthouse JSON
