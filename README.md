@@ -36,6 +36,11 @@ CLAUDE.md
   seo-url-clustering/
     SKILL.md
 
+  seo-helpful-content-audit/
+    SKILL.md
+    references/
+    scripts/
+
   seo-technical-file-diagnosis/
     SKILL.md
 
@@ -90,6 +95,19 @@ seo-analysis-framework/
 6. It computes metrics only when data supports them.
 7. It produces diagnoses, scores and recommendations.
 8. It separates SEO health from audit coverage.
+
+## Standalone Helpful Content Audit
+
+`/seo-helpful-content-audit` audits one URL, an explicit URL list, or every
+eligible page in a domain crawl against Google's helpful, reliable,
+people-first content guidance and the Search Quality Rater Guidelines. It uses
+Screaming Frog MCP data and stored rendered HTML as its only site evidence,
+infers each page's focus and user task automatically, and writes its own
+Markdown, CSV and NDJSON artifacts.
+
+This skill is independent of the main audit workflow. It does not invoke or
+write to the data-foundation, clustering, diagnosis, scoring, orchestration or
+reporting contracts.
 
 ## Key Rule
 

@@ -35,8 +35,9 @@ Ein Git-Repo mit dem kompletten Werkzeugkasten wurde bereits vorbereitet:
 - `global/CLAUDE.md` — projektübergreifende Policy (Qdrant-Memory-Mechanik,
   DuckDB-Staging-Regel, Humanizer-Pflicht für alle Texte)
 - `global/skills/humanizer/SKILL.md` — Skill, der KI-typische Schreibmuster aus Texten entfernt
-- `.claude/skills/*` — elf SEO-Audit-Skills (Datenfundament, Clustering, technische/
-  Content-/Backlink-/GEO-/Performance-Diagnose, Scoring, Report-Generator, Redirect-Map-Builder)
+- `.claude/skills/*` — zwölf SEO-Audit-Skills (Datenfundament, Clustering,
+  eigenständiges Helpful-Content-Audit, technische/Content-/Backlink-/GEO-/
+  Performance-Diagnose, Scoring, Report-Generator, Redirect-Map-Builder)
 - `scripts/*.js` — Wissensbasis-Ingestion-Tooling (PDF-Extraktion, Chunking)
 - `.claude/skills/seo-report-generator/` — der einzige zulässige Report-Renderer
   (`report_renderer.py` + `docx_helpers.py` + `report_config.py`, Python/`python-docx`).
@@ -280,8 +281,9 @@ Verifiziere:
 ```bash
 ls "$USERPROFILE/Claude-Projects/seo/.claude/skills"
 ```
-Erwartet: 11 Skill-Ordner (u. a. `seo-data-foundation`, `seo-file-audit-orchestrator`,
-`seo-report-generator`, `seo-url-clustering`, `redirect-map-builder`, ...).
+Erwartet: 12 Skill-Ordner (u. a. `seo-data-foundation`, `seo-file-audit-orchestrator`,
+`seo-helpful-content-audit`, `seo-report-generator`, `seo-url-clustering`,
+`redirect-map-builder`, ...).
 
 Node-Abhängigkeiten installieren (für die Ingestion-Skripte in `scripts/`):
 ```bash
