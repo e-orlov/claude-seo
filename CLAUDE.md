@@ -60,7 +60,20 @@ For larger SEO audits based on the mixed data basis (uploaded files plus the liv
 
 `seo-url-clustering` is standalone and user-invocable (`/seo-url-clustering`) and recommended when cluster-scoped findings add value (large crawls, multiple locales, high page-type diversity) — not mandatory for smaller audits.
 
+`seo-helpful-content-audit` is a separate standalone, user-invocable skill
+(`/seo-helpful-content-audit`). It audits one URL, a URL list or an entire
+domain using only Screaming Frog MCP crawl data and stored rendered HTML. It
+infers page topics and likely user tasks from page evidence. Do not invoke it
+automatically from the larger-audit sequence, and do not route its collection,
+evidence IDs, assessments, recommendations or Markdown/CSV/NDJSON outputs
+through `seo-data-foundation`, `seo-url-clustering`, diagnosis,
+`seo-scoring-recommendations`, `seo-file-audit-orchestrator` or
+`seo-report-generator`.
+
 If the user asks for a single area only, still apply the relevant data-foundation logic before diagnosing that area.
+
+The standalone `seo-helpful-content-audit` above is an explicit exception to
+that single-area rule; follow its own data and output contracts instead.
 
 Do not skip inventory, source classification, field mapping, data quality checks, URL normalization, metric coverage or evidence ledger for larger audits.
 
