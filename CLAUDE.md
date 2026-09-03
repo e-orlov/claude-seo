@@ -63,9 +63,12 @@ For larger SEO audits based on the mixed data basis (uploaded files plus the liv
 `seo-helpful-content-audit` is a separate standalone, user-invocable skill
 (`/seo-helpful-content-audit`). It audits one URL, a URL list or an entire
 domain using only Screaming Frog MCP crawl data and stored rendered HTML. It
-infers page topics and likely user tasks from page evidence. Its canonical result
-is a SQL-validated `run_id` with evidence, assessments and findings in
-skill-local DuckDB tables. It does not generate a client-facing report. Do not
+infers page topics and likely user tasks from page evidence and performs a
+purpose-dependent content-recency assessment. Seer's 2026 AI-citation study is
+empirical context only: it cannot set pass/fail thresholds or support citation
+predictions. The skill's canonical result is a SQL-validated `run_id` with
+evidence, assessments and findings in skill-local DuckDB tables. It does not
+generate a client-facing report. Do not
 invoke it automatically from the larger-audit sequence, and do not route its
 analysis through `seo-data-foundation`, `seo-url-clustering`, diagnosis,
 `seo-scoring-recommendations` or `seo-file-audit-orchestrator`.

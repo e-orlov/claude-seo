@@ -148,6 +148,24 @@ Use this as a routing aid, not a fixed scorecard.
 | Homepage/About/Contact | Site purpose, ownership, responsibility, topical focus | Per-article depth |
 | Forum/UGC | Provenance, moderation/context, experience value, safety | Formal expertise for every personal post |
 
+## Freshness routing
+
+Freshness is purpose-dependent and is assessed structurally through the
+[content recency framework](content-recency-framework.md), not by adding an
+age-based Google score to this matrix.
+
+Map material freshness evidence back to the existing quality criteria:
+
+- `HC02` when stale information prevents completion of the likely user task;
+- `HC05` when a material factual claim is expired, superseded, contradictory or
+  insufficiently dated;
+- `HC08` when direct version or page evidence supports artificial freshness;
+- `HC15` when missing or conflicting date transparency materially weakens trust;
+- `HC18` when verified stale information creates a serious YMYL harm risk.
+
+Page age alone does not establish any of these outcomes. A recent update claim
+alone does not establish current, accurate or substantially maintained content.
+
 ## Reading and accessibility evidence
 
 Treat these as distinct concepts:

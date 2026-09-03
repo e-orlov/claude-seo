@@ -101,8 +101,11 @@ seo-analysis-framework/
 eligible page in a domain crawl against Google's helpful, reliable,
 people-first content guidance and the Search Quality Rater Guidelines. It uses
 Screaming Frog MCP data and stored rendered HTML as its only site evidence,
-infers each page's focus and user task automatically, and keeps its independent
-working data, evidence, assessments and findings in skill-local DuckDB tables.
+infers each page's focus and user task automatically, and adds a
+purpose-dependent content-recency assessment based on observed date and temporal
+signals. Seer's 2026 AI-citation study is used only as empirical context, not as
+a pass/fail benchmark or prediction. The skill keeps its independent working
+data, evidence, assessments and findings in skill-local DuckDB tables.
 The skill ends after its SQL completion gate with a validated `run_id`; CSV and
 NDJSON snapshots are produced only when explicitly requested.
 

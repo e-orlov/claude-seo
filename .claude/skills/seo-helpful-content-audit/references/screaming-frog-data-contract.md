@@ -89,6 +89,7 @@ Fields with `null` mean unavailable. Do not infer their values.
 | Visible content | `sf_bulk_export_page_content` `VISIBLE_TEXT`, or visible `sf_url_content` | Purpose, audience, focus, user task and qualitative content assessment |
 | Content metrics | `sf_export_seo_element_urls` for `Content` | Flesch score, average words per sentence, readability class, spelling/grammar, exact/near duplicates when exposed |
 | Structured data | `sf_export_seo_element_urls` for `Structured Data`, plus rendered JSON-LD parsing | Page/entity type, headline/name, author/reviewer, dates, about/keywords, citations and publisher claims |
+| Recency signals | Discovered Internal, Structured Data, XML Sitemap and response-header fields, plus rendered HTML | Visible dates, `datePublished`, `dateModified`, sitemap `lastmod`, HTTP `Last-Modified` and temporal statements in main content |
 | Accessibility | `sf_export_seo_element_urls` for `Accessibility`; use discovered bulk export/report for details when available | Confirmed axe run, counts, WCAG rule, exact affected element/location and contrast violations |
 | Text-size legibility | `sf_export_seo_element_urls` for `Mobile` and, if needed, `PageSpeed` | `Illegible Font Size` result only; never substitute the font-resource `Font Size` field |
 | Link relationships | `sf_url_links` for selected targets, or discovered inlink/outlink exports | Author/profile, source, contact and context-page relationships |
@@ -136,6 +137,21 @@ Map live field names to these canonical meanings when present:
 - `closest_similarity_match`
 - `near_duplicate_count`
 
+### Publication, update and temporal signals
+
+- `visible_date_published`
+- `visible_date_modified`
+- `structured_date_published`
+- `structured_date_modified`
+- `sitemap_lastmod`
+- `http_last_modified`
+- `crawl_date`
+
+These are canonical meanings, not field names to guess. Discover their live
+availability and preserve every source value separately. Extract explicit years,
+deadlines, version labels, prices and "current as of" statements from rendered
+main content when they matter to the inferred task.
+
 ### Automated accessibility and legibility
 
 - `accessibility_run_status`
@@ -162,6 +178,7 @@ pipeline tables:
 | `helpful_content_visible_text` | URL plus visible page text |
 | `helpful_content_metrics` | Content, Flesch and duplicate fields |
 | `helpful_content_structured_data` | Structured Data export |
+| `helpful_content_freshness_signals` | Raw publication/update claims and temporal content observations |
 | `helpful_content_accessibility` | Accessibility summary and violation details |
 | `helpful_content_mobile` | Mobile `Illegible Font Size` results |
 | `helpful_content_links` | Only the inlink/outlink relationships needed for the audit |
@@ -189,6 +206,7 @@ applicable:
 - counts and locations of `ul`, `ol`, `li`, tables, definition lists,
   blockquotes and semantic containers;
 - visible bylines, reviewer markup, dates, disclosures and source links;
+- visible publication/update labels and task-relevant temporal statements;
 - `rel=author`, `rel=sponsored`, canonical and language attributes;
 - JSON-LD properties used as a fallback to the Structured Data export;
 - missing or empty image `alt` attributes when relevant to the page purpose.
@@ -260,10 +278,18 @@ element only when it supports or impedes the page's inferred task.
 
 ### Dates
 
-A publication or modification date is a displayed/marked-up claim. Do not infer
-artificial freshness from a recent date alone. A verified freshness concern
-requires contradictory page evidence, unchanged duplicated content across known
-versions, or another direct signal available in the crawl.
+A publication or modification date is a displayed/marked-up claim. Collect
+visible, structured, sitemap and HTTP signals separately and apply the
+reconciliation rules in the content recency framework. Calculate age from the
+recorded crawl date, not the model's current date.
+
+Do not infer currentness, substantive maintenance or artificial freshness from
+a recent date alone. A verified stale-content concern requires direct expired,
+superseded or contradictory page evidence. A verified artificial-freshness
+concern requires contradictory page evidence, unchanged content across known
+stored crawl versions, or another direct signal available in the crawl. An old
+date by itself is only a possible maintenance-review trigger when page purpose
+makes freshness material.
 
 ## Failure handling
 
