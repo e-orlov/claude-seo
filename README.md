@@ -102,12 +102,14 @@ eligible page in a domain crawl against Google's helpful, reliable,
 people-first content guidance and the Search Quality Rater Guidelines. It uses
 Screaming Frog MCP data and stored rendered HTML as its only site evidence,
 infers each page's focus and user task automatically, and keeps its independent
-working data and evidence in skill-local DuckDB tables before exporting its own
-Markdown, CSV and NDJSON artifacts.
+working data, evidence, assessments and findings in skill-local DuckDB tables.
+The skill ends after its SQL completion gate with a validated `run_id`; CSV and
+NDJSON snapshots are produced only when explicitly requested.
 
 This skill is independent of the main audit workflow. It does not invoke or
-write to the data-foundation, clustering, diagnosis, scoring, orchestration or
-reporting contracts.
+write to the data-foundation, clustering, diagnosis, scoring or orchestration
+contracts. It does not generate reports or invoke `seo-report-generator`.
+Report generation is a separate task started manually by the user.
 
 ## Key Rule
 

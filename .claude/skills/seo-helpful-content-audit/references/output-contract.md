@@ -1,4 +1,4 @@
-# Standalone DuckDB and Output Contract
+# Standalone DuckDB Analysis Contract
 
 ## Source of truth
 
@@ -38,7 +38,7 @@ target_baseline
 target_completed
 source_availability_json
 table_map_json
-run_status                collecting | assessing | partial | validated | exported
+run_status                collecting | assessing | partial | validated
 started_at
 completed_at
 ```
@@ -160,10 +160,18 @@ scope
 observation
 why_it_matters
 affected_pages_count
+eligible_pages_count
+affected_pages_pct
 priority                  critical | high | medium | low
 recommendation
 validation
 ```
+
+Each finding must state a concrete observation, the affected scope, why it
+matters for the inferred page purpose, a specific action and a validation
+method. Avoid generic actions such as "improve E-E-A-T", "add more content" or
+"make the page helpful" unless they are converted into a concrete change tied
+to verified evidence.
 
 ### `helpful_content_finding_pages`
 
@@ -193,39 +201,61 @@ Enforce uniqueness on `(run_id, subject_type, subject_key, evidence_id)`.
 
 Insert evidence and assessments directly in DuckDB. Commit each bounded batch
 before starting the next. On resume, select included targets whose
-`assessment_status != 'completed'`; do not reconstruct state from a report or
-NDJSON export.
+`assessment_status != 'completed'`; do not reconstruct state from an export or
+other file.
 
 Derive `target_completed` from completed included target rows before the
-completion gate. If work stops early, set `run_status = 'partial'` and report
+completion gate. If work stops early, set `run_status = 'partial'` and return
 the exact completed and remaining counts.
 
-## Output location
+## Analytical completion
 
-Unless the user supplies an existing audit directory, create:
+No file output is required. The completed analytical result is the validated
+DuckDB run identified by `run_id`, together with its `helpful_content_*` tables.
+Set `run_status = 'validated'` only after the SQL completion gate passes.
+
+End the invocation with a concise operational handoff containing:
+
+- `run_id`, skill version, domain and mode;
+- target baseline, completed and remaining counts;
+- crawl ID/date and rendered-HTML state;
+- source availability and material analytical limitations;
+- actual table names from `table_map_json`;
+- page-assessment, criterion, evidence and finding row counts;
+- the SQL-gate result and final `run_status`.
+
+This handoff is a run-completion notice, not a client-facing report. Do not add a
+report title, report sections, formatted finding tables or presentation rules.
+Do not generate Markdown or DOCX and never invoke `seo-report-generator`.
+Report generation is a separate task that begins only when the user manually
+invokes that skill after this analysis has ended.
+
+## Optional exports
+
+Create exports only when the user explicitly requests them. If no destination
+is supplied, use:
 
 ```text
-clients/<domain>/<YYYY-MM-helpful-content-audit>/output/
+clients/<domain>/<YYYY-MM-helpful-content-audit>/work/exports/
 ```
 
-Required handoff outputs:
+Supported analytical snapshots:
 
 | File | Purpose |
 |---|---|
-| `helpful-content-audit.md` | Client-facing audit report |
 | `helpful-content-url-matrix.csv` | One row per included target URL |
 | `helpful-content-evidence.ndjson` | Direct export of the run's evidence rows |
-| `helpful-content-page-assessments.ndjson` | Direct export of the run's page and criterion assessments |
+| `helpful-content-page-assessments.ndjson` | One object per page assembled from page and criterion rows |
 
-The CSV and NDJSON files are immutable exports of validated DuckDB rows, not
-additional working stores. Generate them only after the SQL completion gate.
-If regeneration is needed, overwrite them from the same `run_id`; never patch
-them independently.
+Export only from a validated `run_id`. These files are immutable snapshots, not
+working stores, resume sources or reports. If regeneration is needed, overwrite
+them from the same run; never patch them independently. Export creation does not
+change `run_status`.
 
 Do not write to `clients/evidence_registry.md`. This standalone audit uses
 `HC-*` IDs and is not part of the shared evidence/scoring pipeline.
 
-## URL matrix
+### Optional URL matrix
 
 Export these columns in order:
 
@@ -250,78 +280,18 @@ Build the values from validated assessment, criterion and evidence-link rows.
 Use semicolon-separated lists inside a cell. Preserve exactly one row per
 included target, including pages with no verified concern.
 
-## Markdown report
+## Analytical calculation rules
 
-Use the user's requested language. If none is stated, use the language of the
-request. Keep stable field/status values in English inside code or artifact
-references, but translate prose and table labels.
-
-Required structure:
-
-```markdown
-# Helpful, Reliable, People-First Content Audit: <domain>
-
-## 1. Scope and evidence basis
-## 2. Executive assessment
-## 3. Domain context
-## 4. Page-level outcome distribution
-## 5. Verified strengths
-## 6. Verified concerns
-## 7. Supported but unverified interpretations
-## 8. Prioritized actions
-## 9. URL matrix
-## 10. Verification boundaries
-## 11. Methodological sources
-```
-
-The scope and evidence-basis section must state:
-
-- crawl ID and date, audit mode and requested scope;
-- included-target denominator and completed-target count;
-- whether stored HTML was confirmed as rendered, unconfirmed or unavailable;
-- availability of Flesch, Accessibility/axe and Mobile/Lighthouse
-  `Illegible Font Size` data;
-- exclusions and material collection limitations.
-
-The executive assessment may summarize only patterns traceable to stored page
-assessments and evidence rows. Keep source coverage separate from quality
-outcomes: unavailable evidence is not a positive result.
-
-For up to 100 targets, include the complete compact URL matrix. For larger
-scopes, include the distribution and highest-priority rows and link to the
-complete CSV.
-
-Each verified concern row includes:
-
-```text
-Finding ID | Scope | Observation | Why it matters | Affected pages | Priority | Recommendation | Validation | Evidence
-```
-
-Every verified finding must join to at least one `HC-E####` row.
-`supported_inference` items remain in their own section and cannot be phrased as
-facts. Do not calculate a 0-100 helpful-content score.
-
-Every recommendation must name the observed issue, affected scope, proposed
-change, reason, validation method, priority and supporting evidence. Avoid
-generic actions such as "improve E-E-A-T", "add more content" or "make the
-page helpful" unless they are converted into a concrete change tied to a
-verified observation.
-
-The verification-boundaries section must distinguish direct observations,
-supported interpretations and facts that the available crawl cannot establish.
-It must disclose partial coverage and must not describe `not_verifiable` checks
-as passes.
-
-## Calculation rules
-
-- State one denominator immediately before every distribution table.
-- Show numerator, denominator and percentage together.
-- Round displayed percentages to one decimal place, but calculate from raw rows.
+- Store numerator, denominator and percentage together for every rate.
+- Store percentages from raw rows at full available precision. An explicitly
+  requested human-readable export may round its displayed value to one decimal
+  place.
 - Do not average Flesch across different languages without separate groups.
 - Do not aggregate `not_applicable` with passes or concerns.
 - Do not convert missing fields to zero.
 - For a criterion rate, use only URLs for which that criterion was verifiable
-  and state that denominator.
+  and store that criterion-specific denominator.
+- Do not calculate a 0-100 helpful-content score.
 
 ## SQL completion gate
 
@@ -388,7 +358,8 @@ HAVING count(*) <> 1;
    `mixed_evidence` criterion has at least one evidence link.
 7. Every evidence link resolves to an evidence row in the same run.
 8. Every finding has at least one affected URL and at least one evidence link;
-   its stored affected-page count equals the joined distinct URL count.
+   its stored affected-page count equals the joined distinct URL count, and its
+   denominator and percentage reproduce from stored rows.
 9. A resolved or ambiguous primary focus has supporting evidence.
 
 ```sql
@@ -417,6 +388,8 @@ WITH finding_counts AS (
   SELECT
     f.finding_id,
     f.affected_pages_count,
+    f.eligible_pages_count,
+    f.affected_pages_pct,
     count(DISTINCT p.url) AS linked_pages,
     count(DISTINCT l.evidence_id) AS linked_evidence
   FROM helpful_content_findings f
@@ -427,13 +400,26 @@ WITH finding_counts AS (
    AND l.subject_type = 'finding'
    AND l.subject_key = f.finding_id
   WHERE f.run_id = '<run_id>'
-  GROUP BY f.finding_id, f.affected_pages_count
+  GROUP BY
+    f.finding_id,
+    f.affected_pages_count,
+    f.eligible_pages_count,
+    f.affected_pages_pct
 )
 SELECT *
 FROM finding_counts
 WHERE linked_pages = 0
    OR linked_evidence = 0
-   OR affected_pages_count <> linked_pages;
+   OR affected_pages_count <> linked_pages
+   OR eligible_pages_count <= 0
+   OR affected_pages_count > eligible_pages_count
+   OR abs(
+        affected_pages_pct
+        - (
+            100.0 * affected_pages_count
+            / NULLIF(eligible_pages_count, 0)
+          )
+      ) > 0.000001;
 ```
 
 ### Source coverage and prohibited claims
@@ -446,21 +432,31 @@ WHERE linked_pages = 0
     `Illegible Font Size`. Readability evidence names the Flesch field.
 12. No evidence, assessment, finding or methodological source contains
     Photowant.
-13. No row or report passage claims an official Google rating, guaranteed
-    ranking impact or an unobserved fact.
+13. No evidence, assessment or finding claims an official Google rating,
+    guaranteed ranking impact or an unobserved fact.
 
-### Export reconciliation
+### Finalization
 
 After the gate passes:
 
-14. Export CSV and NDJSON from DuckDB for exactly one `run_id`.
-15. Re-read the exports with DuckDB and confirm:
-    - CSV rows equal the included target baseline;
+14. Derive and store final row counts and `target_completed` for the current
+    `run_id`.
+15. Set `completed_at` and `run_status = 'validated'`.
+16. Return the operational handoff defined above. Do not generate a report or
+    invoke another skill.
+
+### Optional export reconciliation
+
+Only when the user requested an export:
+
+17. Export the selected CSV or NDJSON snapshot from exactly one validated
+    `run_id`.
+18. Re-read each created export with DuckDB and confirm:
+    - URL-matrix rows equal the included target baseline;
     - evidence NDJSON rows equal `helpful_content_evidence` rows;
     - page-assessment NDJSON top-level rows equal page-assessment rows.
-16. Generate the Markdown report only from gate-passing aggregates and cited
-    rows. Review it for the prohibited claims above.
-17. Set `run_status = 'exported'` only after all reconciliation checks pass.
+19. Keep `run_status = 'validated'`; an optional export is not another analysis
+    state.
 
 Warnings such as evidence rows that are not yet linked require review and an
 explicit decision. They are not silently treated as success.
