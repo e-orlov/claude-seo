@@ -63,12 +63,12 @@ For larger SEO audits based on the mixed data basis (uploaded files plus the liv
 `seo-helpful-content-audit` is a separate standalone, user-invocable skill
 (`/seo-helpful-content-audit`). It audits one URL, a URL list or an entire
 domain using only Screaming Frog MCP crawl data and stored rendered HTML. It
-infers page topics and likely user tasks from page evidence. Do not invoke it
-automatically from the larger-audit sequence, and do not route its collection,
-evidence IDs, assessments, recommendations or Markdown/CSV/NDJSON outputs
-through `seo-data-foundation`, `seo-url-clustering`, diagnosis,
-`seo-scoring-recommendations`, `seo-file-audit-orchestrator` or
-`seo-report-generator`.
+infers page topics and likely user tasks from page evidence. Its canonical result
+is a SQL-validated `run_id` with evidence, assessments and findings in
+skill-local DuckDB tables. It does not generate a client-facing report. Do not
+invoke it automatically from the larger-audit sequence, and do not route its
+analysis through `seo-data-foundation`, `seo-url-clustering`, diagnosis,
+`seo-scoring-recommendations` or `seo-file-audit-orchestrator`.
 
 Standalone does not mean a separate file-based staging pipeline. This skill
 uses the project's local DuckDB MCP infrastructure directly, keeps its working
@@ -76,16 +76,21 @@ state and evidence in tables prefixed with `helpful_content_`, and runs its own
 SQL completion gate. Using DuckDB does not invoke `seo-data-foundation` or make
 the skill part of the larger audit sequence.
 
+`seo-helpful-content-audit` must never invoke `seo-report-generator`
+automatically. After the analytical run has ended, the user may invoke
+`seo-report-generator` manually as a separate task. That later task is governed
+exclusively by the report-generator contract.
+
 If the user asks for a single area only, still apply the relevant data-foundation logic before diagnosing that area.
 
 The standalone `seo-helpful-content-audit` above is an explicit exception to
-that single-area rule; follow its own data and output contracts instead.
+that single-area rule; follow its own data and analysis contracts instead.
 
 Do not skip inventory, source classification, field mapping, data quality checks, URL normalization, metric coverage or evidence ledger for larger audits.
 
 ## No Live Tool Contamination
 
-This project runs in mixed mode, with exactly one sanctioned live source: the Screaming Frog MCP connection (`seospider`). Data pulled through it is treated at parity with file-based evidence — same evidence ledger, same `E-NNN` IDs, no `live_external_source` special marking, because it is the regular path for crawl data, not an exception.
+This project runs in mixed mode, with exactly one sanctioned live source: the Screaming Frog MCP connection (`seospider`). In the shared audit workflow, data pulled through it is treated at parity with file-based evidence — same evidence ledger, same `E-NNN` IDs, no `live_external_source` special marking, because it is the regular path for crawl data, not an exception. The standalone `seo-helpful-content-audit` instead uses its own run-local `HC-E####` IDs in DuckDB and does not write the shared evidence registry during analysis.
 
 Do not use any other live APIs, MCPs, OAuth connections, crawlers or external SEO tools during an audit unless the user explicitly changes the rules for the current audit.
 
@@ -323,9 +328,16 @@ For every larger audit, create or maintain these 12 artifacts internally and sho
 
 Full field definitions and schemas for all 12 artifacts: see `seo-data-foundation` skill (Steps 1–12). `evidence_ledger` and `issue_register` are specifically produced by `seo-file-audit-orchestrator` Phase 3 (including the full `record_type` / `verified_issue` / `unverified_hypothesis` field-requirements table).
 
-## Global Evidence ID Rule
+## Shared-Workflow Evidence ID Rule
 
-Every piece of evidence cited in any audit — across all clients, domains, and date slugs — receives a globally unique `E-NNN` identifier.
+Every piece of evidence used by the shared audit workflow — across all clients,
+domains, and date slugs — receives a globally unique `E-NNN` identifier.
+
+The analytical run of `seo-helpful-content-audit` is an explicit exception. It
+stores run-local `HC-E####` records in `helpful_content_evidence` and does not
+read or update `clients/evidence_registry.md`. If the user later invokes
+`seo-report-generator` manually, that separate report task follows the evidence
+rules defined by the report generator.
 
 ### How to assign a new evidence ID
 
@@ -486,8 +498,8 @@ Core principles that apply everywhere:
 
 - Missing data reduces coverage and confidence, not health score.
 - Do not output a precise numeric score when the data basis is too weak.
-- Priority labels are always in German: **Kritisch / Hoch / Mittel / Niedrig**
-- All output tables must have an **Evidenz** column as the last column.
+- Priority labels in client-facing reports are always in German: **Kritisch / Hoch / Mittel / Niedrig**. Analytical tables may retain stable English codes.
+- All client-facing report tables must have an **Evidenz** column as the last column. DuckDB tables and machine-readable analytical exports are exempt.
 - URL cluster names in tables use patterns, not individual URLs (e.g. `index.php?page=`, not `index.php?page=18`).
 - Percentages must match their numerator/denominator exactly. State the baseline explicitly above every table. Parameter URLs (`?`) and no-parameter URLs are disjoint sets — never express one as a share of the other's baseline.
 
@@ -549,6 +561,10 @@ The report rendering infrastructure lives in `.claude/skills/seo-report-generato
 Always use this infrastructure for `.docx` report generation. Do not re-implement rendering.
 Before generating a report, read any example file the user provides — for column names,
 cluster naming and table conventions.
+
+Analytical skills do not invoke `seo-report-generator` automatically. The user
+starts report generation manually after the relevant analysis and evidence have
+been completed.
 
 Generated report scripts are saved to `clients/<domain>/<date_slug>/work/`.
 Generated `.docx` files are saved to `clients/<domain>/<date_slug>/output/`.

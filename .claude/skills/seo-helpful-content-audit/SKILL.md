@@ -5,16 +5,16 @@ description: >
   people-first content using only Screaming Frog MCP crawl data and stored
   rendered HTML. Infers each page's purpose, audience, focus topic and likely
   user task from on-page evidence, applies Google Search Central guidance and
-  the Search Quality Rater Guidelines as a conceptual framework, stages its
-  evidence in skill-local DuckDB tables, and exports standalone Markdown, CSV
-  and NDJSON outputs. Does not use chrome-devtools, live SERP research, other
+  the Search Quality Rater Guidelines as a conceptual framework, and writes
+  validated evidence, assessments and findings to skill-local DuckDB tables.
+  Does not generate reports or use chrome-devtools, live SERP research, other
   SEO skills or the shared audit scoring/reporting pipeline.
 user-invocable: true
 argument-hint: "[url-or-domain]"
 license: MIT
 compatibility: Requires Claude Code with the Screaming Frog seospider MCP server and a local DuckDB MCP server.
 metadata:
-  version: "1.1.0"
+  version: "1.2.0"
   category: seo-content-audit
 ---
 
@@ -27,7 +27,8 @@ by observable evidence of usefulness, reliability and a people-first purpose.
 Use Screaming Frog as the sole website-data source. The audit may cover one
 page, an explicit URL list, or all eligible pages in a domain crawl.
 
-This is a standalone skill. It owns its data collection, analysis and output.
+This is a standalone analytical skill. It owns its data collection and analysis
+and ends with a validated DuckDB run. It does not own report generation.
 It must not invoke or require:
 
 - `seo-file-audit-orchestrator`
@@ -38,8 +39,10 @@ It must not invoke or require:
 - `seo-url-clustering`
 
 Do not write to their artifacts, evidence registries, issue registers, scores,
-tables or report scripts. Do not add this skill's findings to a full-audit
-score unless the user later requests a separate integration task.
+tables or report scripts. Never invoke `seo-report-generator` automatically.
+The user may start that skill manually as a separate task after this analysis is
+complete. Do not add this skill's findings to a full-audit score unless the user
+later requests a separate integration task.
 
 ## Required References
 
@@ -48,9 +51,9 @@ For an actual audit, read all three references before collecting data:
 1. [Google quality framework](references/google-quality-framework.md) - the
    assessment criteria, applicability rules and limits on what the sources mean.
 2. [Screaming Frog data contract](references/screaming-frog-data-contract.md) -
-   the MCP workflow, required exports and evidence boundaries.
-3. [Standalone output contract](references/output-contract.md) - artifact
-   schemas, report structure and completion checks.
+   the MCP workflow, required collection and evidence boundaries.
+3. [Standalone DuckDB analysis contract](references/output-contract.md) - table
+   schemas, optional exports and completion checks.
 
 For a question about the method rather than an audit, read only the reference
 needed to answer that question.
@@ -94,7 +97,7 @@ additional target-page findings. Label each URL as `target` or `context`.
 
 For `domain` mode, assess every eligible page. Do not silently sample. Process
 large crawls in bounded batches and persist results after each batch. If the run
-stops early, report exact completed and remaining counts and resume from the
+stops early, return exact completed and remaining counts and resume from the
 saved `helpful_content_page_assessments` rows in DuckDB.
 
 ## Eligibility
@@ -262,7 +265,8 @@ count is not automatically a defect. Judge each element against page purpose.
 ### 5. Aggregate without hiding page-level variation
 
 Group recurring findings by verified common template or structural pattern.
-Report exact numerator, denominator and percentage for every domain-level rate.
+Store the exact numerator, denominator and percentage for every domain-level
+rate.
 Do not extrapolate a finding from a sample to unsampled pages.
 
 Preserve a `helpful_content_page_assessments` row for every target URL,
@@ -280,28 +284,30 @@ Use these factors, in order:
 4. importance of the affected page type to the site's stated purpose;
 5. confidence and directness of evidence.
 
-Use the stable values `critical`, `high`, `medium` or `low`, and translate their
-display labels into the report language. Do not assign `critical` solely for
-absent optional markup or a poor Flesch classification. Explain every priority.
-Do not claim traffic or conversion impact without corresponding data.
+Store the stable values `critical`, `high`, `medium` or `low`. Do not assign
+`critical` solely for absent optional markup or a poor Flesch classification.
+Explain every priority. Do not claim traffic or conversion impact without
+corresponding data.
 
-### 7. Validate in DuckDB and export standalone outputs
+### 7. Validate and finalize the DuckDB analysis
 
-Follow the output contract. Treat DuckDB as the only working source of truth.
-Run every SQL completion check there before producing:
+Follow the DuckDB analysis contract. Treat DuckDB as the only working source of
+truth.
+Run every SQL completion check there and correct failures before setting
+`run_status = 'validated'`.
 
-- a Markdown audit report;
-- a complete per-URL CSV;
-- an NDJSON evidence-ledger export;
-- an NDJSON page-assessment export.
+Do not generate Markdown, DOCX or another client-facing report. Never invoke
+`seo-report-generator` automatically. Report generation begins only when the
+user later invokes that skill as a separate task.
 
-Generate CSV and NDJSON directly from the validated run's DuckDB rows. Do not
-maintain separately edited file copies. Correct every failed SQL check before
-delivery; retained limitations require an explicit note in the report.
+CSV or NDJSON snapshots are optional and may be produced only when the user
+explicitly requests them. Generate them directly from one validated `run_id`;
+never maintain them as parallel working state or use them to resume analysis.
 
-Do not generate DOCX and do not call `seo-report-generator`. If the user later
-asks for a Word document, that is a separate task using the completed standalone
-artifacts as input.
+End with a concise operational handoff containing the `run_id`, domain, mode,
+target baseline, completed count, source-coverage summary, table map, assessment
+and finding counts, validation status and any material analytical limitations.
+This handoff is not a report and must not prescribe report structure or layout.
 
 ## Explicit Verification Boundaries
 
@@ -358,4 +364,6 @@ Do not call the audit complete until all of the following are true:
 - findings do not claim official Google ratings or ranking-factor status;
 - Photowant is absent from sources and reasoning;
 - the DuckDB SQL completion gate passes;
-- all four standalone outputs were generated from that validated run.
+- `run_status` is `validated` and the final handoff identifies the validated
+  `run_id` and its table map;
+- no report was generated and `seo-report-generator` was not invoked.
