@@ -4,8 +4,9 @@ description: >
   Audits one URL, a URL list, or an entire domain for helpful, reliable,
   people-first content using only Screaming Frog MCP crawl data and stored
   rendered HTML. Infers each page's purpose, audience, focus topic and likely
-  user task from on-page evidence, applies Google Search Central guidance and
-  the Search Quality Rater Guidelines as a conceptual framework, and writes
+  user task from on-page evidence, evaluates purpose-dependent content recency
+  and maintenance, applies Google Search Central guidance, the Search Quality
+  Rater Guidelines and a bounded empirical recency framework, and writes
   validated evidence, assessments and findings to skill-local DuckDB tables.
   Does not generate reports or use chrome-devtools, live SERP research, other
   SEO skills or the shared audit scoring/reporting pipeline.
@@ -14,7 +15,7 @@ argument-hint: "[url-or-domain]"
 license: MIT
 compatibility: Requires Claude Code with the Screaming Frog seospider MCP server and a local DuckDB MCP server.
 metadata:
-  version: "1.2.0"
+  version: "1.3.0"
   category: seo-content-audit
 ---
 
@@ -46,13 +47,16 @@ later requests a separate integration task.
 
 ## Required References
 
-For an actual audit, read all three references before collecting data:
+For an actual audit, read all four references before collecting data:
 
 1. [Google quality framework](references/google-quality-framework.md) - the
    assessment criteria, applicability rules and limits on what the sources mean.
 2. [Screaming Frog data contract](references/screaming-frog-data-contract.md) -
    the MCP workflow, required collection and evidence boundaries.
-3. [Standalone DuckDB analysis contract](references/output-contract.md) - table
+3. [Content recency framework](references/content-recency-framework.md) - the
+   Seer study's empirical context, date normalization, freshness-demand routing,
+   maintenance classifications and limits on AI-visibility inference.
+4. [Standalone DuckDB analysis contract](references/output-contract.md) - table
    schemas, optional exports and completion checks.
 
 For a question about the method rather than an audit, read only the reference
@@ -72,6 +76,20 @@ or assigns an official Google Page Quality rating. Search quality raters do not
 directly control rankings, and E-E-A-T is not a single ranking factor.
 
 Do not use, cite or reproduce the Photowant guide. It is deliberately excluded.
+
+## Empirical Recency Basis
+
+Use [Seer Interactive: Study: Content Recency's Impact on AI Visibility in
+2026](https://www.seerinteractive.com/insights/study-content-recencys-impact-on-ai-visibility-in-2026)
+only through the rules in the content recency framework. It is an empirical,
+observational supporting source, not normative Google guidance and not evidence
+about an audited site.
+
+The study may inform date bands, maintenance-pattern labels and review
+priorities. It must not create a universal refresh cadence, turn a recent
+`dateModified` value into a quality pass, turn an older page into a concern by
+itself, prove causation, or support a prediction that refreshing a page will
+increase AI citations. This skill does not collect AI citation histories.
 
 ## Accepted Scope
 
@@ -132,8 +150,8 @@ Do not use:
 - other crawler or SEO APIs;
 - supplied target keywords as a prerequisite.
 
-The source documents above may be cited as methodology. They are not evidence
-about the audited site.
+The source documents and Seer study above may be cited as methodology or
+empirical context. They are not evidence about the audited site.
 
 ## Evidence Status
 
@@ -207,6 +225,8 @@ collect:
 - visible page text;
 - Content metrics, including Flesch data when available;
 - structured data;
+- visible, structured-data, sitemap and HTTP publication/modification date
+  signals when exposed by Screaming Frog;
 - Accessibility results and violation details when available;
 - Mobile `Illegible Font Size` evidence when available;
 - internal duplicate/near-duplicate signals when available;
@@ -236,6 +256,8 @@ Before judging individual pages, determine from observed pages:
 - author/reviewer infrastructure;
 - visible editorial, review or content-production policies;
 - internal exact/near-duplicate patterns;
+- date-signal coverage, conflicts, recency buckets and maintenance patterns by
+  page type;
 - sitewide accessibility, readability and production-quality patterns.
 
 Do not infer off-site reputation from the site's own claims or testimonials.
@@ -253,10 +275,13 @@ For each target, in order:
 4. Identify main content and distinguish it from supplementary content,
    navigation, monetization and boilerplate using rendered HTML.
 5. Apply only the relevant criteria in the Google quality framework.
-6. Record the strongest direct evidence for every result. Prefer selectors,
+6. Apply the content recency framework: infer freshness demand, map the Seer
+   content type, reconcile date signals, calculate age from the crawl date,
+   inspect substantive currency and write one structured freshness assessment.
+7. Record the strongest direct evidence for every result. Prefer selectors,
    element names, source fields and short paraphrases over long quotations.
-7. Separate page-specific issues from template-wide or domain-wide patterns.
-8. Create actions only for concrete concerns or well-supported improvement
+8. Separate page-specific issues from template-wide or domain-wide patterns.
+9. Create actions only for concrete concerns or well-supported improvement
    opportunities.
 
 Absence of lists, tables, FAQ markup, video, images, a byline or a specific word
@@ -268,6 +293,11 @@ Group recurring findings by verified common template or structural pattern.
 Store the exact numerator, denominator and percentage for every domain-level
 rate.
 Do not extrapolate a finding from a sample to unsampled pages.
+
+Store the freshness-demand, date-coverage, recency-bucket, fresh-from-old and
+freshness-outcome distributions defined in the content recency framework.
+Treat the Seer percentages as labeled external study context, never as a target,
+benchmark pass/fail threshold or substitute for the audited domain's own rows.
 
 Preserve a `helpful_content_page_assessments` row for every target URL,
 including pages with no verified concerns and pages whose evidence is
@@ -281,8 +311,9 @@ Use these factors, in order:
 1. potential harm or trust failure, especially on clear YMYL pages;
 2. inability to achieve the page's apparent user purpose;
 3. affected scope across target pages;
-4. importance of the affected page type to the site's stated purpose;
-5. confidence and directness of evidence.
+4. freshness demand when the finding is temporal;
+5. importance of the affected page type to the site's stated purpose;
+6. confidence and directness of evidence.
 
 Store the stable values `critical`, `high`, `medium` or `low`. Do not assign
 `critical` solely for absent optional markup or a poor Flesch classification.
@@ -305,8 +336,9 @@ explicitly requests them. Generate them directly from one validated `run_id`;
 never maintain them as parallel working state or use them to resume analysis.
 
 End with a concise operational handoff containing the `run_id`, domain, mode,
-target baseline, completed count, source-coverage summary, table map, assessment
-and finding counts, validation status and any material analytical limitations.
+target baseline, completed count, source-coverage summary, table map,
+page-assessment, freshness-assessment and finding counts, validation status and
+any material analytical limitations.
 This handoff is not a report and must not prescribe report structure or layout.
 
 ## Explicit Verification Boundaries
@@ -322,7 +354,9 @@ and successfully populated:
 - Flesch Reading Ease, average words per sentence and Screaming Frog's
   readability classification;
 - spelling/grammar issue fields;
-- HTTP, indexability, canonical and link facts.
+- HTTP, indexability, canonical and link facts;
+- displayed and machine-readable date claims, their conflicts, deterministic
+  age calculations from the crawl date and direct temporal contradictions.
 
 Qualify these claims:
 
@@ -344,7 +378,9 @@ Normally not verifiable from this data alone:
 - independent reputation when external evidence was not crawled;
 - the authenticity of credentials, testimonials or claimed experience;
 - full visual hierarchy, intrusive overlays or layout quality;
-- full accessibility conformance.
+- full accessibility conformance;
+- actual AI visibility, citation durability or citation lift from a future
+  content refresh.
 
 Use `supported_inference` or `not_verifiable` for these. Never phrase them as
 established facts.
@@ -358,10 +394,18 @@ Do not call the audit complete until all of the following are true:
 - rendered HTML was inspected for every assessed URL, or the exact uncovered count
   is stated;
 - inferred focus includes evidence and confidence for every target;
+- every target has one structured freshness assessment, including
+  `not_verifiable` or `not_applicable` where appropriate;
+- every freshness assessment derives age from the crawl date, preserves date
+  provenance and treats Seer's age bands as descriptive context only;
+- no page is marked stale from age alone and no recent date is treated as proof
+  of substantive maintenance;
 - every concern points to at least one evidence record;
 - contrast, font-size and Flesch statements name the exact source field/audit;
 - no `not_verifiable` criterion is presented as passed;
 - findings do not claim official Google ratings or ranking-factor status;
+- findings do not predict AI citations or prescribe a universal refresh cadence
+  from the Seer study;
 - Photowant is absent from sources and reasoning;
 - the DuckDB SQL completion gate passes;
 - `run_status` is `validated` and the final handoff identifies the validated
