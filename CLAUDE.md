@@ -70,6 +70,12 @@ through `seo-data-foundation`, `seo-url-clustering`, diagnosis,
 `seo-scoring-recommendations`, `seo-file-audit-orchestrator` or
 `seo-report-generator`.
 
+Standalone does not mean a separate file-based staging pipeline. This skill
+uses the project's local DuckDB MCP infrastructure directly, keeps its working
+state and evidence in tables prefixed with `helpful_content_`, and runs its own
+SQL completion gate. Using DuckDB does not invoke `seo-data-foundation` or make
+the skill part of the larger audit sequence.
+
 If the user asks for a single area only, still apply the relevant data-foundation logic before diagnosing that area.
 
 The standalone `seo-helpful-content-audit` above is an explicit exception to

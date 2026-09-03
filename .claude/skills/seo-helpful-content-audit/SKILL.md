@@ -5,16 +5,16 @@ description: >
   people-first content using only Screaming Frog MCP crawl data and stored
   rendered HTML. Infers each page's purpose, audience, focus topic and likely
   user task from on-page evidence, applies Google Search Central guidance and
-  the Search Quality Rater Guidelines as a conceptual framework, and produces
-  standalone evidence-led Markdown, CSV and NDJSON outputs. Does not use
-  chrome-devtools, live SERP research, other SEO skills or the shared audit
-  scoring/reporting pipeline.
+  the Search Quality Rater Guidelines as a conceptual framework, stages its
+  evidence in skill-local DuckDB tables, and exports standalone Markdown, CSV
+  and NDJSON outputs. Does not use chrome-devtools, live SERP research, other
+  SEO skills or the shared audit scoring/reporting pipeline.
 user-invocable: true
 argument-hint: "[url-or-domain]"
 license: MIT
-compatibility: Requires Claude Code with the Screaming Frog seospider MCP server and Python 3.10+.
+compatibility: Requires Claude Code with the Screaming Frog seospider MCP server and a local DuckDB MCP server.
 metadata:
-  version: "1.0.0"
+  version: "1.1.0"
   category: seo-content-audit
 ---
 
@@ -95,7 +95,7 @@ additional target-page findings. Label each URL as `target` or `context`.
 For `domain` mode, assess every eligible page. Do not silently sample. Process
 large crawls in bounded batches and persist results after each batch. If the run
 stops early, report exact completed and remaining counts and resume from the
-saved page-assessment artifact.
+saved `helpful_content_page_assessments` rows in DuckDB.
 
 ## Eligibility
 
@@ -210,14 +210,18 @@ collect:
 - URL-level inlinks/outlinks only where needed to resolve author, source or
   domain-context relationships.
 
-Run `scripts/extract_rendered_html_signals.py` against the raw rendered-HTML
-export. This step is mandatory for structural facts that normal Screaming Frog
-columns do not expose reliably, including `ul`, `ol`, `li`, table, blockquote,
-definition-list and semantic-container counts.
+Stage every Screaming Frog result in DuckDB before analysis. Use only skill-local
+tables prefixed with `helpful_content_`; this is direct use of the project's
+DuckDB infrastructure, not an invocation of `seo-data-foundation`.
 
-Stage the resulting tabular/NDJSON data under skill-local table names prefixed
-with `helpful_content_`. This is internal working state, not an invocation of
-`seo-data-foundation`.
+Read rendered HTML from the staged `helpful_content_raw_html` rows. Extract the
+needed page facts yourself and write each auditable observation directly to
+`helpful_content_evidence`. Normal Screaming Frog columns do not expose every
+structural fact, so explicitly inspect the stored rendered HTML when the audit
+needs counts or locations for `ul`, `ol`, `li`, tables, blockquotes,
+definition lists, semantic containers, bylines, citations or disclosures. Do
+not introduce a second parser or intermediate evidence file as another source
+of truth.
 
 ### 3. Establish domain context
 
@@ -261,9 +265,10 @@ Group recurring findings by verified common template or structural pattern.
 Report exact numerator, denominator and percentage for every domain-level rate.
 Do not extrapolate a finding from a sample to unsampled pages.
 
-Preserve a row for every target URL, including pages with no verified concerns
-and pages whose evidence is insufficient. Domain-level summaries must remain
-traceable to page rows and evidence records.
+Preserve a `helpful_content_page_assessments` row for every target URL,
+including pages with no verified concerns and pages whose evidence is
+insufficient. Domain-level summaries must remain traceable through DuckDB joins
+to page rows and evidence records.
 
 ### 6. Prioritize recommendations
 
@@ -280,18 +285,19 @@ display labels into the report language. Do not assign `critical` solely for
 absent optional markup or a poor Flesch classification. Explain every priority.
 Do not claim traffic or conversion impact without corresponding data.
 
-### 7. Write and validate the standalone outputs
+### 7. Validate in DuckDB and export standalone outputs
 
-Follow the output contract. Produce:
+Follow the output contract. Treat DuckDB as the only working source of truth.
+Run every SQL completion check there before producing:
 
 - a Markdown audit report;
 - a complete per-URL CSV;
-- an NDJSON evidence ledger;
-- an NDJSON page-assessment file that supports safe resume.
+- an NDJSON evidence-ledger export;
+- an NDJSON page-assessment export.
 
-Run `scripts/validate_audit_outputs.py <audit-directory>` and correct every
-reported error before delivery. Warnings require review and an explicit decision;
-they are not automatic failures.
+Generate CSV and NDJSON directly from the validated run's DuckDB rows. Do not
+maintain separately edited file copies. Correct every failed SQL check before
+delivery; retained limitations require an explicit note in the report.
 
 Do not generate DOCX and do not call `seo-report-generator`. If the user later
 asks for a Word document, that is a separate task using the completed standalone
@@ -342,8 +348,8 @@ established facts.
 Do not call the audit complete until all of the following are true:
 
 - target scope and denominator are explicit;
-- every target URL has a page-assessment record;
-- rendered HTML was parsed for every assessed URL, or the exact uncovered count
+- every target URL has one and only one `helpful_content_page_assessments` row;
+- rendered HTML was inspected for every assessed URL, or the exact uncovered count
   is stated;
 - inferred focus includes evidence and confidence for every target;
 - every concern points to at least one evidence record;
@@ -351,4 +357,5 @@ Do not call the audit complete until all of the following are true:
 - no `not_verifiable` criterion is presented as passed;
 - findings do not claim official Google ratings or ranking-factor status;
 - Photowant is absent from sources and reasoning;
-- all four standalone artifacts pass the output-contract checks.
+- the DuckDB SQL completion gate passes;
+- all four standalone outputs were generated from that validated run.
