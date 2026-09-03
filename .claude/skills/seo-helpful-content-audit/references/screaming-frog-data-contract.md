@@ -148,43 +148,60 @@ Map live field names to these canonical meanings when present:
 Do not require every field to exist before continuing. Track availability per
 URL and use `not_verifiable` for the affected criterion.
 
-## Standalone staging
+## Standalone DuckDB staging
 
-Large exports must be stored as files and staged before analysis. Use skill-local
-names so this audit neither depends on nor overwrites shared pipeline tables:
+Write every structured Screaming Frog result to the local DuckDB MCP database
+before analysis, in accordance with the project-wide stage-before-analyze rule.
+Use skill-local names so this audit neither depends on nor overwrites shared
+pipeline tables:
 
 | Suggested table | Contents |
 |---|---|
 | `helpful_content_internal` | Internal HTML export |
-| `helpful_content_raw_html` | RAW_HTML page-content NDJSON |
-| `helpful_content_visible_text` | VISIBLE_TEXT page-content NDJSON |
-| `helpful_content_dom_signals` | Output of `extract_rendered_html_signals.py` |
-| `helpful_content_metrics` | Content/Flesch/duplicate fields |
+| `helpful_content_raw_html` | URL plus the complete stored rendered HTML |
+| `helpful_content_visible_text` | URL plus visible page text |
+| `helpful_content_metrics` | Content, Flesch and duplicate fields |
 | `helpful_content_structured_data` | Structured Data export |
-| `helpful_content_accessibility` | Accessibility summary/details |
-| `helpful_content_mobile` | Mobile text-size results |
+| `helpful_content_accessibility` | Accessibility summary and violation details |
+| `helpful_content_mobile` | Mobile `Illegible Font Size` results |
+| `helpful_content_links` | Only the inlink/outlink relationships needed for the audit |
 
-These are suggested names, not a contract with `seo-data-foundation`. Record the
-actual names in the standalone scope artifact.
+Add `run_id` to every staged row. These are suggested physical names, not a
+contract with `seo-data-foundation`; record the actual names in
+`helpful_content_runs.table_map_json`.
 
-Run the included extractor:
+When an MCP result must transit through a temporary JSON/NDJSON file because of
+tool-size or DuckDB-loading mechanics, load it immediately, confirm row count
+and columns, and treat the DuckDB table as canonical. The transport file is not
+an evidence ledger, assessment store or resume mechanism.
 
-```bash
-python .claude/skills/seo-helpful-content-audit/scripts/extract_rendered_html_signals.py \
-  <raw-html.ndjson> <dom-signals.ndjson>
-```
+### Rendered-HTML extraction
 
-For a single saved HTML file:
+Claude performs the necessary extraction from `helpful_content_raw_html` and
+writes observed facts directly to `helpful_content_evidence`. Do not call a
+separate HTML parser and do not create an intermediate DOM-signals file.
 
-```bash
-python .claude/skills/seo-helpful-content-audit/scripts/extract_rendered_html_signals.py \
-  <page.html> <dom-signals.ndjson> --url https://example.com/page
-```
+For each included target, explicitly inspect the rendered HTML whenever the
+needed fact is not exposed by a normal Screaming Frog field. This includes, as
+applicable:
 
-The extractor uses only Python's standard library. Inspect its stderr summary,
-stage its NDJSON output and verify input/output row counts. Any record with an
-`extraction_error` remains visible and makes rendered-DOM criteria
-`not_verifiable` for that URL.
+- ordered heading sequence and main-content boundaries;
+- counts and locations of `ul`, `ol`, `li`, tables, definition lists,
+  blockquotes and semantic containers;
+- visible bylines, reviewer markup, dates, disclosures and source links;
+- `rel=author`, `rel=sponsored`, canonical and language attributes;
+- JSON-LD properties used as a fallback to the Structured Data export;
+- missing or empty image `alt` attributes when relevant to the page purpose.
+
+Use bounded DuckDB queries to retrieve the HTML for the current URL or batch;
+do not load the domain's full HTML corpus into model context. Record the
+extraction method and the exact element, attribute, property path or compact
+locator in `source_locator`. If the HTML is missing, truncated or cannot support
+the observation, write the coverage limitation and use `not_verifiable`; do not
+infer a zero count.
+
+DOM counts remain observations, not quality scores. Their absence is a concern
+only when the inferred page task makes that structure materially useful.
 
 ## Required evidence locators
 

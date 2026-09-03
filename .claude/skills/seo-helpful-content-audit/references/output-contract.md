@@ -1,109 +1,89 @@
-# Standalone Output Contract
+# Standalone DuckDB and Output Contract
 
-## Output location
+## Source of truth
 
-Unless the user supplies an existing audit directory, create:
+DuckDB is the only working source of truth for this skill. Write scope, source
+coverage, target URLs, extracted observations, assessments, evidence links and
+findings there as the audit progresses. Do not maintain parallel working JSON,
+NDJSON or CSV files and do not use output files to resume a run.
+
+The skill remains standalone by owning tables prefixed with
+`helpful_content_`. It uses the project's DuckDB MCP infrastructure directly but
+does not invoke, depend on or write to the contracts of `seo-data-foundation`,
+the orchestrator, diagnosis, clustering, scoring or reporting skills.
+
+Every row must contain `run_id`. Never mix two audit runs in a query merely
+because they cover the same domain. Use UTC timestamps.
+
+## Minimum DuckDB model
+
+Equivalent physical types are acceptable, but preserve these logical tables and
+fields. Record actual table names in `helpful_content_runs.table_map_json`.
+
+### `helpful_content_runs`
+
+One row per invocation:
 
 ```text
-clients/<domain>/<YYYY-MM-helpful-content-audit>/
-  work/
-  output/
+run_id                    primary key
+skill_version
+domain
+mode                      single_url | url_list | domain
+requested_scope_json
+crawl_id
+crawl_date
+crawl_complete
+html_render_state         confirmed_rendered | unconfirmed | unavailable
+target_baseline
+target_completed
+source_availability_json
+table_map_json
+run_status                collecting | assessing | partial | validated | exported
+started_at
+completed_at
 ```
 
-Keep raw Screaming Frog exports in its allowed MCP directory and record their
-paths in the scope artifact. Keep derived local working files under `work/`.
+`source_availability_json` may use only `available`, `partial`, `unavailable`
+or `failed`. These values are skill-local and do not extend repository-wide
+taxonomies.
 
-This skill produces Markdown, CSV and NDJSON only. It does not create DOCX or use
-the shared report renderer.
+### `helpful_content_targets`
 
-## Required artifacts
+One row per target or context URL:
 
-| File | Purpose |
-|---|---|
-| `work/helpful-content-scope.json` | Run identity, target/context scope, crawl details, source-field availability and working-table/file paths |
-| `work/helpful-content-page-assessments.ndjson` | Complete resumable assessment, one record per target URL |
-| `output/helpful-content-url-matrix.csv` | Human-readable one-row-per-target summary |
-| `output/helpful-content-evidence.ndjson` | Standalone evidence ledger |
-| `output/helpful-content-audit.md` | Client-facing audit report |
-
-The scope JSON is a working artifact; the other four are handoff artifacts.
-
-Do not write to `clients/evidence_registry.md`. This standalone audit uses local
-IDs and is not part of the shared evidence/scoring pipeline.
-
-## Scope artifact
-
-Minimum fields:
-
-```json
-{
-  "skill": "seo-helpful-content-audit",
-  "skill_version": "1.0.0",
-  "run_id": "example.com-2026-09-02T103000Z",
-  "mode": "domain",
-  "requested_scope": ["https://example.com/"],
-  "crawl_id": "...",
-  "crawl_date": "...",
-  "crawl_complete": true,
-  "html_render_state": "confirmed_rendered",
-  "target_baseline": 120,
-  "target_completed": 120,
-  "context_urls": [],
-  "excluded_counts": {"non_200": 2, "non_indexable": 8, "no_rendered_html": 1},
-  "source_availability": {
-    "raw_html": "available",
-    "visible_text": "available",
-    "flesch": "available",
-    "accessibility": "available",
-    "illegible_font_size": "unavailable"
-  },
-  "files": {},
-  "tables": {}
-}
+```text
+run_id
+url
+scope_role                target | context
+eligibility_status        included | excluded | context_only
+exclusion_reason
+assessment_status         pending | completed | not_assessable
 ```
 
-Use `available`, `partial`, `unavailable` or `failed` only inside this skill-local
-artifact. These values do not extend or modify repository-wide status taxonomies.
+Enforce uniqueness on `(run_id, url, scope_role)`. `target_baseline` is the
+count of rows with `scope_role = 'target'` and `eligibility_status = 'included'`.
 
-## Page-assessment record
+### `helpful_content_page_assessments`
 
-Write one JSON object per target URL after completing it. Save after every batch.
+One row per included target URL:
 
-```json
-{
-  "url": "https://example.com/page",
-  "scope_role": "target",
-  "page_type": {"value": "editorial guide", "confidence": "high", "evidence_ids": ["HC-E0001"]},
-  "purpose": {"value": "help a reader complete ...", "confidence": "high", "evidence_ids": ["HC-E0001"]},
-  "audience": {"value": "...", "confidence": "medium", "evidence_ids": ["HC-E0002"]},
-  "primary_focus": {"value": "...", "status": "resolved", "confidence": "high", "evidence_ids": ["HC-E0003"]},
-  "secondary_topics": [],
-  "likely_user_task": "...",
-  "ymyl": {"value": "unlikely", "reason": "...", "confidence": "high"},
-  "criteria": [
-    {
-      "criterion_id": "HC01",
-      "status": "verified_positive",
-      "observation": "...",
-      "interpretation": "...",
-      "confidence": "high",
-      "evidence_ids": ["HC-E0004"]
-    }
-  ],
-  "verified_strengths": [],
-  "verified_concerns": [],
-  "supported_inferences": [],
-  "not_verifiable": [],
-  "overall_outcome": "verified_improvement_opportunities",
-  "completed_at": "..."
-}
+```text
+run_id
+url
+page_type
+purpose
+audience
+primary_focus
+focus_status              resolved | focus_ambiguous | not_verifiable
+focus_confidence          high | medium | low
+secondary_topics_json
+likely_user_task
+ymyl                      clear | possible | unlikely | not_verifiable
+ymyl_reason
+overall_outcome
+highest_priority          critical | high | medium | low | none
+completed_at
 ```
-
-Allowed `primary_focus.status` values:
-
-- `resolved`
-- `focus_ambiguous`
-- `not_verifiable`
 
 Allowed `overall_outcome` values:
 
@@ -113,24 +93,46 @@ Allowed `overall_outcome` values:
 - `serious_verified_trust_or_harm_concerns`
 - `insufficient_evidence`
 
-These are audit outcomes, not Google ratings or ranking predictions.
+### `helpful_content_criterion_assessments`
 
-## Evidence record
+One row per applicable criterion and target URL:
 
-Assign monotonically increasing run-local IDs: `HC-E0001`, `HC-E0002`, etc.
+```text
+run_id
+url
+criterion_id              HC01 ... HC18
+status
+observation
+interpretation
+confidence                high | medium | low
+```
 
-```json
-{
-  "evidence_id": "HC-E0001",
-  "url": "https://example.com/page",
-  "source_type": "rendered_html",
-  "source_locator": "page > main > h1",
-  "observation": "The H1 describes ...",
-  "raw_value": "short value or count",
-  "collected_at": "...",
-  "confidence": "high",
-  "limitations": ""
-}
+Allowed `status` values:
+
+- `verified_positive`
+- `verified_concern`
+- `supported_inference`
+- `mixed_evidence`
+- `not_verifiable`
+- `not_applicable`
+
+Enforce uniqueness on `(run_id, url, criterion_id)`.
+
+### `helpful_content_evidence`
+
+Store observations, never recommendations:
+
+```text
+run_id
+evidence_id               HC-E0001, HC-E0002, ...
+url
+source_type
+source_locator
+observation
+raw_value
+collected_at
+confidence                high | medium | low
+limitations
 ```
 
 Allowed `source_type` values:
@@ -145,12 +147,87 @@ Allowed `source_type` values:
 - `derived_aggregate`
 - `external_page_in_selected_crawl`
 
-Evidence records contain observations, not recommendations. Keep quotations
-short and necessary. Prefer paraphrase plus a selector/property locator.
+Evidence IDs are monotonically increasing and unique within a run. Keep raw
+HTML in the source table, not in `raw_value`; use a compact value, count or
+excerpt plus a locator.
+
+### `helpful_content_findings`
+
+```text
+run_id
+finding_id                HC-F001, HC-F002, ...
+scope
+observation
+why_it_matters
+affected_pages_count
+priority                  critical | high | medium | low
+recommendation
+validation
+```
+
+### `helpful_content_finding_pages`
+
+One row per finding/affected-URL pair:
+
+```text
+run_id
+finding_id
+url
+```
+
+### `helpful_content_evidence_links`
+
+Use a normalized link table instead of copying evidence-ID arrays between
+working artifacts:
+
+```text
+run_id
+subject_type              page_assessment | criterion | finding
+subject_key               URL | URL#HC01 | HC-F001
+evidence_id
+```
+
+Enforce uniqueness on `(run_id, subject_type, subject_key, evidence_id)`.
+
+## Persistence and resume
+
+Insert evidence and assessments directly in DuckDB. Commit each bounded batch
+before starting the next. On resume, select included targets whose
+`assessment_status != 'completed'`; do not reconstruct state from a report or
+NDJSON export.
+
+Derive `target_completed` from completed included target rows before the
+completion gate. If work stops early, set `run_status = 'partial'` and report
+the exact completed and remaining counts.
+
+## Output location
+
+Unless the user supplies an existing audit directory, create:
+
+```text
+clients/<domain>/<YYYY-MM-helpful-content-audit>/output/
+```
+
+Required handoff outputs:
+
+| File | Purpose |
+|---|---|
+| `helpful-content-audit.md` | Client-facing audit report |
+| `helpful-content-url-matrix.csv` | One row per included target URL |
+| `helpful-content-evidence.ndjson` | Direct export of the run's evidence rows |
+| `helpful-content-page-assessments.ndjson` | Direct export of the run's page and criterion assessments |
+
+The CSV and NDJSON files are immutable exports of validated DuckDB rows, not
+additional working stores. Generate them only after the SQL completion gate.
+If regeneration is needed, overwrite them from the same `run_id`; never patch
+them independently.
+
+Do not write to `clients/evidence_registry.md`. This standalone audit uses
+`HC-*` IDs and is not part of the shared evidence/scoring pipeline.
 
 ## URL matrix
 
-CSV columns, in this order:
+Export these columns in order:
 
 ```text
 URL
@@ -169,8 +246,9 @@ Highest Priority
 Evidence IDs
 ```
 
-Use semicolon-separated lists within a cell. Preserve one row per target URL.
-Do not omit rows that have no concern.
+Build the values from validated assessment, criterion and evidence-link rows.
+Use semicolon-separated lists inside a cell. Preserve exactly one row per
+included target, including pages with no verified concern.
 
 ## Markdown report
 
@@ -196,24 +274,22 @@ Required structure:
 ## 11. Methodological sources
 ```
 
-### Scope and evidence basis
+The scope and evidence-basis section must state:
 
-State:
+- crawl ID and date, audit mode and requested scope;
+- included-target denominator and completed-target count;
+- whether stored HTML was confirmed as rendered, unconfirmed or unavailable;
+- availability of Flesch, Accessibility/axe and Mobile/Lighthouse
+  `Illegible Font Size` data;
+- exclusions and material collection limitations.
 
-- crawl ID/date and target mode;
-- target denominator and completed count;
-- whether rendered HTML was confirmed;
-- availability of Flesch, Accessibility/contrast and `Illegible Font Size`;
-- exact exclusions that materially affect interpretation.
+The executive assessment may summarize only patterns traceable to stored page
+assessments and evidence rows. Keep source coverage separate from quality
+outcomes: unavailable evidence is not a positive result.
 
-Do not turn this into a generic shopping list of missing tools or data.
-
-### Executive assessment
-
-Summarize only patterns traceable to page records. State coverage separately
-from content outcome. Do not calculate a 0-100 helpful-content score.
-
-### Finding tables
+For up to 100 targets, include the complete compact URL matrix. For larger
+scopes, include the distribution and highest-priority rows and link to the
+complete CSV.
 
 Each verified concern row includes:
 
@@ -221,79 +297,170 @@ Each verified concern row includes:
 Finding ID | Scope | Observation | Why it matters | Affected pages | Priority | Recommendation | Validation | Evidence
 ```
 
-Assign run-local finding IDs `HC-F001`, `HC-F002`, etc. Every verified finding
-must cite one or more `HC-E####` records. `supported_inference` items must be kept
-in their own section and cannot be phrased as facts.
+Every verified finding must join to at least one `HC-E####` row.
+`supported_inference` items remain in their own section and cannot be phrased as
+facts. Do not calculate a 0-100 helpful-content score.
 
-### URL matrix in Markdown
+Every recommendation must name the observed issue, affected scope, proposed
+change, reason, validation method, priority and supporting evidence. Avoid
+generic actions such as "improve E-E-A-T", "add more content" or "make the
+page helpful" unless they are converted into a concrete change tied to a
+verified observation.
 
-For up to 100 target URLs, include the complete compact matrix in the report.
-For larger scopes, include an outcome distribution and the highest-priority rows,
-then link to `helpful-content-url-matrix.csv`, which remains complete.
-
-### Recommendations
-
-Every recommendation must include:
-
-- the observed problem or opportunity;
-- affected scope;
-- concrete change;
-- reason the change addresses the page purpose;
-- validation method;
-- priority and evidence IDs.
-
-Store priorities as `critical`, `high`, `medium` or `low`; translate the visible
-label into the report language.
-
-Avoid generic advice such as "improve E-E-A-T", "add more content" or "make the
-page more helpful". Do not prescribe lists, FAQs, author boxes or longer copy
-unless the evidence shows why that form solves the identified task failure.
-
-### Verification boundaries
-
-Briefly distinguish:
-
-- direct instrument/DOM checks completed;
-- supported interpretations;
-- material questions the selected evidence cannot establish.
-
-Do not describe `not_verifiable` items as passed. Do not claim complete factual,
-visual, reputation or accessibility validation.
+The verification-boundaries section must distinguish direct observations,
+supported interpretations and facts that the available crawl cannot establish.
+It must disclose partial coverage and must not describe `not_verifiable` checks
+as passes.
 
 ## Calculation rules
 
 - State one denominator immediately before every distribution table.
 - Show numerator, denominator and percentage together.
-- Round displayed percentages to one decimal place, but calculate from raw counts.
-- Do not average Flesch values across different languages without separate
-  language groups.
-- Do not aggregate `not_applicable` criteria with passes or concerns.
+- Round displayed percentages to one decimal place, but calculate from raw rows.
+- Do not average Flesch across different languages without separate groups.
+- Do not aggregate `not_applicable` with passes or concerns.
 - Do not convert missing fields to zero.
-- A domain-level concern rate includes only URLs for which that criterion was
-  actually verifiable; state that criterion-specific denominator.
+- For a criterion rate, use only URLs for which that criterion was verifiable
+  and state that denominator.
 
-## Final QA
+## SQL completion gate
 
-Before delivery, validate programmatically where possible:
+Run the checks below for the current `run_id`. Adapt only physical table or
+column names recorded in `table_map_json`; do not weaken the invariants.
 
-```bash
-python .claude/skills/seo-helpful-content-audit/scripts/validate_audit_outputs.py \
-  clients/<domain>/<YYYY-MM-helpful-content-audit>
+### Scope and uniqueness
+
+1. The included target count equals `helpful_content_runs.target_baseline`.
+2. Every included target has exactly one page-assessment row.
+3. No duplicate `(run_id, url, criterion_id)`, evidence ID, finding ID or
+   evidence-link tuple exists.
+4. `target_completed` equals the count of included targets marked `completed`.
+
+Representative queries; each duplicate/missing-row query must return zero rows:
+
+```sql
+WITH counts AS (
+  SELECT
+    r.run_id,
+    r.target_baseline,
+    count(*) FILTER (
+      WHERE t.scope_role = 'target'
+        AND t.eligibility_status = 'included'
+    ) AS included_targets,
+    r.target_completed,
+    count(*) FILTER (
+      WHERE t.scope_role = 'target'
+        AND t.eligibility_status = 'included'
+        AND t.assessment_status = 'completed'
+    ) AS completed_targets
+  FROM helpful_content_runs r
+  LEFT JOIN helpful_content_targets t ON t.run_id = r.run_id
+  WHERE r.run_id = '<run_id>'
+  GROUP BY r.run_id, r.target_baseline, r.target_completed
+)
+SELECT *
+FROM counts
+WHERE target_baseline <> included_targets
+   OR target_completed <> completed_targets;
+
+SELECT t.url
+FROM helpful_content_targets t
+LEFT JOIN helpful_content_page_assessments a
+  ON a.run_id = t.run_id AND a.url = t.url
+WHERE t.run_id = '<run_id>'
+  AND t.scope_role = 'target'
+  AND t.eligibility_status = 'included'
+GROUP BY t.url
+HAVING count(a.url) <> 1;
+
+SELECT evidence_id, count(*)
+FROM helpful_content_evidence
+WHERE run_id = '<run_id>'
+GROUP BY evidence_id
+HAVING count(*) <> 1;
 ```
 
-The command must return exit code 0. Review warnings; correct them or document
-why the retained state is intentional.
+### Domain values and evidence integrity
 
-1. Scope baseline equals target page-assessment record count, unless the scope
-   artifact explicitly records a partial run.
-2. URL matrix has exactly one row per target assessment.
-3. Every evidence ID is unique.
-4. Every cited evidence ID exists.
-5. Every `verified_concern` and `verified_positive` criterion has evidence.
-6. `not_verifiable` criteria do not appear in verified-strength counts.
-7. Finding percentages reproduce from their page lists.
-8. No official Google rating, ranking prediction or unsupported ranking-factor
-   statement appears.
-9. No Photowant source or citation appears.
-10. The report names Screaming Frog as the evidence source for contrast,
-    `Illegible Font Size` and Flesch claims.
+5. Criterion IDs are only `HC01` through `HC18`; statuses and outcomes use only
+   the enumerations above.
+6. Each `verified_positive`, `verified_concern`, `supported_inference` and
+   `mixed_evidence` criterion has at least one evidence link.
+7. Every evidence link resolves to an evidence row in the same run.
+8. Every finding has at least one affected URL and at least one evidence link;
+   its stored affected-page count equals the joined distinct URL count.
+9. A resolved or ambiguous primary focus has supporting evidence.
+
+```sql
+SELECT l.*
+FROM helpful_content_evidence_links l
+LEFT JOIN helpful_content_evidence e
+  ON e.run_id = l.run_id AND e.evidence_id = l.evidence_id
+WHERE l.run_id = '<run_id>' AND e.evidence_id IS NULL;
+
+SELECT c.url, c.criterion_id
+FROM helpful_content_criterion_assessments c
+WHERE c.run_id = '<run_id>'
+  AND c.status IN (
+    'verified_positive', 'verified_concern',
+    'supported_inference', 'mixed_evidence'
+  )
+  AND NOT EXISTS (
+    SELECT 1
+    FROM helpful_content_evidence_links l
+    WHERE l.run_id = c.run_id
+      AND l.subject_type = 'criterion'
+      AND l.subject_key = c.url || '#' || c.criterion_id
+  );
+
+WITH finding_counts AS (
+  SELECT
+    f.finding_id,
+    f.affected_pages_count,
+    count(DISTINCT p.url) AS linked_pages,
+    count(DISTINCT l.evidence_id) AS linked_evidence
+  FROM helpful_content_findings f
+  LEFT JOIN helpful_content_finding_pages p
+    ON p.run_id = f.run_id AND p.finding_id = f.finding_id
+  LEFT JOIN helpful_content_evidence_links l
+    ON l.run_id = f.run_id
+   AND l.subject_type = 'finding'
+   AND l.subject_key = f.finding_id
+  WHERE f.run_id = '<run_id>'
+  GROUP BY f.finding_id, f.affected_pages_count
+)
+SELECT *
+FROM finding_counts
+WHERE linked_pages = 0
+   OR linked_evidence = 0
+   OR affected_pages_count <> linked_pages;
+```
+
+### Source coverage and prohibited claims
+
+10. Every included target has stored rendered HTML. If a known failure is
+    retained in a partial run, it is counted explicitly and every DOM-dependent
+    criterion for that URL is `not_verifiable`.
+11. Contrast evidence names the completed Screaming Frog Accessibility/axe rule
+    and affected locator. Font-size evidence names Mobile/Lighthouse
+    `Illegible Font Size`. Readability evidence names the Flesch field.
+12. No evidence, assessment, finding or methodological source contains
+    Photowant.
+13. No row or report passage claims an official Google rating, guaranteed
+    ranking impact or an unobserved fact.
+
+### Export reconciliation
+
+After the gate passes:
+
+14. Export CSV and NDJSON from DuckDB for exactly one `run_id`.
+15. Re-read the exports with DuckDB and confirm:
+    - CSV rows equal the included target baseline;
+    - evidence NDJSON rows equal `helpful_content_evidence` rows;
+    - page-assessment NDJSON top-level rows equal page-assessment rows.
+16. Generate the Markdown report only from gate-passing aggregates and cited
+    rows. Review it for the prohibited claims above.
+17. Set `run_status = 'exported'` only after all reconciliation checks pass.
+
+Warnings such as evidence rows that are not yet linked require review and an
+explicit decision. They are not silently treated as success.

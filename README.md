@@ -39,7 +39,6 @@ CLAUDE.md
   seo-helpful-content-audit/
     SKILL.md
     references/
-    scripts/
 
   seo-technical-file-diagnosis/
     SKILL.md
@@ -102,7 +101,8 @@ seo-analysis-framework/
 eligible page in a domain crawl against Google's helpful, reliable,
 people-first content guidance and the Search Quality Rater Guidelines. It uses
 Screaming Frog MCP data and stored rendered HTML as its only site evidence,
-infers each page's focus and user task automatically, and writes its own
+infers each page's focus and user task automatically, and keeps its independent
+working data and evidence in skill-local DuckDB tables before exporting its own
 Markdown, CSV and NDJSON artifacts.
 
 This skill is independent of the main audit workflow. It does not invoke or
