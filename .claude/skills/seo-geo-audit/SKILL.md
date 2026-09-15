@@ -10,9 +10,9 @@ disable-model-invocation: true
 argument-hint: "[clients/<domain>/<date>/geo/config/audit.yaml]"
 license: MIT
 metadata:
-  version: "0.1.0"
+  version: "0.2.0"
   category: geo-audit
-  release-stage: contracts
+  release-stage: preflight
 ---
 
 # SEO GEO Audit
@@ -48,6 +48,13 @@ Read and validate these runtime contracts before touching client inputs:
 Run `.claude/geo-audit/scripts/validate_contracts.py`. If it is absent or does
 not return PASS, stop: the installed skill is not contract-complete.
 
+For preflight, also read:
+
+7. `references/preflight-rules.md`
+8. `references/mcp-probes.md`
+9. `references/source-adapters.md`
+10. `references/limitations.md`
+
 ## Closed source gate
 
 Preflight all 18 source codes every run:
@@ -80,6 +87,27 @@ valid empty export is present only after all source-level gates pass.
 11. Create evidence, findings and deduplicated recommendation candidates.
 12. Pass every analysis completion invariant and write the immutable analysis
     package. End the skill.
+
+## Implemented preflight commands
+
+1. Run `scripts/init_run.py --config <audit.yaml> --run-root <geo/work>`.
+   If it returns `WAITING_FOR_CONFIG`, ask only for its `missing_fields`.
+2. Make the harmless live MCP reads in `references/mcp-probes.md` and save their
+   actual responses under the run's `probes/` directory. Do not use synthetic
+   fixtures in a client run.
+3. Run `scripts/estimate_sistrix_cost.py` and show its lower/expected/upper
+   request and credit bounds before full collection.
+4. Build the two response-anchored probe drafts, then run
+   `scripts/inspect_mcp_probe.py` for Screaming Frog and SISTRIX.
+5. Run `scripts/preflight.py --manifest <run-manifest.json> --sf-probe <...>
+   --sistrix-probe <...>`, adding `--input-root` for uploaded directories/ZIPs.
+6. Show the complete 18-row source checklist and every blocking action from the
+   manifest. Do not proceed to collection unless the state is `READY` or
+   `READY_WITH_GAPS`.
+
+If this Claude environment does not expose either MCP, preserve the resumable
+manifest and stop with the exact connection action. Availability cannot be
+simulated from documentation or tool names.
 
 ## Non-negotiable interpretation
 

@@ -297,6 +297,22 @@ def validate_skill_entrypoints(policy: dict[str, Any]) -> None:
         require(frontmatter["name"] == skill_name, f"{skill_name}: frontmatter name mismatch")
         require(frontmatter.get("user-invocable") is True, f"{skill_name}: must be user-invocable")
         require(frontmatter.get("disable-model-invocation") is True, f"{skill_name}: model invocation must be disabled")
+        if skill_name == "seo-geo-audit":
+            require(frontmatter.get("metadata", {}).get("version") == "0.2.0", "GEO audit skill version mismatch")
+            require(frontmatter.get("metadata", {}).get("release-stage") == "preflight", "GEO audit skill stage mismatch")
+    audit_skill = SKILLS_DIR / "seo-geo-audit"
+    required_stage2_files = [
+        "references/preflight-rules.md", "references/mcp-probes.md",
+        "references/source-adapters.md", "references/limitations.md",
+        "scripts/preflight_common.py", "scripts/init_run.py", "scripts/preflight.py",
+        "scripts/inspect_mcp_probe.py", "scripts/estimate_sistrix_cost.py",
+        "scripts/source_adapters.py", "scripts/extract_zip.py",
+        "scripts/parse_mhtml.py", "scripts/inspect_file.py",
+    ]
+    require(
+        all((audit_skill / relative).is_file() for relative in required_stage2_files),
+        "GEO Stage 2 runtime/reference file missing",
+    )
     report_readme = (SKILLS_DIR / "seo-geo-report-generator" / "README.md").read_text(encoding="utf-8")
     require(f"Policy version: `{POLICY_VERSION}`" in report_readme, "Report README policy version mismatch")
     require(f"Policy fingerprint: `sha256:{POLICY_FINGERPRINT}`" in report_readme, "Report README policy fingerprint mismatch")
@@ -460,6 +476,9 @@ def main() -> int:
         validate_with_schema(config, "audit-config.schema.json")
         validate_with_schema(analysis, "analysis-package.schema.json")
         validate_with_schema(report, "report-package.schema.json")
+        for runtime_schema_name in ("run-manifest.schema.json", "mcp-probe.schema.json"):
+            runtime_schema = load_json(CONTRACT_DIR / runtime_schema_name)
+            validate_schema_definition(runtime_schema, runtime_schema)
         validate_catalog_alignment(source_catalog, factor_catalog, policy)
         validate_skill_entrypoints(policy)
         validate_report_contract()
@@ -480,6 +499,7 @@ def main() -> int:
         "policy_fingerprint": policy["policy_fingerprint"]["digest"],
         "ddl_tables": len(EXPECTED_TABLES),
         "negative_fixtures_rejected": negative_rejections,
+        "runtime_schemas": 2,
     }, sort_keys=True))
     return 0
 

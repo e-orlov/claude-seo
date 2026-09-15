@@ -1,9 +1,10 @@
 # Детальный план двух GEO skills
 
-Версия: 1.5
+Версия: 1.6
 Дата фиксации: 15 сентября 2026 года
 Основа анализа: 18 первичных источников, 129 факторов, 6 блоков.
-Статус реализации: Gate P0 и Gate A пройдены; scoring policy 1.0.0 заморожена с
+Статус реализации: Gate P0 и Gate A пройдены; Stage 2 реализован offline, Gate B
+ожидает production MCP integration. Scoring policy 1.0.0 заморожена с
 fingerprint `sha256:77da1451409845f6ba53d97f90071c92a4b26cc248f8d6b2bbc5634aaebe89ed`,
 runtime contracts 1.0.0 проверены.
 
@@ -1332,6 +1333,7 @@ Run прерывается и возобновляется:
 10. **Обязательная integration spike:** зафиксировать реальные имена и response schemas Screaming Frog и SISTRIX MCP tools безопасными тестовыми reads.
 11. **Решено:** полная человекочитаемая scoring policy находится в README GEO-report skill и contract-валидируется против машинной YAML policy.
 12. **Пройдено — Gate A:** source/factor catalogs, config/analysis/report schemas, 41-table DDL, report contract, positive fixtures и 11 negative mutations валидируются автономно; следующий этап — реальные MCP probes и adapters.
+13. **Реализовано — Stage 2 offline:** state machine, 18-source readiness, response-anchored probe contracts, SISTRIX cost bounds, secure ZIP/MHTML и multilingual file adapters покрыты runtime tests. Gate B не закрыт до реальных reads подключённых Screaming Frog и SISTRIX MCP.
 
 Integration spike из пункта 10 нельзя корректно заполнить заранее: точные callable tool names и response schemas зависят от фактически подключённых MCP servers и должны быть подтверждены безопасными тестовыми reads.
 
@@ -1369,3 +1371,4 @@ Integration spike из пункта 10 нельзя корректно запо�
 - [Frozen GEO scoring policy](scoring-policy/README.md)
 - [Gate P0 validation record](GATE_P0_CLOSEOUT.md)
 - [Gate A validation record](GATE_A_CLOSEOUT.md)
+- [Stage 2 preflight checkpoint](STAGE2_PREFLIGHT_CHECKPOINT.md)

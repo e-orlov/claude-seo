@@ -1,6 +1,6 @@
 # GEO Audit Skills — Final Implementation Backlog
 
-Статус: **Gate A passed; Stage 2 is next**
+Статус: **Stage 2 implemented offline; Gate B awaits live MCP integration**
 
 Рабочая ветка: `work/geo-audit-skills`
 
@@ -284,56 +284,60 @@ request с новой версией policy.
 
 ## 6. Stage 2 — Preflight and source adapters
 
-### GEO-200 — Audit skill entrypoint and state machine — `NEXT`
+### GEO-200 — Audit skill entrypoint and state machine
 
-- [ ] Создать `seo-geo-audit/SKILL.md` и run states.
-- [ ] Реализовать safe resume, idempotency и blocking actions.
-- [ ] Запрашивать только отсутствующие brand/domain/country/language/model/scope
+- [x] Создать `seo-geo-audit/SKILL.md` и run states.
+- [x] Реализовать safe resume, idempotency и blocking actions.
+- [x] Запрашивать только отсутствующие brand/domain/country/language/model/scope
   параметры.
 
-### GEO-201 — Screaming Frog MCP probe
+### GEO-201 — Screaming Frog MCP probe — `NEXT`
 
 - [ ] Выполнить реальный harmless read, а не проверку имени tool.
 - [ ] Подтвердить crawl timestamp/domain/HTML universe и наличие SF, RAW, REN,
   PSI, GSC-SA и GSC-UI данных.
 - [ ] Зафиксировать реальные callable names и response schemas adapter version.
+- [x] Реализовать response-anchored capture validation и fail-closed отсутствие
+  production probe.
 
 ### GEO-202 — SISTRIX MCP probe and cost plan
 
 - [ ] Запросить `ai.models`, проверить необходимые модели.
 - [ ] Выполнить минимальный `ai.check.overview` для brand/domain/country.
 - [ ] Зафиксировать schemas overview/competitors/prompts/prompts.count/sources.
-- [ ] Рассчитать requests и credit lower/expected/upper bound без придуманной
+- [x] Рассчитать requests и credit lower/expected/upper bound без придуманной
   точности.
+- [x] Реализовать проверку endpoint mapping, model scope, response assertions и
+  обязательного cost-plan; live capture остаётся открытым.
 
 ### GEO-203 — Mandatory file inventory
 
-- [ ] Обнаружить Ahrefs Backlinks, Referring Domains и Broken Backlinks.
-- [ ] Обнаружить Dejan export/result, SISTRIX Sentiment MHTML и GSC-GAI export.
-- [ ] Для каждого файла сохранить path, SHA-256, size, schema fingerprint,
+- [x] Обнаружить Ahrefs Backlinks, Referring Domains и Broken Backlinks.
+- [x] Обнаружить Dejan export/result, SISTRIX Sentiment MHTML и GSC-GAI export.
+- [x] Для каждого файла сохранить path, SHA-256, size, schema fingerprint,
   snapshot date, row count, scope и freshness.
-- [ ] Для каждого отсутствующего источника выдать точное напоминание о требуемом
+- [x] Для каждого отсутствующего источника выдать точное напоминание о требуемом
   подключении или файле.
 
 ### GEO-204 — Secure parsers and adapters
 
-- [ ] Реализовать ZIP path-traversal protection.
-- [ ] Разбирать MHTML как MIME multipart/related с transfer decoding.
-- [ ] Реализовать multilingual Ahrefs/GSC/Dejan tabular adapters.
-- [ ] Запретить remote resource loading из MHTML.
+- [x] Реализовать ZIP path-traversal protection.
+- [x] Разбирать MHTML как MIME multipart/related с transfer decoding.
+- [x] Реализовать multilingual Ahrefs/GSC/Dejan tabular adapters.
+- [x] Запретить remote resource loading из MHTML.
 
 ### GEO-205 — Readiness and source coverage
 
-- [ ] Реализовать access/data/scope/freshness/blocking status для всех 18 sources.
-- [ ] Различать missing source и доказанный valid empty export.
-- [ ] Разрешать `READY_WITH_GAPS` только для документированных record-level gaps.
+- [x] Реализовать access/data/scope/freshness/blocking status для всех 18 sources.
+- [x] Различать missing source и доказанный valid empty export.
+- [x] Разрешать `READY_WITH_GAPS` только для документированных record-level gaps.
 
 ### GATE B — Preflight
 
 - [ ] Реальные MCP probes и file fingerprints проходят.
-- [ ] Source-level absence переводит run в WAITING/BLOCKED.
-- [ ] Cost plan и ограничения сохранены в manifest.
-- [ ] Resume не дублирует запросы или artifacts.
+- [x] Source-level absence переводит run в WAITING/BLOCKED.
+- [x] Cost plan и ограничения сохранены в manifest.
+- [x] Resume не дублирует запросы или artifacts.
 
 ## 7. Stage 3 — Staging, normalization and clustering
 
@@ -558,11 +562,12 @@ request с новой версией policy.
 
 ## 13. Текущая следующая задача
 
-`GATE P0` и `GATE A` пройдены. Frozen policy `1.0.0`, catalogs, schemas,
-DuckDB DDL, report contract и negative fixtures проверяются автономно. Следующая
-задача — `GEO-200 — Audit skill entrypoint and state machine`, затем реальные
-Screaming Frog/SISTRIX probes и mandatory-file adapters. Любое изменение policy
-после этой точки требует version bump, rationale и regression tests.
+`GATE P0` и `GATE A` пройдены. Stage 2 runtime, file adapters, cost estimator и
+18-source readiness gate реализованы и проверены локально. Следующая задача —
+production integration spike `GEO-201/202`: реальные Screaming Frog/SISTRIX MCP
+reads и фиксация их callable names/response schemas. До этого `GATE B` остаётся
+открытым, а Stage 3 не начинается. Любое изменение policy требует version bump,
+rationale и regression tests.
 
 ## 14. Нормативные ссылки для реализации
 
@@ -571,6 +576,7 @@ Screaming Frog/SISTRIX probes и mandatory-file adapters. Любое измен�
 - [GEO scoring policy](scoring-policy/README.md)
 - [Gate P0 validation record](GATE_P0_CLOSEOUT.md)
 - [Gate A validation record](GATE_A_CLOSEOUT.md)
+- [Stage 2 preflight checkpoint](STAGE2_PREFLIGHT_CHECKPOINT.md)
 - [Claude Code skills](https://code.claude.com/docs/en/skills)
 - [RFC 3986, URI path hierarchy](https://www.rfc-editor.org/rfc/rfc3986#section-3.3)
 - [DuckDB transactions](https://duckdb.org/docs/stable/sql/statements/transactions)

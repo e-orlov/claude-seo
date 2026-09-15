@@ -21,6 +21,8 @@ These files are the standalone interface between `seo-geo-audit` and
 | `report-package.schema.json` | Deterministically scored report/output contract |
 | `report-contract.yaml` | Required report sections, wording and blocking invariants |
 | `duckdb-schema.sql` | Versioned analytical database DDL |
+| `run-manifest.schema.json` | Resumable run state, source checklist and immutable checkpoints |
+| `mcp-probe.schema.json` | Response-anchored Screaming Frog/SISTRIX live-probe package |
 
 ## Versioning and compatibility
 
