@@ -10,16 +10,18 @@ design and implementation of the dedicated GEO audit skills:
 
 | Document | Purpose | Current revision |
 |---|---|---:|
-| `GEO_SKILLS_DETAILED_IMPLEMENTATION_PLAN.md` | Architecture, contracts, data flow, evidence model, scoring handoff, tests and Definition of Done | 1.4 |
+| `GEO_SKILLS_DETAILED_IMPLEMENTATION_PLAN.md` | Architecture, contracts, data flow, evidence model, scoring handoff, tests and Definition of Done | 1.5 |
 | `GEO_audit_sources_and_factor_matrix_FINAL.md` | Closed registry of 18 required data sources and 129 auditable GEO factors | 1.2 |
 | `scoring-policy/scoring-matrix.yaml` | Frozen executable factor, priority and roll-up policy | 1.0.0 |
 | `scoring-policy/README.md` | Human-readable rendering of the frozen policy | 1.0.0 |
 | `GATE_P0_CLOSEOUT.md` | Reproducible validation evidence and change-control record | PASS |
+| `GATE_A_CLOSEOUT.md` | Runtime contracts, fixtures and validation record | PASS |
 | `BACKLOG.md` | Ordered implementation tasks, dependencies, deliverables and acceptance gates | living backlog |
 
-Current execution status: `GATE P0` passed for policy version `1.0.0`, fingerprint
+Current execution status: `GATE P0` and `GATE A` passed. Policy version `1.0.0`
+has fingerprint
 `sha256:77da1451409845f6ba53d97f90071c92a4b26cc248f8d6b2bbc5634aaebe89ed`.
-The next task is `GEO-100 — Create final project structure`.
+The next task is `GEO-200 — Audit skill entrypoint and state machine`.
 
 ## Working rules
 

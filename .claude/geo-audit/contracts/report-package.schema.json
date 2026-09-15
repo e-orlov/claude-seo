@@ -1,0 +1,129 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/e-orlov/claude-seo/.claude/geo-audit/contracts/report-package.schema.json",
+  "title": "Deterministically scored GEO report package",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "package_type", "schema_version", "run_id", "analysis_package_sha256",
+    "policy", "scored_factors", "block_statuses", "overall_status", "summary",
+    "full_report", "outputs", "validation", "package_sha256"
+  ],
+  "properties": {
+    "package_type": {"const": "geo_report_package"},
+    "schema_version": {"const": 1},
+    "run_id": {"type": "string", "minLength": 1},
+    "analysis_package_sha256": {"$ref": "#/$defs/sha256"},
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "fingerprint"],
+      "properties": {
+        "version": {"const": "1.0.0"},
+        "fingerprint": {"const": "77da1451409845f6ba53d97f90071c92a4b26cc248f8d6b2bbc5634aaebe89ed"}
+      }
+    },
+    "scored_factors": {
+      "type": "array",
+      "minItems": 129,
+      "maxItems": 129,
+      "items": {"$ref": "#/$defs/scoredFactor"}
+    },
+    "block_statuses": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "items": {"$ref": "#/$defs/blockStatus"}
+    },
+    "overall_status": {"enum": ["red", "yellow", "green", "ND"]},
+    "summary": {"type": "array", "items": {"$ref": "#/$defs/redSummaryItem"}},
+    "full_report": {"type": "array", "minItems": 129, "maxItems": 129, "items": {"$ref": "#/$defs/reportRow"}},
+    "outputs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["docx", "pdf"],
+      "properties": {
+        "docx": {"type": "string", "pattern": "\\.docx$"},
+        "pdf": {"type": "string", "pattern": "\\.pdf$"}
+      }
+    },
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["content_passed", "visual_passed", "failed_checks"],
+      "properties": {
+        "content_passed": {"const": true},
+        "visual_passed": {"const": true},
+        "failed_checks": {"type": "array", "maxItems": 0}
+      }
+    },
+    "package_sha256": {"$ref": "#/$defs/sha256"}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "factorId": {"type": "string", "pattern": "^(T|B|C|S|O|M)[0-9]{2}$"},
+    "evidenceId": {"type": "string", "pattern": "^E-[0-9]{4,}$"},
+    "priority": {"enum": ["P0", "P1", "P2", "P3", null]},
+    "confidence": {"enum": ["high", "medium", "low", "ND"]},
+    "scoredFactor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["factor_id", "status", "priority", "confidence", "betroffenheit", "coverage_rate", "rule_fingerprint", "evidence_ids", "recommendation_ids"],
+      "properties": {
+        "factor_id": {"$ref": "#/$defs/factorId"},
+        "status": {"enum": ["red", "yellow", "green", "ND", "NA"]},
+        "priority": {"$ref": "#/$defs/priority"},
+        "confidence": {"$ref": "#/$defs/confidence"},
+        "betroffenheit": {"enum": ["broad", "material", "limited", "isolated", "none", "ND", "NA"]},
+        "coverage_rate": {"type": "number", "minimum": 0, "maximum": 1},
+        "rule_fingerprint": {"$ref": "#/$defs/sha256"},
+        "evidence_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/evidenceId"}},
+        "recommendation_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+      }
+    },
+    "blockStatus": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["block_id", "status", "coverage_rate", "rule_trace"],
+      "properties": {
+        "block_id": {"enum": ["T", "B", "C", "S", "O", "M"]},
+        "status": {"enum": ["red", "yellow", "green", "ND"]},
+        "coverage_rate": {"type": "number", "minimum": 0, "maximum": 1},
+        "rule_trace": {"type": "string", "minLength": 1}
+      }
+    },
+    "redSummaryItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["block_id", "factor_id", "status", "priority", "formulation", "why_important", "why_red", "recommendation", "evidence_ids"],
+      "properties": {
+        "block_id": {"enum": ["T", "B", "C", "S", "O", "M"]},
+        "factor_id": {"$ref": "#/$defs/factorId"},
+        "status": {"const": "red"},
+        "priority": {"enum": ["P0", "P1", "P2", "P3"]},
+        "formulation": {"type": "string", "minLength": 1},
+        "why_important": {"type": "string", "minLength": 1},
+        "why_red": {"type": "string", "minLength": 1},
+        "recommendation": {"type": "string", "minLength": 1},
+        "evidence_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/evidenceId"}}
+      }
+    },
+    "reportRow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["block_id", "factor_id", "status", "priority", "confidence", "formulation", "why_important", "rating_explanation", "recommendation", "evidence_ids"],
+      "properties": {
+        "block_id": {"enum": ["T", "B", "C", "S", "O", "M"]},
+        "factor_id": {"$ref": "#/$defs/factorId"},
+        "status": {"enum": ["red", "yellow", "green", "ND", "NA"]},
+        "priority": {"$ref": "#/$defs/priority"},
+        "confidence": {"$ref": "#/$defs/confidence"},
+        "formulation": {"type": "string", "minLength": 1},
+        "why_important": {"type": "string", "minLength": 1},
+        "rating_explanation": {"type": "string", "minLength": 1},
+        "recommendation": {"type": ["string", "null"]},
+        "evidence_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/evidenceId"}}
+      }
+    }
+  }
+}

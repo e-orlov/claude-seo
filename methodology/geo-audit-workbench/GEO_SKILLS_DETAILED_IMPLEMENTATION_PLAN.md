@@ -1,10 +1,11 @@
 # Детальный план двух GEO skills
 
-Версия: 1.4
+Версия: 1.5
 Дата фиксации: 15 сентября 2026 года
 Основа анализа: 18 первичных источников, 129 факторов, 6 блоков.
-Статус реализации: Gate P0 пройден; scoring policy 1.0.0 заморожена с
-fingerprint `sha256:77da1451409845f6ba53d97f90071c92a4b26cc248f8d6b2bbc5634aaebe89ed`.
+Статус реализации: Gate P0 и Gate A пройдены; scoring policy 1.0.0 заморожена с
+fingerprint `sha256:77da1451409845f6ba53d97f90071c92a4b26cc248f8d6b2bbc5634aaebe89ed`,
+runtime contracts 1.0.0 проверены.
 
 ## 1. Зафиксированная архитектура
 
@@ -1330,6 +1331,7 @@ Run прерывается и возобновляется:
 9. **Пройдено — Gate P0:** exact thresholds/rubrics и priority ceilings для каждой из 129 строк, block/overall veto и boundary/adversarial fixtures заморожены в scoring policy 1.0.0; это не runtime-решение пользователя.
 10. **Обязательная integration spike:** зафиксировать реальные имена и response schemas Screaming Frog и SISTRIX MCP tools безопасными тестовыми reads.
 11. **Решено:** полная человекочитаемая scoring policy находится в README GEO-report skill и contract-валидируется против машинной YAML policy.
+12. **Пройдено — Gate A:** source/factor catalogs, config/analysis/report schemas, 41-table DDL, report contract, positive fixtures и 11 negative mutations валидируются автономно; следующий этап — реальные MCP probes и adapters.
 
 Integration spike из пункта 10 нельзя корректно заполнить заранее: точные callable tool names и response schemas зависят от фактически подключённых MCP servers и должны быть подтверждены безопасными тестовыми reads.
 
@@ -1366,3 +1368,4 @@ Integration spike из пункта 10 нельзя корректно запо�
 - [Existing static report renderer](https://github.com/e-orlov/claude-seo/blob/main/.claude/skills/seo-report-generator/report_renderer.py)
 - [Frozen GEO scoring policy](scoring-policy/README.md)
 - [Gate P0 validation record](GATE_P0_CLOSEOUT.md)
+- [Gate A validation record](GATE_A_CLOSEOUT.md)

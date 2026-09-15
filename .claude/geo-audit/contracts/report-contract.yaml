@@ -1,0 +1,116 @@
+contract_version: 1.0.0
+input:
+  package_type: geo_analysis_package
+  allowed_states:
+    - ANALYSIS_COMPLETE
+    - ANALYSIS_COMPLETE_WITH_GAPS
+  read_primary_sources: false
+  read_arbitrary_chat_or_notes: false
+  require_analysis_package_sha256: true
+  require_policy:
+    version: 1.0.0
+    fingerprint: 77da1451409845f6ba53d97f90071c92a4b26cc248f8d6b2bbc5634aaebe89ed
+  require_source_count: 18
+  require_factor_count: 129
+
+scoring:
+  machine_policy: scoring-matrix.yaml
+  status_values:
+    - red
+    - yellow
+    - green
+    - ND
+    - NA
+  priority_values:
+    - P0
+    - P1
+    - P2
+    - P3
+    - null
+  confidence_values:
+    - high
+    - medium
+    - low
+    - ND
+  runtime_discretion: forbidden
+  effort_changes_priority: false
+  missing_data_is_negative: false
+
+summary:
+  title_de: Zusammenfassung
+  inclusion_rule: factor_status_equals_red
+  sort_order:
+    - priority_ascending
+    - veto_role_overall_before_block_before_none
+    - dependency_role_eligibility_before_direct_before_supporting
+    - betroffenheit_broad_to_isolated
+    - affected_count_descending
+    - factor_id_ascending
+  columns:
+    - Block
+    - Faktor-ID
+    - Formulierung
+    - Warum wichtig
+    - Was ist falsch und warum rot
+    - Handlungsempfehlung
+    - Evidenz
+  empty_state_de: Keine Faktoren erfüllen die vorab definierte Red-Bedingung.
+
+full_report:
+  title_de: Gesamtbericht
+  inclusion_rule: all_129_factors_exactly_once
+  order: canonical_block_then_factor_id
+  columns:
+    - Block
+    - Faktor-ID
+    - Status
+    - Priorität
+    - Confidence
+    - Formulierung
+    - Betroffenheit und Abdeckung
+    - Warum wichtig und Bewertungsbegründung
+    - Handlungsempfehlung
+    - Evidenz
+  recommendation_rule:
+    required_for:
+      - red
+      - yellow
+    forbidden_invention: true
+    green_nd_na_may_be_null: true
+
+wording:
+  default_language: de
+  observed_fact_before_inference: true
+  nennen_betroffenheit_not_impact: true
+  lighthouse_label: Lighthouse lab
+  forbidden_claims:
+    - universal_relevant_prompt_rate_without_denominator
+    - prompt_answer_source_join_without_documented_key
+    - citation_correctness_or_absorption_without_statement_source_evidence
+    - observed_ai_bot_visit_without_server_logs
+    - causal_ai_visibility_or_business_uplift
+    - externally_verified_brand_truth_from_site_html
+
+outputs:
+  required:
+    - docx
+    - pdf
+  document_orientation: landscape
+  page_size: A4
+  visual_qa_required: true
+  content_qa_required: true
+  report_package_schema: report-package.schema.json
+
+blocking_invariants:
+  - analysis_package_schema_valid
+  - analysis_package_hash_valid
+  - policy_version_and_fingerprint_match
+  - all_18_sources_ready
+  - exactly_129_unique_known_factors
+  - every_evidence_id_resolves
+  - every_red_or_yellow_recommendation_resolves
+  - numerator_not_greater_than_denominator
+  - sitewide_counts_use_distinct_urls
+  - no_parent_child_cluster_summation
+  - summary_contains_only_red
+  - full_report_contains_all_factors_once

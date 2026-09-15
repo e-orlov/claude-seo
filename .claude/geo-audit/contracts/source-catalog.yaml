@@ -1,0 +1,757 @@
+catalog_version: 1.0.0
+catalog_fingerprint: 401f387b1d525cd6711d9e3578f3bfd491d22e9ec29a9735f0ba39748499e0ca
+source_count: 18
+all_sources_required: true
+source_order:
+- SF
+- RAW
+- REN
+- PSI
+- GSC-SA
+- GSC-UI
+- GSC-GAI
+- AH-BL
+- AH-RD
+- AH-BB
+- SX-M
+- SX-O
+- SX-C
+- SX-P
+- SX-PC
+- SX-S
+- SX-SENT
+- DJ
+sources:
+- source_code: SF
+  label: Screaming Frog crawl and native metrics
+  transport: screaming_frog_mcp
+  artifact_kind: mcp_extraction
+  grain: one crawled resource or relation record
+  scope_fields:
+  - domain
+  - crawl_timestamp
+  - crawl_configuration
+  - content_type
+  freshness_class: crawl_14d
+  preflight_probe: harmless crawl overview plus one bounded HTML-row read
+  limitations:
+  - crawl_state_not_external_bot_visit
+  - scope_depends_on_crawl_configuration
+  required: true
+  required_for:
+  - B17
+  - C01
+  - C03
+  - C04
+  - C07
+  - C11
+  - C17
+  - C18
+  - C19
+  - C20
+  - C22
+  - C23
+  - C24
+  - C26
+  - C27
+  - C28
+  - C29
+  - O04
+  - O07
+  - S01
+  - S02
+  - S03
+  - S04
+  - S05
+  - S06
+  - S07
+  - S08
+  - S09
+  - S10
+  - S11
+  - S12
+  - S13
+  - S14
+  - S15
+  - S16
+  - S17
+  - S18
+  - S19
+  - S20
+  - T01
+  - T02
+  - T03
+  - T04
+  - T05
+  - T06
+  - T08
+  - T09
+  - T10
+  - T11
+  - T12
+  - T13
+  - T14
+  - T15
+  - T16
+  - T17
+  - T18
+  - T19
+  - T20
+  - T21
+  - T22
+  - T23
+  - T24
+  - T25
+  adapter_version: 1
+  source_level_gate:
+  - access
+  - schema
+  - scope
+  - snapshot_or_range
+  - successful_extraction
+  valid_empty_policy: zero rows are valid only after every source-level gate passes
+- source_code: RAW
+  label: Original HTML from Screaming Frog
+  transport: screaming_frog_mcp
+  artifact_kind: mcp_extraction
+  grain: one original response body per crawled HTML URL
+  scope_fields:
+  - domain
+  - page_url
+  - crawl_timestamp
+  - user_agent
+  freshness_class: crawl_14d
+  preflight_probe: bounded raw HTML read for a confirmed HTML URL
+  limitations:
+  - depends_on_crawl_scope_and_user_agent
+  required: true
+  required_for:
+  - B17
+  - C01
+  - C02
+  - C03
+  - C04
+  - C05
+  - C06
+  - C07
+  - C08
+  - C09
+  - C10
+  - C11
+  - C12
+  - C13
+  - C14
+  - C17
+  - C18
+  - C19
+  - C20
+  - C21
+  - C22
+  - C23
+  - C24
+  - C25
+  - C26
+  - C27
+  - C28
+  - C29
+  - S01
+  - S02
+  - S03
+  - S04
+  - S05
+  - S06
+  - S07
+  - S08
+  - S09
+  - S10
+  - S11
+  - S12
+  - S13
+  - S14
+  - S15
+  - S16
+  - S17
+  - S18
+  - S19
+  - S20
+  - T03
+  - T05
+  - T09
+  - T16
+  - T17
+  - T19
+  - T23
+  adapter_version: 1
+  source_level_gate:
+  - access
+  - schema
+  - scope
+  - snapshot_or_range
+  - successful_extraction
+  valid_empty_policy: zero rows are valid only after every source-level gate passes
+- source_code: REN
+  label: Rendered HTML from Screaming Frog
+  transport: screaming_frog_mcp
+  artifact_kind: mcp_extraction
+  grain: one rendered DOM per crawled HTML URL
+  scope_fields:
+  - domain
+  - page_url
+  - crawl_timestamp
+  - renderer
+  freshness_class: crawl_14d
+  preflight_probe: bounded rendered HTML read for the same URL used by RAW
+  limitations:
+  - chromium_render_does_not_prove_rendering_by_each_ai_bot
+  required: true
+  required_for:
+  - B17
+  - C01
+  - C02
+  - C03
+  - C04
+  - C05
+  - C06
+  - C07
+  - C08
+  - C09
+  - C10
+  - C11
+  - C12
+  - C13
+  - C14
+  - C17
+  - C18
+  - C19
+  - C20
+  - C21
+  - C22
+  - C23
+  - C24
+  - C25
+  - C26
+  - C27
+  - C28
+  - C29
+  - S01
+  - S02
+  - S03
+  - S04
+  - S05
+  - S06
+  - S07
+  - S08
+  - S09
+  - S10
+  - S11
+  - S12
+  - S13
+  - S14
+  - S15
+  - S16
+  - S17
+  - S18
+  - S19
+  - S20
+  - T05
+  - T09
+  - T15
+  - T16
+  - T17
+  - T18
+  - T19
+  - T20
+  - T23
+  - T25
+  adapter_version: 1
+  source_level_gate:
+  - access
+  - schema
+  - scope
+  - snapshot_or_range
+  - successful_extraction
+  valid_empty_policy: zero rows are valid only after every source-level gate passes
+- source_code: PSI
+  label: PageSpeed Insights connector data
+  transport: screaming_frog_mcp
+  artifact_kind: mcp_extraction
+  grain: one URL and Lighthouse strategy result
+  scope_fields:
+  - page_url
+  - strategy
+  - test_timestamp
+  freshness_class: crawl_14d
+  preflight_probe: bounded PSI-field read for mobile and desktop where configured
+  limitations:
+  - lighthouse_lab_is_primary
+  - crux_optional
+  - tbt_is_not_field_inp
+  required: true
+  required_for:
+  - C27
+  - T20
+  - T21
+  - T24
+  - T25
+  adapter_version: 1
+  source_level_gate:
+  - access
+  - schema
+  - scope
+  - snapshot_or_range
+  - successful_extraction
+  valid_empty_policy: zero rows are valid only after every source-level gate passes
+- source_code: GSC-SA
+  label: Google Search Console Search Analytics connector data
+  transport: screaming_frog_mcp
+  artifact_kind: mcp_extraction
+  grain: one returned Search Analytics dimension row
+  scope_fields:
+  - property
+  - date_range
+  - search_type
+  - dimensions
+  freshness_class: visibility_30d
+  preflight_probe: bounded Search Analytics field read and date-range check
+  limitations:
+  - only_returned_google_search_measurements
+  required: true
+  required_for:
+  - C01
+  - C04
+  - C05
+  - C10
+  - C25
+  - C29
+  - T14
+  adapter_version: 1
+  source_level_gate:
+  - access
+  - schema
+  - scope
+  - snapshot_or_range
+  - successful_extraction
+  valid_empty_policy: zero rows are valid only after every source-level gate passes
+- source_code: GSC-UI
+  label: Google Search Console URL Inspection connector data
+  transport: screaming_frog_mcp
+  artifact_kind: mcp_extraction
+  grain: one inspected URL
+  scope_fields:
+  - property
+  - page_url
+  - inspection_timestamp
+  freshness_class: crawl_14d
+  preflight_probe: one bounded inspection-field read without starting a bulk run
+  limitations:
+  - full_when_eligible_url_count_lte_2000
+  - deterministic_sample_max_2000_otherwise
+  required: true
+  required_for:
+  - T10
+  - T14
+  adapter_version: 1
+  source_level_gate:
+  - access
+  - schema
+  - scope
+  - snapshot_or_range
+  - successful_extraction
+  valid_empty_policy: zero rows are valid only after every source-level gate passes
+- source_code: GSC-GAI
+  label: Google Search Console Generative AI performance export
+  transport: uploaded_file
+  artifact_kind: tabular_export
+  grain: one exported date/page/country/device dimension row
+  scope_fields:
+  - property
+  - date_range
+  - dimensions
+  freshness_class: visibility_30d
+  preflight_probe: file fingerprint, schema signature, scope and date-range validation
+  limitations:
+  - file_snapshot_not_api_stream
+  required: true
+  required_for:
+  - B26
+  - B27
+  - M14
+  - M15
+  adapter_version: 1
+  source_level_gate:
+  - access
+  - schema
+  - scope
+  - snapshot_or_range
+  - successful_extraction
+  valid_empty_policy: zero rows are valid only after every source-level gate passes
+- source_code: AH-BL
+  label: Ahrefs Backlinks export
+  transport: uploaded_file
+  artifact_kind: tabular_export
+  grain: one exported backlink record
+  scope_fields:
+  - target_domain
+  - export_timestamp
+  freshness_class: visibility_30d
+  preflight_probe: header signature, target-domain, row-count and export-date validation
+  limitations:
+  - bounded_to_exported_rows_and_fields
+  required: true
+  required_for:
+  - O01
+  - O02
+  - O03
+  - O05
+  - O07
+  - O08
+  - O09
+  - O10
+  - O11
+  - O17
+  adapter_version: 1
+  source_level_gate:
+  - access
+  - schema
+  - scope
+  - snapshot_or_range
+  - successful_extraction
+  valid_empty_policy: zero rows are valid only after every source-level gate passes
+- source_code: AH-RD
+  label: Ahrefs Referring Domains export
+  transport: uploaded_file
+  artifact_kind: tabular_export
+  grain: one exported referring-domain record
+  scope_fields:
+  - target_domain
+  - export_timestamp
+  freshness_class: visibility_30d
+  preflight_probe: header signature, target-domain, row-count and export-date validation
+  limitations:
+  - does_not_measure_unlinked_brand_mentions
+  required: true
+  required_for:
+  - O02
+  - O03
+  - O05
+  - O07
+  - O08
+  - O09
+  - O10
+  - O11
+  - O17
+  adapter_version: 1
+  source_level_gate:
+  - access
+  - schema
+  - scope
+  - snapshot_or_range
+  - successful_extraction
+  valid_empty_policy: zero rows are valid only after every source-level gate passes
+- source_code: AH-BB
+  label: Ahrefs Broken Backlinks export
+  transport: uploaded_file
+  artifact_kind: tabular_export
+  grain: one exported broken-backlink record
+  scope_fields:
+  - target_domain
+  - export_timestamp
+  freshness_class: visibility_30d
+  preflight_probe: header signature, target-domain, row-count and export-date validation
+  limitations:
+  - bounded_to_ahrefs_broken_backlink_export
+  required: true
+  required_for:
+  - O06
+  - O10
+  adapter_version: 1
+  source_level_gate:
+  - access
+  - schema
+  - scope
+  - snapshot_or_range
+  - successful_extraction
+  valid_empty_policy: zero rows are valid only after every source-level gate passes
+- source_code: SX-M
+  label: SISTRIX AI models
+  transport: sistrix_mcp
+  artifact_kind: mcp_extraction
+  grain: one returned model record
+  scope_fields:
+  - llm_model
+  - llm_label
+  - request_timestamp
+  freshness_class: visibility_30d
+  preflight_probe: ai.models read
+  limitations:
+  - model_availability_does_not_guarantee_brand_rows
+  required: true
+  required_for:
+  - B06
+  - M04
+  adapter_version: 1
+  source_level_gate:
+  - access
+  - schema
+  - scope
+  - snapshot_or_range
+  - successful_extraction
+  valid_empty_policy: zero rows are valid only after every source-level gate passes
+- source_code: SX-O
+  label: SISTRIX AI Check overview
+  transport: sistrix_mcp
+  artifact_kind: mcp_extraction
+  grain: one brand/domain/model/country overview record
+  scope_fields:
+  - brand
+  - domain
+  - country
+  - llm_model
+  - request_timestamp
+  freshness_class: visibility_30d
+  preflight_probe: minimal ai.check.overview read for approved scope
+  limitations:
+  - observed_prompt_count_not_universal_relevant_prompt_rate
+  required: true
+  required_for:
+  - B01
+  - B02
+  - B03
+  - B04
+  - B06
+  - B07
+  - M01
+  - M02
+  - M03
+  - M04
+  - M05
+  adapter_version: 1
+  source_level_gate:
+  - access
+  - schema
+  - scope
+  - snapshot_or_range
+  - successful_extraction
+  valid_empty_policy: zero rows are valid only after every source-level gate passes
+- source_code: SX-C
+  label: SISTRIX AI Check competitors
+  transport: sistrix_mcp
+  artifact_kind: mcp_extraction
+  grain: one returned competitor record
+  scope_fields:
+  - brand
+  - country
+  - llm_model
+  - request_timestamp
+  freshness_class: visibility_30d
+  preflight_probe: bounded ai.check.competitors schema read
+  limitations:
+  - competitor_list_not_complete_sov_denominator
+  required: true
+  required_for:
+  - B01
+  - B12
+  - B13
+  - B16
+  - C13
+  - M06
+  - O12
+  - O17
+  adapter_version: 1
+  source_level_gate:
+  - access
+  - schema
+  - scope
+  - snapshot_or_range
+  - successful_extraction
+  valid_empty_policy: zero rows are valid only after every source-level gate passes
+- source_code: SX-P
+  label: SISTRIX AI Check prompts
+  transport: sistrix_mcp
+  artifact_kind: mcp_extraction
+  grain: one returned prompt and answer record
+  scope_fields:
+  - brand
+  - domain
+  - country
+  - llm_model
+  - request_timestamp
+  freshness_class: visibility_30d
+  preflight_probe: bounded ai.check.prompts schema read after cost plan
+  limitations:
+  - corpus_contains_observed_mentions_or_citations
+  - no_complete_relevant_prompt_denominator
+  - no_proven_prompt_to_source_join
+  required: true
+  required_for:
+  - B01
+  - B06
+  - B07
+  - B08
+  - B09
+  - B10
+  - B13
+  - B14
+  - B15
+  - B16
+  - B17
+  - C01
+  - C02
+  - C05
+  - C10
+  - C12
+  - C13
+  - C25
+  - C29
+  - M04
+  - M05
+  - M07
+  - O12
+  - O17
+  adapter_version: 1
+  source_level_gate:
+  - access
+  - schema
+  - scope
+  - snapshot_or_range
+  - successful_extraction
+  valid_empty_policy: zero rows are valid only after every source-level gate passes
+- source_code: SX-PC
+  label: SISTRIX AI Check prompt counts
+  transport: sistrix_mcp
+  artifact_kind: mcp_extraction
+  grain: one date/model/country prompt-count record
+  scope_fields:
+  - brand
+  - domain
+  - country
+  - llm_model
+  - date
+  freshness_class: historical_window
+  preflight_probe: bounded ai.check.prompts.count schema read
+  limitations:
+  - daily_aggregate_not_prompt_answer_history
+  required: true
+  required_for:
+  - B25
+  - C29
+  - M13
+  adapter_version: 1
+  source_level_gate:
+  - access
+  - schema
+  - scope
+  - snapshot_or_range
+  - successful_extraction
+  valid_empty_policy: zero rows are valid only after every source-level gate passes
+- source_code: SX-S
+  label: SISTRIX AI Check sources
+  transport: sistrix_mcp
+  artifact_kind: mcp_extraction
+  grain: one returned cited host/domain/URL record
+  scope_fields:
+  - brand
+  - domain
+  - country
+  - llm_model
+  - request_timestamp
+  freshness_class: visibility_30d
+  preflight_probe: bounded ai.check.sources schema read after cost plan
+  limitations:
+  - no_documented_prompt_answer_source_key
+  - no_citation_correctness_or_absorption
+  required: true
+  required_for:
+  - B01
+  - B06
+  - B07
+  - B11
+  - M04
+  - M05
+  - M08
+  - M09
+  - M10
+  - M11
+  - M12
+  - O12
+  - O13
+  - O14
+  - O17
+  adapter_version: 1
+  source_level_gate:
+  - access
+  - schema
+  - scope
+  - snapshot_or_range
+  - successful_extraction
+  valid_empty_policy: zero rows are valid only after every source-level gate passes
+- source_code: SX-SENT
+  label: SISTRIX Sentiment GUI MHTML
+  transport: uploaded_file
+  artifact_kind: mhtml_snapshot
+  grain: one brand/platform/topic/snapshot observation
+  scope_fields:
+  - brand
+  - snapshot_date
+  - displayed_platforms
+  - comparison_group
+  freshness_class: visibility_30d
+  preflight_probe: MIME structure, main HTML, brand, date, platform and sentiment-field validation
+  limitations:
+  - snapshot_only
+  - displayed_platforms_only
+  - remote_resources_must_not_load
+  required: true
+  required_for:
+  - B01
+  - B10
+  - B12
+  - B13
+  - B15
+  - B16
+  - B17
+  - B18
+  - B19
+  - B20
+  - B21
+  - B22
+  - B23
+  - B24
+  - M16
+  - M17
+  - O12
+  - O13
+  - O14
+  - O17
+  adapter_version: 1
+  source_level_gate:
+  - access
+  - schema
+  - scope
+  - snapshot_or_range
+  - successful_extraction
+  valid_empty_policy: zero rows are valid only after every source-level gate passes
+- source_code: DJ
+  label: Dejan AI Agent Access result
+  transport: uploaded_file
+  artifact_kind: tabular_or_html_export
+  grain: one agent and access-rule result
+  scope_fields:
+  - domain
+  - test_timestamp
+  - agent
+  freshness_class: crawl_14d
+  preflight_probe: domain, timestamp, agent inventory and result-schema validation
+  limitations:
+  - configuration_test_not_observed_bot_crawl
+  required: true
+  required_for:
+  - T04
+  adapter_version: 1
+  source_level_gate:
+  - access
+  - schema
+  - scope
+  - snapshot_or_range
+  - successful_extraction
+  valid_empty_policy: zero rows are valid only after every source-level gate passes

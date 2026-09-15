@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/e-orlov/claude-seo/.claude/geo-audit/contracts/source-catalog.schema.json",
+  "title": "GEO canonical source catalog",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["catalog_version", "catalog_fingerprint", "source_count", "all_sources_required", "source_order", "sources"],
+  "properties": {
+    "catalog_version": {"const": "1.0.0"},
+    "catalog_fingerprint": {"$ref": "#/$defs/sha256"},
+    "source_count": {"const": 18},
+    "all_sources_required": {"const": true},
+    "source_order": {"type": "array", "minItems": 18, "maxItems": 18, "uniqueItems": true, "items": {"$ref": "#/$defs/sourceCode"}},
+    "sources": {"type": "array", "minItems": 18, "maxItems": 18, "items": {"$ref": "#/$defs/source"}}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "nonEmptyString": {"type": "string", "minLength": 1},
+    "factorId": {"type": "string", "pattern": "^(T|B|C|S|O|M)[0-9]{2}$"},
+    "sourceCode": {"enum": ["SF", "RAW", "REN", "PSI", "GSC-SA", "GSC-UI", "GSC-GAI", "AH-BL", "AH-RD", "AH-BB", "SX-M", "SX-O", "SX-C", "SX-P", "SX-PC", "SX-S", "SX-SENT", "DJ"]},
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_code", "label", "transport", "artifact_kind", "grain", "scope_fields", "freshness_class", "preflight_probe", "limitations", "required", "required_for", "adapter_version", "source_level_gate", "valid_empty_policy"],
+      "properties": {
+        "source_code": {"$ref": "#/$defs/sourceCode"},
+        "label": {"$ref": "#/$defs/nonEmptyString"},
+        "transport": {"enum": ["screaming_frog_mcp", "sistrix_mcp", "uploaded_file"]},
+        "artifact_kind": {"enum": ["mcp_extraction", "tabular_export", "mhtml_snapshot", "tabular_or_html_export"]},
+        "grain": {"$ref": "#/$defs/nonEmptyString"},
+        "scope_fields": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/nonEmptyString"}},
+        "freshness_class": {"enum": ["crawl_14d", "visibility_30d", "historical_window"]},
+        "preflight_probe": {"$ref": "#/$defs/nonEmptyString"},
+        "limitations": {"type": "array", "items": {"$ref": "#/$defs/nonEmptyString"}},
+        "required": {"const": true},
+        "required_for": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/factorId"}},
+        "adapter_version": {"const": 1},
+        "source_level_gate": {"const": ["access", "schema", "scope", "snapshot_or_range", "successful_extraction"]},
+        "valid_empty_policy": {"$ref": "#/$defs/nonEmptyString"}
+      }
+    }
+  }
+}

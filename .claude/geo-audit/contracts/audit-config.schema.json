@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/e-orlov/claude-seo/.claude/geo-audit/contracts/audit-config.schema.json",
+  "title": "GEO audit configuration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "client_id", "brand", "domain", "country", "language",
+    "report_language", "crawl", "sistrix", "gsc_url_inspection", "clustering",
+    "inputs", "report"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "client_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]{1,62}$"},
+    "brand": {"type": "string", "minLength": 1},
+    "domain": {"type": "string", "pattern": "^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z]{2,63}$"},
+    "country": {"type": "string", "pattern": "^[a-z]{2}$"},
+    "language": {"type": "string", "pattern": "^[a-z]{2,3}(?:-[A-Z]{2})?$"},
+    "report_language": {"enum": ["de", "en"]},
+    "crawl": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["expected_scope", "include_subdomains"],
+      "properties": {
+        "expected_scope": {"type": "string", "minLength": 1},
+        "include_subdomains": {"type": "boolean"}
+      }
+    },
+    "sistrix": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["connection_mode", "models", "country", "direct_api_fallback", "max_credit_cost"],
+      "properties": {
+        "connection_mode": {"enum": ["mcp", "direct_api"]},
+        "models": {
+          "oneOf": [
+            {"const": "all_available"},
+            {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": {"enum": ["chatgpt", "gemini", "perplexity", "aio", "aimode", "copilot"]}
+            }
+          ]
+        },
+        "country": {"type": "string", "pattern": "^[a-z]{2}$"},
+        "direct_api_fallback": {"type": "boolean"},
+        "max_credit_cost": {"type": ["integer", "null"], "minimum": 0}
+      }
+    },
+    "gsc_url_inspection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["max_urls", "selection"],
+      "properties": {
+        "max_urls": {"const": 2000},
+        "selection": {"const": "cluster_stratified"}
+      }
+    },
+    "clustering": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "auto_invoke", "build_path_prefix_hierarchy", "recompute_memberships_each_run",
+        "require_url_type_confirmation", "confirmation_scope", "require_zero_unresolved"
+      ],
+      "properties": {
+        "auto_invoke": {"const": true},
+        "build_path_prefix_hierarchy": {"const": true},
+        "recompute_memberships_each_run": {"const": true},
+        "require_url_type_confirmation": {"const": true},
+        "confirmation_scope": {"const": "semantic_labels_and_criticality_only"},
+        "require_zero_unresolved": {"const": true}
+      }
+    },
+    "inputs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ahrefs_backlinks", "ahrefs_refdomains", "ahrefs_broken_backlinks",
+        "dejan", "sistrix_sentiment_mhtml", "gsc_generative_ai_export"
+      ],
+      "properties": {
+        "ahrefs_backlinks": {"$ref": "#/$defs/nullablePath"},
+        "ahrefs_refdomains": {"$ref": "#/$defs/nullablePath"},
+        "ahrefs_broken_backlinks": {"$ref": "#/$defs/nullablePath"},
+        "dejan": {"$ref": "#/$defs/nullablePath"},
+        "sistrix_sentiment_mhtml": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "gsc_generative_ai_export": {"$ref": "#/$defs/nullablePath"}
+      }
+    },
+    "report": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["output_docx", "output_pdf"],
+      "properties": {
+        "output_docx": {"const": true},
+        "output_pdf": {"const": true}
+      }
+    }
+  },
+  "$defs": {
+    "nullablePath": {
+      "oneOf": [
+        {"type": "string", "minLength": 1},
+        {"type": "null"}
+      ]
+    }
+  }
+}

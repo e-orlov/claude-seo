@@ -1,0 +1,46 @@
+{
+  "brand": "Example",
+  "client_id": "contract-fixture",
+  "clustering": {
+    "auto_invoke": true,
+    "build_path_prefix_hierarchy": true,
+    "confirmation_scope": "semantic_labels_and_criticality_only",
+    "recompute_memberships_each_run": true,
+    "require_url_type_confirmation": true,
+    "require_zero_unresolved": true
+  },
+  "country": "de",
+  "crawl": {
+    "expected_scope": "example.com",
+    "include_subdomains": false
+  },
+  "domain": "example.com",
+  "gsc_url_inspection": {
+    "max_urls": 2000,
+    "selection": "cluster_stratified"
+  },
+  "inputs": {
+    "ahrefs_backlinks": "inputs/ahrefs-backlinks.csv",
+    "ahrefs_broken_backlinks": "inputs/ahrefs-broken-backlinks.csv",
+    "ahrefs_refdomains": "inputs/ahrefs-refdomains.csv",
+    "dejan": "inputs/dejan.csv",
+    "gsc_generative_ai_export": "inputs/gsc-gai.csv",
+    "sistrix_sentiment_mhtml": [
+      "inputs/sistrix-sentiment.mhtml"
+    ]
+  },
+  "language": "de",
+  "report": {
+    "output_docx": true,
+    "output_pdf": true
+  },
+  "report_language": "de",
+  "schema_version": 1,
+  "sistrix": {
+    "connection_mode": "mcp",
+    "country": "de",
+    "direct_api_fallback": false,
+    "max_credit_cost": null,
+    "models": "all_available"
+  }
+}

@@ -1,0 +1,327 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/e-orlov/claude-seo/methodology/geo-audit-workbench/scoring-policy/scoring-rule.schema.json",
+  "title": "GEO audit scoring policy",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "policy_version",
+    "policy_status",
+    "effective_date",
+    "factor_count",
+    "source_count",
+    "policy_fingerprint",
+    "rubric_value_policy",
+    "evidence_policy",
+    "coverage_policy",
+    "priority_policy",
+    "block_rollups",
+    "overall_rollup",
+    "citations",
+    "rules"
+  ],
+  "properties": {
+    "policy_version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+    "policy_status": {"const": "frozen"},
+    "effective_date": {"type": "string", "format": "date"},
+    "factor_count": {"const": 129},
+    "source_count": {"const": 18},
+    "policy_fingerprint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["algorithm", "canonicalization", "digest"],
+      "properties": {
+        "algorithm": {"const": "sha256"},
+        "canonicalization": {"const": "canonical-json-v1-excluding-digest"},
+        "digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+      }
+    },
+    "rubric_value_policy": {"$ref": "#/$defs/nonEmptyObject"},
+    "evidence_policy": {"$ref": "#/$defs/nonEmptyObject"},
+    "coverage_policy": {"$ref": "#/$defs/nonEmptyObject"},
+    "priority_policy": {"$ref": "#/$defs/nonEmptyObject"},
+    "block_rollups": {
+      "type": "object",
+      "minProperties": 6,
+      "maxProperties": 6,
+      "required": ["T", "B", "C", "S", "O", "M"],
+      "additionalProperties": {"$ref": "#/$defs/rollupRule"}
+    },
+    "overall_rollup": {"$ref": "#/$defs/rollupRule"},
+    "citations": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["title", "url", "authority", "supports"],
+        "properties": {
+          "title": {"$ref": "#/$defs/nonEmptyString"},
+          "url": {"type": "string", "pattern": "^https://"},
+          "authority": {"enum": ["official", "standards_body", "statistical_reference"]},
+          "supports": {"$ref": "#/$defs/nonEmptyString"}
+        }
+      }
+    },
+    "rules": {
+      "type": "array",
+      "minItems": 129,
+      "maxItems": 129,
+      "items": {"$ref": "#/$defs/factorRule"}
+    }
+  },
+  "$defs": {
+    "nonEmptyString": {"type": "string", "minLength": 1},
+    "nonEmptyObject": {"type": "object", "minProperties": 1},
+    "condition": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["metric", "operator", "value"],
+          "properties": {
+            "metric": {"$ref": "#/$defs/nonEmptyString"},
+            "operator": {
+              "enum": ["eq", "ne", "lt", "lte", "gt", "gte", "in", "not_in", "between", "exists"]
+            },
+            "value": {}
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["all"],
+          "properties": {
+            "all": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/condition"}}
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["any"],
+          "properties": {
+            "any": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/condition"}}
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["not"],
+          "properties": {"not": {"$ref": "#/$defs/condition"}}
+        }
+      ]
+    },
+    "metric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "type", "unit", "required", "description"],
+      "properties": {
+        "name": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"},
+        "type": {"enum": ["integer", "number", "boolean", "string"]},
+        "unit": {"$ref": "#/$defs/nonEmptyString"},
+        "required": {"type": "boolean"},
+        "description": {"$ref": "#/$defs/nonEmptyString"}
+      }
+    },
+    "statusBands": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evaluation_order", "red", "yellow", "green"],
+      "properties": {
+        "evaluation_order": {"const": ["red", "yellow", "green"]},
+        "red": {"$ref": "#/$defs/condition"},
+        "yellow": {"$ref": "#/$defs/condition"},
+        "green": {"$ref": "#/$defs/condition"}
+      }
+    },
+    "factorRule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "factor_id",
+        "factor_name",
+        "policy_version",
+        "rule_type",
+        "applicability_rule",
+        "canonical_metrics",
+        "measurement_definition",
+        "rubric_dimensions",
+        "measurement_universe",
+        "source_requirements",
+        "coverage_gate",
+        "evidence_grade",
+        "confidence_rule",
+        "status_bands",
+        "no_data_rule",
+        "dependency_role",
+        "dependency_parents",
+        "root_cause_group",
+        "base_priority",
+        "priority_ceiling",
+        "criticality_modifiers",
+        "veto_role",
+        "recommendation_trigger",
+        "threshold_basis",
+        "causal_chain",
+        "rationale",
+        "citations"
+      ],
+      "properties": {
+        "factor_id": {"type": "string", "pattern": "^(T|B|C|S|O|M)[0-9]{2}$"},
+        "factor_name": {"$ref": "#/$defs/nonEmptyString"},
+        "policy_version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+        "rule_type": {
+          "enum": ["boolean_gate", "threshold", "prevalence", "comparative_gap", "consistency", "rubric"]
+        },
+        "applicability_rule": {"$ref": "#/$defs/condition"},
+        "canonical_metrics": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/metric"}},
+        "measurement_definition": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["source_observation", "unit_of_analysis", "affected_definition", "aggregation", "denominator_policy"],
+          "properties": {
+            "source_observation": {"$ref": "#/$defs/nonEmptyString"},
+            "unit_of_analysis": {"$ref": "#/$defs/nonEmptyString"},
+            "affected_definition": {"$ref": "#/$defs/nonEmptyString"},
+            "aggregation": {"$ref": "#/$defs/nonEmptyString"},
+            "denominator_policy": {"$ref": "#/$defs/nonEmptyString"}
+          }
+        },
+        "rubric_dimensions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["dimension_id", "weight", "criterion"],
+            "properties": {
+              "dimension_id": {"type": "string", "pattern": "^[A-Z][0-9]{2}-R[1-9][0-9]*$"},
+              "weight": {"type": "number", "exclusiveMinimum": 0, "maximum": 100},
+              "criterion": {"$ref": "#/$defs/nonEmptyString"}
+            }
+          }
+        },
+        "measurement_universe": {"$ref": "#/$defs/nonEmptyString"},
+        "source_requirements": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"enum": ["SF", "RAW", "REN", "PSI", "GSC-SA", "GSC-UI", "GSC-GAI", "AH-BL", "AH-RD", "AH-BB", "SX-M", "SX-O", "SX-C", "SX-P", "SX-PC", "SX-S", "SX-SENT", "DJ"]}
+        },
+        "coverage_gate": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["minimum_rate", "allowed_scope_types", "below_minimum_status", "confirmed_issue_override"],
+          "properties": {
+            "minimum_rate": {"type": "number", "minimum": 0, "maximum": 1},
+            "allowed_scope_types": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": {"enum": ["full", "representative_sample", "diagnostic_sample", "source_corpus", "snapshot"]}
+            },
+            "below_minimum_status": {"const": "ND"},
+            "confirmed_issue_override": {"type": "boolean"}
+          }
+        },
+        "evidence_grade": {"enum": ["G1_DIRECT", "G2_CALCULATED", "G3_SOURCE_LIMITED", "G4_SUPPORTED_INFERENCE"]},
+        "confidence_rule": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["base", "freshness_class", "caps"],
+          "properties": {
+            "base": {"enum": ["high", "medium", "low"]},
+            "freshness_class": {"enum": ["crawl_14d", "visibility_30d", "historical_window", "static_reference"]},
+            "caps": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["when", "maximum", "reason"],
+                "properties": {
+                  "when": {"$ref": "#/$defs/condition"},
+                  "maximum": {"enum": ["medium", "low"]},
+                  "reason": {"$ref": "#/$defs/nonEmptyString"}
+                }
+              }
+            }
+          }
+        },
+        "status_bands": {"$ref": "#/$defs/statusBands"},
+        "no_data_rule": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["source_level_failure", "missing_required_metric", "zero_denominator", "not_applicable"],
+          "properties": {
+            "source_level_failure": {"const": "BLOCK_RUN"},
+            "missing_required_metric": {"const": "ND"},
+            "zero_denominator": {"enum": ["ND", "NA", "green"]},
+            "not_applicable": {"const": "NA"}
+          }
+        },
+        "dependency_role": {"enum": ["eligibility_gate", "direct_observed_outcome", "supporting_driver"]},
+        "dependency_parents": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^(T|B|C|S|O|M)[0-9]{2}$"}},
+        "root_cause_group": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$"},
+        "base_priority": {"enum": ["P0", "P1", "P2", "P3", null]},
+        "priority_ceiling": {"enum": ["P0", "P1", "P2", "P3", null]},
+        "criticality_modifiers": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["profile", "maximum_uplift_steps", "requires_confirmed_mapping"],
+          "properties": {
+            "profile": {"enum": ["url_cluster", "model_country", "sitewide", "none"]},
+            "maximum_uplift_steps": {"type": "integer", "minimum": 0, "maximum": 1},
+            "requires_confirmed_mapping": {"type": "boolean"}
+          }
+        },
+        "veto_role": {"enum": ["none", "block", "overall"]},
+        "recommendation_trigger": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["statuses", "minimum_confidence", "informational_only"],
+          "properties": {
+            "statuses": {"type": "array", "uniqueItems": true, "items": {"enum": ["red", "yellow"]}},
+            "minimum_confidence": {"enum": ["high", "medium", "low"]},
+            "informational_only": {"type": "boolean"}
+          }
+        },
+        "threshold_basis": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["mechanism", "cutoffs"],
+          "properties": {
+            "mechanism": {"enum": ["official_hard_rule", "official_guidance", "platform_definition", "empirical_association", "deterministic_derivation", "internal_audit_policy"]},
+            "cutoffs": {"enum": ["official_threshold", "deterministic_derivation", "statistical_inference", "internal_audit_policy", "no_normative_cutoff"]}
+          }
+        },
+        "causal_chain": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["observation", "mechanism", "affected_scope", "consequence", "action", "consequence_basis"],
+          "properties": {
+            "observation": {"$ref": "#/$defs/nonEmptyString"},
+            "mechanism": {"$ref": "#/$defs/nonEmptyString"},
+            "affected_scope": {"$ref": "#/$defs/nonEmptyString"},
+            "consequence": {"$ref": "#/$defs/nonEmptyString"},
+            "action": {"$ref": "#/$defs/nonEmptyString"},
+            "consequence_basis": {"enum": ["official", "platform_observation", "statistical_inference", "internal_policy_inference"]}
+          }
+        },
+        "rationale": {"type": "string", "minLength": 20},
+        "citations": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^[A-Z0-9_-]+$"}}
+      }
+    },
+    "rollupRule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["minimum_coverage_rate", "evaluation_order", "red", "yellow", "green", "nd"],
+      "properties": {
+        "minimum_coverage_rate": {"type": "number", "minimum": 0, "maximum": 1},
+        "evaluation_order": {"const": ["red", "ND", "yellow", "green"]},
+        "red": {"$ref": "#/$defs/condition"},
+        "yellow": {"$ref": "#/$defs/condition"},
+        "green": {"$ref": "#/$defs/condition"},
+        "nd": {"$ref": "#/$defs/condition"}
+      }
+    }
+  }
+}

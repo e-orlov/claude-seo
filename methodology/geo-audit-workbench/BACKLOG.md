@@ -1,6 +1,6 @@
 # GEO Audit Skills — Final Implementation Backlog
 
-Статус: **Gate P0 passed; Stage 1 is next**
+Статус: **Gate A passed; Stage 2 is next**
 
 Рабочая ветка: `work/geo-audit-skills`
 
@@ -242,49 +242,49 @@ request с новой версией policy.
 
 ## 5. Stage 1 — Contracts and repository skeleton
 
-### GEO-100 — Create final project structure — `NEXT`
+### GEO-100 — Create final project structure
 
-- [ ] Создать `.claude/geo-audit/contracts/`, fixtures и ровно два новых skill
+- [x] Создать `.claude/geo-audit/contracts/`, fixtures и ровно два новых skill
   directories.
-- [ ] Держать SKILL.md компактными; подробные schemas/methods разместить в
+- [x] Держать SKILL.md компактными; подробные schemas/methods разместить в
   references, повторяемую детерминированную обработку — в scripts.
-- [ ] Зафиксировать explicit-only invocation обоих новых skills.
+- [x] Зафиксировать explicit-only invocation обоих новых skills.
 
 ### GEO-101 — Source and factor catalogs
 
-- [ ] Перенести 18 sources в `source-catalog.yaml` с `required: true`.
-- [ ] Перенести 129 factors в `factor-catalog.yaml` без изменения ID.
-- [ ] Для каждого factor связать sources, method, coverage, applicability,
+- [x] Перенести 18 sources в `source-catalog.yaml` с `required: true`.
+- [x] Перенести 129 factors в `factor-catalog.yaml` без изменения ID.
+- [x] Для каждого factor связать sources, method, coverage, applicability,
   evidence contract и scoring rule ID.
 
 ### GEO-102 — Frozen scoring artifacts
 
-- [ ] Разместить frozen machine policy в `scoring-matrix.yaml`.
-- [ ] Разместить human-readable policy в README report skill.
-- [ ] Добавить version/hash cross-validation.
+- [x] Разместить frozen machine policy в `scoring-matrix.yaml`.
+- [x] Разместить human-readable policy в README report skill.
+- [x] Добавить version/hash cross-validation.
 
 ### GEO-103 — Schemas and DuckDB DDL
 
-- [ ] Создать audit config, analysis package и report package JSON Schemas.
-- [ ] Создать versioned DuckDB DDL для raw, staging, canonical, derived,
+- [x] Создать audit config, analysis package и report package JSON Schemas.
+- [x] Создать versioned DuckDB DDL для raw, staging, canonical, derived,
   clustering, evidence, factors и recommendations.
-- [ ] Определить migrations и backward-compatibility policy.
+- [x] Определить migrations и backward-compatibility policy.
 
 ### GEO-104 — Contract validation
 
-- [ ] Проверить counts `18 / 129` и распределение `24/26/27/20/15/17`.
-- [ ] Проверить все references и rule IDs.
-- [ ] Добавить negative fixtures для missing/duplicate/unknown IDs.
+- [x] Проверить counts `18 / 129` и распределение `24/26/27/20/15/17`.
+- [x] Проверить все references и rule IDs.
+- [x] Добавить negative fixtures для missing/duplicate/unknown IDs.
 
 ### GATE A — Contracts
 
-- [ ] Все contracts валидируются автономно.
-- [ ] Нет циклической или несуществующей ссылки между catalogs/schemas/policy.
-- [ ] Ни один runtime step не требует придумать отсутствующее правило.
+- [x] Все contracts валидируются автономно.
+- [x] Нет циклической или несуществующей ссылки между catalogs/schemas/policy.
+- [x] Ни один runtime step не требует придумать отсутствующее правило.
 
 ## 6. Stage 2 — Preflight and source adapters
 
-### GEO-200 — Audit skill entrypoint and state machine
+### GEO-200 — Audit skill entrypoint and state machine — `NEXT`
 
 - [ ] Создать `seo-geo-audit/SKILL.md` и run states.
 - [ ] Реализовать safe resume, idempotency и blocking actions.
@@ -558,11 +558,11 @@ request с новой версией policy.
 
 ## 13. Текущая следующая задача
 
-`GATE P0` пройден для frozen policy `1.0.0`; validation evidence находится в
-`GATE_P0_CLOSEOUT.md`. Следующая задача — `GEO-100 — Create final project
-structure`, затем source/factor catalogs, frozen scoring artifacts и contracts.
-Любое изменение policy после этой точки требует version bump, rationale и
-regression tests.
+`GATE P0` и `GATE A` пройдены. Frozen policy `1.0.0`, catalogs, schemas,
+DuckDB DDL, report contract и negative fixtures проверяются автономно. Следующая
+задача — `GEO-200 — Audit skill entrypoint and state machine`, затем реальные
+Screaming Frog/SISTRIX probes и mandatory-file adapters. Любое изменение policy
+после этой точки требует version bump, rationale и regression tests.
 
 ## 14. Нормативные ссылки для реализации
 
@@ -570,6 +570,7 @@ regression tests.
 - [GEO source and factor matrix](GEO_audit_sources_and_factor_matrix_FINAL.md)
 - [GEO scoring policy](scoring-policy/README.md)
 - [Gate P0 validation record](GATE_P0_CLOSEOUT.md)
+- [Gate A validation record](GATE_A_CLOSEOUT.md)
 - [Claude Code skills](https://code.claude.com/docs/en/skills)
 - [RFC 3986, URI path hierarchy](https://www.rfc-editor.org/rfc/rfc3986#section-3.3)
 - [DuckDB transactions](https://duckdb.org/docs/stable/sql/statements/transactions)

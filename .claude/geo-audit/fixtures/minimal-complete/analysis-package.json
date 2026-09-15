@@ -1,0 +1,2084 @@
+{
+  "clustering": {
+    "cluster_run_id": "cluster-contract-fixture-r1",
+    "crawl_universe_sha256": "f11a64f40763121bd7d5578a082925378355802ce667251f54e56075df34ce5d",
+    "horizontal_row_count": 1,
+    "html_url_count": 1,
+    "memberships_recomputed": true,
+    "prefix_membership_count": 1,
+    "unresolved_count": 0,
+    "vertical_row_count": 1
+  },
+  "completion_gate": {
+    "check_count": 1,
+    "failed_checks": [],
+    "passed": true
+  },
+  "config_sha256": "ef38e0b3c2b8f6c20b53c0fd27e2d9e279c29708ab154df5d7120768be3063f7",
+  "contract": {
+    "factor_catalog_fingerprint": "3ac10563160965636731a9cb46e96c303b3c707a058e8cb0858b1f5fbfaf1e5a",
+    "factor_catalog_version": "1.0.0",
+    "source_catalog_fingerprint": "401f387b1d525cd6711d9e3578f3bfd491d22e9ec29a9735f0ba39748499e0ca",
+    "source_catalog_version": "1.0.0"
+  },
+  "created_at": "2026-09-15T00:00:00Z",
+  "evidence": [],
+  "factor_results": [
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "B01",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "B02",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "B03",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "B04",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "B06",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "B07",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "B08",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "B09",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "B10",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "B11",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "B12",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "B13",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "B14",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "B15",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "B16",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "B17",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "B18",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "B19",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "B20",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "B21",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "B22",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "B23",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "B24",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "B25",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "B26",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "B27",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "C01",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "C02",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "C03",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "C04",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "C05",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "C06",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "C07",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "C08",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "C09",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "C10",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "C11",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "C12",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "C13",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "C14",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "C17",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "C18",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "C19",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "C20",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "C21",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "C22",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "C23",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "C24",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "C25",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "C26",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "C27",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "C28",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "C29",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "M01",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "M02",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "M03",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "M04",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "M05",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "M06",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "M07",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "M08",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "M09",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "M10",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "M11",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "M12",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "M13",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "M14",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "M15",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "M16",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "M17",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "O01",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "O02",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "O03",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "O04",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "O05",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "O06",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "O07",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "O08",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "O09",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "O10",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "O11",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "O12",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "O13",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "O14",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "O17",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "S01",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "S02",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "S03",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "S04",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "S05",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "S06",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "S07",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "S08",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "S09",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "S10",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "S11",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "S12",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "S13",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "S14",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "S15",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "S16",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "S17",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "S18",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "S19",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "S20",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "T01",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "T02",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "T03",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "T04",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "T05",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "T06",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "T08",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "T09",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "T10",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "T11",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "T12",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "T13",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "T14",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "T15",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "T16",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "T17",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "T18",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "T19",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "T20",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "T21",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "T22",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "T23",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "T24",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    },
+    {
+      "applicability": "not_applicable",
+      "confidence": "ND",
+      "coverage_rate": 1.0,
+      "evidence_ids": [],
+      "factor_id": "T25",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "measurement_status": "not_applicable",
+      "metrics": {},
+      "recommendation_ids": [],
+      "scope_type": "full"
+    }
+  ],
+  "findings": [],
+  "limitations": [
+    "Synthetic package validates structure only; it is not an audit result."
+  ],
+  "package_sha256": "1475dde29d9198c4b3fcd561e718989ff729c3a7fa5f809b1faef01166a98137",
+  "package_type": "geo_analysis_package",
+  "policy": {
+    "fingerprint": "77da1451409845f6ba53d97f90071c92a4b26cc248f8d6b2bbc5634aaebe89ed",
+    "version": "1.0.0"
+  },
+  "recommendations": [],
+  "run_id": "geo-contract-fixture-2026-09-15-r1",
+  "run_state": "ANALYSIS_COMPLETE",
+  "schema_version": 1,
+  "source_manifest": [
+    {
+      "artifact_id": "fixture-sf",
+      "artifact_sha256": "c8f5a7bed62f3534a5827c7aa82f4df5c0dd96715417b4803d2e44ff55f6156a",
+      "freshness_status": "current",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "record_count": 1,
+      "scope_status": "match",
+      "source_code": "SF",
+      "source_level_status": "ready",
+      "valid_empty": false
+    },
+    {
+      "artifact_id": "fixture-raw",
+      "artifact_sha256": "381c94c65077ba6f3bb0cca67f7e8703af71dcc646a8a8bcc9112c1391636af2",
+      "freshness_status": "current",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "record_count": 1,
+      "scope_status": "match",
+      "source_code": "RAW",
+      "source_level_status": "ready",
+      "valid_empty": false
+    },
+    {
+      "artifact_id": "fixture-ren",
+      "artifact_sha256": "f0af75028de5a0dea03e95ff8152264d7d41e4889d7cf710fb415417629de0e6",
+      "freshness_status": "current",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "record_count": 1,
+      "scope_status": "match",
+      "source_code": "REN",
+      "source_level_status": "ready",
+      "valid_empty": false
+    },
+    {
+      "artifact_id": "fixture-psi",
+      "artifact_sha256": "5c6c6d0315c675dff44511324b14518450b80ad060563342d6dafaae74ab7996",
+      "freshness_status": "current",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "record_count": 1,
+      "scope_status": "match",
+      "source_code": "PSI",
+      "source_level_status": "ready",
+      "valid_empty": false
+    },
+    {
+      "artifact_id": "fixture-gsc-sa",
+      "artifact_sha256": "64289e7be021c7f8eea4cdceff46c72dcc8f2db9d9c5acdb1448486621c7b1e1",
+      "freshness_status": "current",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "record_count": 1,
+      "scope_status": "match",
+      "source_code": "GSC-SA",
+      "source_level_status": "ready",
+      "valid_empty": false
+    },
+    {
+      "artifact_id": "fixture-gsc-ui",
+      "artifact_sha256": "9b29eb3eb2b291a80fa5fa2f2fb3d0d3efa63adc09b2d31d64fe0de2dcba2529",
+      "freshness_status": "current",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "record_count": 1,
+      "scope_status": "match",
+      "source_code": "GSC-UI",
+      "source_level_status": "ready",
+      "valid_empty": false
+    },
+    {
+      "artifact_id": "fixture-gsc-gai",
+      "artifact_sha256": "c165db0c5c8a70041fbb74d199b29f951f073e5416749e549dd0928a7e3feba1",
+      "freshness_status": "current",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "record_count": 1,
+      "scope_status": "match",
+      "source_code": "GSC-GAI",
+      "source_level_status": "ready",
+      "valid_empty": false
+    },
+    {
+      "artifact_id": "fixture-ah-bl",
+      "artifact_sha256": "a8ce66f6f8a715126f22ab969ed26450863df586f1e98a3ee1d9b264026b75e0",
+      "freshness_status": "current",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "record_count": 1,
+      "scope_status": "match",
+      "source_code": "AH-BL",
+      "source_level_status": "ready",
+      "valid_empty": false
+    },
+    {
+      "artifact_id": "fixture-ah-rd",
+      "artifact_sha256": "fbb591e60132e110e706105a32d73dd2ca5ff2b249d6a17cecce248a511a1afa",
+      "freshness_status": "current",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "record_count": 1,
+      "scope_status": "match",
+      "source_code": "AH-RD",
+      "source_level_status": "ready",
+      "valid_empty": false
+    },
+    {
+      "artifact_id": "fixture-ah-bb",
+      "artifact_sha256": "7d92c2ae0e4d0523b8e68fc08e33be5d9bb25d758458eec79c4369aa791014eb",
+      "freshness_status": "current",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "record_count": 1,
+      "scope_status": "match",
+      "source_code": "AH-BB",
+      "source_level_status": "ready",
+      "valid_empty": false
+    },
+    {
+      "artifact_id": "fixture-sx-m",
+      "artifact_sha256": "0314f6cd392bb3cff06882ae7a94d73d67eea165e91037795ef96e6ced2ec852",
+      "freshness_status": "current",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "record_count": 1,
+      "scope_status": "match",
+      "source_code": "SX-M",
+      "source_level_status": "ready",
+      "valid_empty": false
+    },
+    {
+      "artifact_id": "fixture-sx-o",
+      "artifact_sha256": "8770115959ebb7be3724e33cb0b83ffb220f87ed22e1519cf8a398171ce63b68",
+      "freshness_status": "current",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "record_count": 1,
+      "scope_status": "match",
+      "source_code": "SX-O",
+      "source_level_status": "ready",
+      "valid_empty": false
+    },
+    {
+      "artifact_id": "fixture-sx-c",
+      "artifact_sha256": "1f1f23c9084d24d8dbea02e65b8a4d95389195fbcbbf5b68b6b9cb2e3cbe958f",
+      "freshness_status": "current",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "record_count": 1,
+      "scope_status": "match",
+      "source_code": "SX-C",
+      "source_level_status": "ready",
+      "valid_empty": false
+    },
+    {
+      "artifact_id": "fixture-sx-p",
+      "artifact_sha256": "fdfba829b4e25a70429c48c477dbcef727b605d60a90113d0ea660795e35611f",
+      "freshness_status": "current",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "record_count": 1,
+      "scope_status": "match",
+      "source_code": "SX-P",
+      "source_level_status": "ready",
+      "valid_empty": false
+    },
+    {
+      "artifact_id": "fixture-sx-pc",
+      "artifact_sha256": "a139f25f3b4b8e76c05e5629c5c6b2b89122967c4fc88a2f172c463cb8532a93",
+      "freshness_status": "current",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "record_count": 1,
+      "scope_status": "match",
+      "source_code": "SX-PC",
+      "source_level_status": "ready",
+      "valid_empty": false
+    },
+    {
+      "artifact_id": "fixture-sx-s",
+      "artifact_sha256": "94a549b7efabddc02ee9e5f4b80e4210ab15a052cf42daff51842c7e019b577a",
+      "freshness_status": "current",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "record_count": 1,
+      "scope_status": "match",
+      "source_code": "SX-S",
+      "source_level_status": "ready",
+      "valid_empty": false
+    },
+    {
+      "artifact_id": "fixture-sx-sent",
+      "artifact_sha256": "5de8a44830a267dc2857575baea998dc46a5903acaf2fbc0dae6af15a76ffecd",
+      "freshness_status": "current",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "record_count": 1,
+      "scope_status": "match",
+      "source_code": "SX-SENT",
+      "source_level_status": "ready",
+      "valid_empty": false
+    },
+    {
+      "artifact_id": "fixture-dj",
+      "artifact_sha256": "c55987d0f07ed203e74a308c2337b6e1e87abb17efe6292aa3ed3b58728a17f9",
+      "freshness_status": "current",
+      "limitations": [
+        "synthetic_contract_fixture"
+      ],
+      "record_count": 1,
+      "scope_status": "match",
+      "source_code": "DJ",
+      "source_level_status": "ready",
+      "valid_empty": false
+    }
+  ]
+}

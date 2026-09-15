@@ -1,0 +1,6 @@
+case_id: eligible-url-count-over-2000
+eligible_url_count: 2001
+maximum_inspection_count: 2000
+selection: cluster_stratified
+required_inclusion_reason: true
+sitewide_prevalence_without_weighting: false
