@@ -1,6 +1,6 @@
 # Детальный план двух GEO skills
 
-Версия: 1.2
+Версия: 1.3
 Дата фиксации: 15 сентября 2026 года
 Основа анализа: 18 первичных источников, 129 факторов, 6 блоков.
 
@@ -1222,6 +1222,7 @@ Run прерывается и возобновляется:
 
 | Gate | Критерий |
 |---|---|
+| P0 — Scoring Policy Freeze | 129 complete rules, thresholds/rubrics, priority ceilings, veto, roll-ups и boundary fixtures заморожены до implementation |
 | A — Contracts | 18 sources и 129 factors валидны |
 | B — Preflight | Реальные probes, scope/freshness и blockers корректны |
 | C — Staging | Row counts, schemas, hashes, joins и transactions валидны |
@@ -1233,6 +1234,22 @@ Run прерывается и возобновляется:
 | I — E2E | Повторяемый audit на sanitised fixture без ручных скрытых расчётов |
 
 ## 28. Порядок реализации
+
+Исполнимый checklist с task IDs, зависимостями и gate criteria находится в
+[BACKLOG.md](BACKLOG.md). Этот раздел фиксирует milestone order; при расхождении
+деталей архитектурные инварианты этого документа и acceptance criteria backlog
+должны быть согласованы отдельным versioned change до продолжения работ.
+
+### Этап 0 — Scoring Policy Design and Freeze
+
+- определить полный scoring rule schema;
+- зафиксировать evidence/confidence policy, Betroffenheit, coverage и
+  materiality;
+- создать exact thresholds/rubrics для всех 129 факторов;
+- определить dependency roles, priority floors/ceilings и modifiers;
+- определить block/overall veto и roll-ups;
+- создать human-readable policy, machine policy и boundary/adversarial fixtures;
+- заморозить policy version/hash до написания implementation skeleton skills.
 
 ### Этап 1 — Зафиксировать контракты
 
@@ -1272,13 +1289,13 @@ Run прерывается и возобновляется:
 - final evidence allocation;
 - analysis completion gate.
 
-### Этап 5 — Scoring matrix
+### Этап 5 — Deterministic scoring engine
 
-- определить rule type для каждого factor;
-- зафиксировать thresholds/rubrics/veto;
-- определить block и overall roll-ups;
-- boundary tests;
-- versioned scored-factor output.
+- валидировать analysis package и совместимость policy version/hash;
+- применить замороженные factor rules без model discretion;
+- применить замороженные priority ceilings, block/overall veto и roll-ups;
+- повторно выполнить boundary/adversarial tests на исполняемом engine;
+- создать deterministic versioned scored-factor output.
 
 ### Этап 6 — GEO report
 
@@ -1308,11 +1325,11 @@ Run прерывается и возобновляется:
 6. **Решено:** READY требует source-level gate всех 18 обязательных источников; отсутствующий целый источник блокирует run.
 7. **Решено:** Summary при любых условиях остаётся red-only и сортируется по priority.
 8. **Решено:** пользователь подтверждает semantic labels и business criticality patterns; structural prefix tree и memberships всегда рассчитываются автоматически заново.
-9. **Обязательная реализация:** создать exact thresholds/rubrics и priority ceilings для каждой из 129 строк и проверить boundary fixtures; это не runtime-решение пользователя.
+9. **Следующий обязательный gate:** до Stage 1 создать и заморозить exact thresholds/rubrics и priority ceilings для каждой из 129 строк, block/overall veto и boundary fixtures; это не runtime-решение пользователя.
 10. **Обязательная integration spike:** зафиксировать реальные имена и response schemas Screaming Frog и SISTRIX MCP tools безопасными тестовыми reads.
 11. **Решено:** полная человекочитаемая scoring policy находится в README GEO-report skill и contract-валидируется против машинной YAML policy.
 
-Последний пункт нельзя корректно заполнить заранее: точные callable tool names и response schemas зависят от фактически подключённых MCP servers и должны быть подтверждены безопасными тестовыми reads.
+Integration spike из пункта 10 нельзя корректно заполнить заранее: точные callable tool names и response schemas зависят от фактически подключённых MCP servers и должны быть подтверждены безопасными тестовыми reads.
 
 ## 30. Definition of Done
 
