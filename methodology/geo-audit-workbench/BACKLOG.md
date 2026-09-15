@@ -1,6 +1,6 @@
 # GEO Audit Skills — Final Implementation Backlog
 
-Статус: **Architecture baseline complete; Stage 0 is next**
+Статус: **Gate P0 passed; Stage 1 is next**
 
 Рабочая ветка: `work/geo-audit-skills`
 
@@ -80,169 +80,169 @@ request с новой версией policy.
 - [x] Зафиксированы URL-prefix hierarchy и запрет parent/child double counting.
 - [x] Создан version-controlled workbench в отдельной GitHub branch.
 
-### GEO-001 — Scoring rule schema — `NEXT`
+### GEO-001 — Scoring rule schema
 
-- [ ] Определить обязательные поля одного factor rule:
+- [x] Определить обязательные поля одного factor rule:
   `factor_id`, `policy_version`, `rule_type`, `applicability_rule`,
   `canonical_metrics`, `measurement_universe`, `source_requirements`,
   `coverage_gate`, `evidence_grade`, `confidence_rule`, `status_bands`,
   `no_data_rule`, `dependency_role`, `base_priority`, `priority_ceiling`,
   `criticality_modifiers`, `veto_role`, `recommendation_trigger`,
   `threshold_basis`, `rationale` и `citations`.
-- [ ] Определить допустимые rule types: boolean gate, threshold, prevalence,
+- [x] Определить допустимые rule types: boolean gate, threshold, prevalence,
   comparative gap, consistency и rubric.
-- [ ] Формализовать `ND` и `NA` так, чтобы отсутствие данных никогда не давало
+- [x] Формализовать `ND` и `NA` так, чтобы отсутствие данных никогда не давало
   red/yellow и не улучшало block status.
-- [ ] Создать schema validation и один полный exemplar rule без placeholder-полей.
+- [x] Создать schema validation и один полный exemplar rule без placeholder-полей.
 
 ### GEO-002 — Evidence strength and confidence policy
 
-- [ ] Определить evidence grades для direct field, deterministic calculation,
+- [x] Определить evidence grades для direct field, deterministic calculation,
   source-limited observation, supported inference и not verifiable.
-- [ ] Определить правила high/medium/low confidence через source quality,
+- [x] Определить правила high/medium/low confidence через source quality,
   coverage, join quality, sample type и freshness.
-- [ ] Назначить priority ceilings по confidence/evidence так, чтобы слабое evidence
+- [x] Назначить priority ceilings по confidence/evidence так, чтобы слабое evidence
   не могло автоматически создавать P0/P1, кроме явно перечисленных hard gates.
-- [ ] Запретить повышение confidence за счёт количества повторов одного и того же
+- [x] Запретить повышение confidence за счёт количества повторов одного и того же
   зависимого источника.
 
 ### GEO-003 — Betroffenheit, coverage and materiality policy
 
-- [ ] Зафиксировать denominator для sitewide, path-prefix cluster, semantic
+- [x] Зафиксировать denominator для sitewide, path-prefix cluster, semantic
   cluster, template, URL sample и source corpus.
-- [ ] Определить versioned Betroffenheit bands и правила absolute-count floor.
-- [ ] Разделить `full`, `representative_sample`, `diagnostic_sample` и
+- [x] Определить versioned Betroffenheit bands и правила absolute-count floor.
+- [x] Разделить `full`, `representative_sample`, `diagnostic_sample` и
   `source_corpus`; определить допустимые экстраполяции для каждого scope type.
-- [ ] Определить minimum coverage gates и поведение при partial record coverage.
-- [ ] Зафиксировать `COUNT(DISTINCT page_url)` для sitewide roll-up и запрет
+- [x] Определить minimum coverage gates и поведение при partial record coverage.
+- [x] Зафиксировать `COUNT(DISTINCT page_url)` для sitewide roll-up и запрет
   суммирования parent/child cluster counts.
 
 ### GEO-004 — Dependency roles and causal chain
 
-- [ ] Классифицировать каждый фактор как eligibility gate, direct observed
+- [x] Классифицировать каждый фактор как eligibility gate, direct observed
   outcome или supporting driver.
-- [ ] Для каждого правила записать доказательную цепочку:
+- [x] Для каждого правила записать доказательную цепочку:
   `observation -> mechanism -> affected scope -> consequence -> action`.
-- [ ] Отметить места, где consequence является internal policy inference, а не
+- [x] Отметить места, где consequence является internal policy inference, а не
   доказанной внешней причинностью.
-- [ ] Создать cross-factor dependency map и правила предотвращения двойного
+- [x] Создать cross-factor dependency map и правила предотвращения двойного
   приоритизирования одной root cause.
 
 ### GEO-005 — Exact rules: T block
 
-- [ ] Определить thresholds/rubrics для всех 24 факторов T.
-- [ ] Выделить hard technical veto: crawl/index/render eligibility и опасные
+- [x] Определить thresholds/rubrics для всех 24 факторов T.
+- [x] Выделить hard technical veto: crawl/index/render eligibility и опасные
   canonical/robots contradictions.
-- [ ] Зафиксировать GSC URL Inspection coverage при `<= 2 000` и sampling при
+- [x] Зафиксировать GSC URL Inspection coverage при `<= 2 000` и sampling при
   большем URL universe.
-- [ ] Зафиксировать Lighthouse-lab terminology и запрет подмены TBT полевым INP.
+- [x] Зафиксировать Lighthouse-lab terminology и запрет подмены TBT полевым INP.
 
 ### GEO-006 — Exact rules: B block
 
-- [ ] Определить правила всех 26 факторов B в пределах наблюдаемого SISTRIX
+- [x] Определить правила всех 26 факторов B в пределах наблюдаемого SISTRIX
   corpus и sentiment snapshot.
-- [ ] Не создавать полного relevant-prompt denominator из SX-P/SX-O.
-- [ ] Не создавать недоказанный join `prompt -> answer -> source URL`.
-- [ ] Разделить visibility, representation accuracy, prominence и sentiment.
+- [x] Не создавать полного relevant-prompt denominator из SX-P/SX-O.
+- [x] Не создавать недоказанный join `prompt -> answer -> source URL`.
+- [x] Разделить visibility, representation accuracy, prominence и sentiment.
 
 ### GEO-007 — Exact rules: C block
 
-- [ ] Определить правила всех 27 факторов C.
-- [ ] Разделить автоматически измеряемые признаки и rubric-based content review.
-- [ ] Зафиксировать Site-declared Brand Truth как позицию сайта, а не независимую
+- [x] Определить правила всех 27 факторов C.
+- [x] Разделить автоматически измеряемые признаки и rubric-based content review.
+- [x] Зафиксировать Site-declared Brand Truth как позицию сайта, а не независимую
   юридическую или фактическую верификацию.
-- [ ] Зафиксировать handling YMYL/trust risk без недоказанных E-E-A-T scores.
+- [x] Зафиксировать handling YMYL/trust risk без недоказанных E-E-A-T scores.
 
 ### GEO-008 — Exact rules: S block
 
-- [ ] Определить правила всех 20 факторов S.
-- [ ] Разделить syntax/validation, type applicability, entity consistency и
+- [x] Определить правила всех 20 факторов S.
+- [x] Разделить syntax/validation, type applicability, entity consistency и
   schema-visible-content consistency.
-- [ ] Зафиксировать raw/rendered schema parity как S18 и supporting evidence, а
+- [x] Зафиксировать raw/rendered schema parity как S18 и supporting evidence, а
   не как дополнительный 130-й фактор.
 
 ### GEO-009 — Exact rules: O block
 
-- [ ] Определить правила всех 15 факторов O.
-- [ ] Разделить backlink quantities, quality distribution, recovery opportunity
+- [x] Определить правила всех 15 факторов O.
+- [x] Разделить backlink quantities, quality distribution, recovery opportunity
   и AI source ecosystem.
-- [ ] Ограничить выводы составом Ahrefs/SISTRIX exports и не подменять ими
+- [x] Ограничить выводы составом Ahrefs/SISTRIX exports и не подменять ими
   unlinked mentions или полное содержимое внешних страниц.
 
 ### GEO-010 — Exact rules: M block
 
-- [ ] Определить правила всех 17 факторов M.
-- [ ] Сохранить названия Observed Prompt Count вместо недоступных universal rates.
-- [ ] Разделить snapshot, time series, first-party GAI export и source coverage.
-- [ ] Не возвращать Business Impact и причинную атрибуцию.
+- [x] Определить правила всех 17 факторов M.
+- [x] Сохранить названия Observed Prompt Count вместо недоступных universal rates.
+- [x] Разделить snapshot, time series, first-party GAI export и source coverage.
+- [x] Не возвращать Business Impact и причинную атрибуцию.
 
 ### GEO-011 — Deterministic priority policy
 
-- [ ] Определить base priority для каждого factor/dependency role.
-- [ ] Определить priority floors только для доказанных hard gates и accuracy/
+- [x] Определить base priority для каждого factor/dependency role.
+- [x] Определить priority floors только для доказанных hard gates и accuracy/
   reputational risks.
-- [ ] Определить ceilings по confidence, coverage и sample type.
-- [ ] Формализовать modifiers для Betroffenheit, absolute affected count,
+- [x] Определить ceilings по confidence, coverage и sample type.
+- [x] Формализовать modifiers для Betroffenheit, absolute affected count,
   confirmed cluster criticality, model/country scope, reversibility и risk.
-- [ ] Effort хранить отдельно; разрешить Quick Win label, но запретить effort
+- [x] Effort хранить отдельно; разрешить Quick Win label, но запретить effort
   повышать важность проблемы.
-- [ ] Определить deterministic tie-break и порядок сортировки Summary.
+- [x] Определить deterministic tie-break и порядок сортировки Summary.
 
 ### GEO-012 — Block veto and block roll-up policy
 
-- [ ] Для каждого из шести блоков определить red veto, yellow conditions,
+- [x] Для каждого из шести блоков определить red veto, yellow conditions,
   material combinations и minimum coverage gate.
-- [ ] Запретить простое среднее цветов и скрытое числовое усреднение ordinal
+- [x] Запретить простое среднее цветов и скрытое числовое усреднение ordinal
   traffic-light labels.
-- [ ] Определить поведение red с low confidence и конфликтующего evidence.
-- [ ] Проверить, что block green невозможен при недостаточном coverage.
+- [x] Определить поведение red с low confidence и конфликтующего evidence.
+- [x] Проверить, что block green невозможен при недостаточном coverage.
 
 ### GEO-013 — Overall roll-up policy
 
-- [ ] Определить overall veto и допустимые комбинации block statuses.
-- [ ] Определить общий coverage gate.
-- [ ] Зафиксировать порядок `red / yellow / green / ND` без преобразования ND в
+- [x] Определить overall veto и допустимые комбинации block statuses.
+- [x] Определить общий coverage gate.
+- [x] Зафиксировать порядок `red / yellow / green / ND` без преобразования ND в
   негативную оценку.
-- [ ] Проверить, что один supporting-driver factor не может без специального veto
+- [x] Проверить, что один supporting-driver factor не может без специального veto
   сделать весь audit red.
 
 ### GEO-014 — Human-readable policy and provenance
 
-- [ ] Создать полную понятную policy для будущего
+- [x] Создать полную понятную policy для будущего
   `seo-geo-report-generator/README.md`.
-- [ ] Для каждого threshold указать basis category: official hard rule,
+- [x] Для каждого threshold указать basis category: official hard rule,
   official guidance, empirical association, deterministic derivation или
   internal audit policy.
-- [ ] Не выдавать internal audit policy за научно доказанную универсальную
+- [x] Не выдавать internal audit policy за научно доказанную универсальную
   важность.
-- [ ] Обеспечить однозначную трассировку README rule ↔ YAML rule ↔ factor ID.
+- [x] Обеспечить однозначную трассировку README rule ↔ YAML rule ↔ factor ID.
 
 ### GEO-015 — Boundary and adversarial fixtures
 
-- [ ] Создать тесты на значение точно на границе и по обе стороны каждого
+- [x] Создать тесты на значение точно на границе и по обе стороны каждого
   threshold.
-- [ ] Создать fixtures для zero denominator, partial coverage, low confidence,
+- [x] Создать fixtures для zero denominator, partial coverage, low confidence,
   conflicting sources, valid empty export, nested clusters и stale mappings.
-- [ ] Создать priority tests для одинакового status при разных Betroffenheit и
+- [x] Создать priority tests для одинакового status при разных Betroffenheit и
   cluster criticality.
-- [ ] Создать roll-up tests для veto, insufficient coverage и all-green cases.
-- [ ] Проверить повторяемость: одинаковый scored input всегда даёт byte-stable
+- [x] Создать roll-up tests для veto, insufficient coverage и all-green cases.
+- [x] Проверить повторяемость: одинаковый scored input всегда даёт byte-stable
   normalized scoring output.
 
 ### GATE P0 — Scoring Policy Freeze
 
-- [ ] Ровно 129 уникальных factor IDs имеют полный rule.
-- [ ] Ни одно обязательное поле не заполнено placeholder или runtime discretion.
-- [ ] Все thresholds имеют basis и rationale.
-- [ ] Все priority ceilings и veto перечислены явно.
-- [ ] README-policy и machine-policy совпадают по version, hash и rule IDs.
-- [ ] Все boundary/adversarial fixtures проходят.
-- [ ] Policy получает immutable version; последующее изменение требует version
+- [x] Ровно 129 уникальных factor IDs имеют полный rule.
+- [x] Ни одно обязательное поле не заполнено placeholder или runtime discretion.
+- [x] Все thresholds имеют basis и rationale.
+- [x] Все priority ceilings и veto перечислены явно.
+- [x] README-policy и machine-policy совпадают по version, hash и rule IDs.
+- [x] Все boundary/adversarial fixtures проходят.
+- [x] Policy получает immutable version; последующее изменение требует version
   bump, rationale и regression tests.
 
 ## 5. Stage 1 — Contracts and repository skeleton
 
-### GEO-100 — Create final project structure
+### GEO-100 — Create final project structure — `NEXT`
 
 - [ ] Создать `.claude/geo-audit/contracts/`, fixtures и ровно два новых skill
   directories.
@@ -558,15 +558,18 @@ request с новой версией policy.
 
 ## 13. Текущая следующая задача
 
-Начать с `GEO-001 — Scoring rule schema`. До завершения `GATE P0` не создавать
-implementation skeleton новых skills и не распределять thresholds во время
-runtime. Это делает аргументацию traffic lights и priorities заранее
-опубликованной, версионированной и воспроизводимой.
+`GATE P0` пройден для frozen policy `1.0.0`; validation evidence находится в
+`GATE_P0_CLOSEOUT.md`. Следующая задача — `GEO-100 — Create final project
+structure`, затем source/factor catalogs, frozen scoring artifacts и contracts.
+Любое изменение policy после этой точки требует version bump, rationale и
+regression tests.
 
 ## 14. Нормативные ссылки для реализации
 
 - [GEO architecture](GEO_SKILLS_DETAILED_IMPLEMENTATION_PLAN.md)
 - [GEO source and factor matrix](GEO_audit_sources_and_factor_matrix_FINAL.md)
+- [GEO scoring policy](scoring-policy/README.md)
+- [Gate P0 validation record](GATE_P0_CLOSEOUT.md)
 - [Claude Code skills](https://code.claude.com/docs/en/skills)
 - [RFC 3986, URI path hierarchy](https://www.rfc-editor.org/rfc/rfc3986#section-3.3)
 - [DuckDB transactions](https://duckdb.org/docs/stable/sql/statements/transactions)

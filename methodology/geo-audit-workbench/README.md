@@ -10,13 +10,16 @@ design and implementation of the dedicated GEO audit skills:
 
 | Document | Purpose | Current revision |
 |---|---|---:|
-| `GEO_SKILLS_DETAILED_IMPLEMENTATION_PLAN.md` | Architecture, contracts, data flow, evidence model, scoring handoff, tests and Definition of Done | 1.3 |
+| `GEO_SKILLS_DETAILED_IMPLEMENTATION_PLAN.md` | Architecture, contracts, data flow, evidence model, scoring handoff, tests and Definition of Done | 1.4 |
 | `GEO_audit_sources_and_factor_matrix_FINAL.md` | Closed registry of 18 required data sources and 129 auditable GEO factors | 1.2 |
+| `scoring-policy/scoring-matrix.yaml` | Frozen executable factor, priority and roll-up policy | 1.0.0 |
+| `scoring-policy/README.md` | Human-readable rendering of the frozen policy | 1.0.0 |
+| `GATE_P0_CLOSEOUT.md` | Reproducible validation evidence and change-control record | PASS |
 | `BACKLOG.md` | Ordered implementation tasks, dependencies, deliverables and acceptance gates | living backlog |
 
-Current execution status: architecture baseline is complete. The next task is
-`GEO-001 — Scoring rule schema`; implementation must not pass `GATE P0` until
-the complete policy for all 129 factors is frozen and boundary-tested.
+Current execution status: `GATE P0` passed for policy version `1.0.0`, fingerprint
+`sha256:77da1451409845f6ba53d97f90071c92a4b26cc248f8d6b2bbc5634aaebe89ed`.
+The next task is `GEO-100 — Create final project structure`.
 
 ## Working rules
 
@@ -29,7 +32,7 @@ the complete policy for all 129 factors is frozen and boundary-tested.
    business criticality mappings may be reused at project level.
 4. Do not store client exports, credentials, API responses, crawl HTML or other
    audit inputs in this repository.
-5. The three documents above remain authoritative until their rules are migrated
+5. The documents above remain authoritative until their rules are migrated
    into executable contracts, skill references and tests.
 
 ## Cleanup rule
