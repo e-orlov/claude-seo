@@ -55,6 +55,11 @@ For preflight, also read:
 9. `references/source-adapters.md`
 10. `references/limitations.md`
 
+Before factor analysis, read `references/on-page-observables.md` and apply its
+versioned extraction rules for ToC, H2 count/form, editorial summary, author
+blocks, title/H1 characteristics, list types and native `<details>`. These are
+URL-level observations attached to existing factors, not additional factors.
+
 ## Closed source gate
 
 Preflight all 18 source codes every run:
@@ -83,7 +88,10 @@ valid empty export is present only after all source-level gates pass.
    unchanged pattern.
 9. Calculate raw/rendered HTML parity as a shared method for T16, T17 and S18,
    not as a 130th factor.
-10. Calculate all 129 factor metric records and cluster scopes.
+10. Extract the on-page observations defined in
+    `references/on-page-observables.md`, preserving RAW/REN provenance and
+    explicit extraction gaps. Attach them to the existing factor evidence,
+    then calculate all 129 canonical factor metric records and cluster scopes.
 11. Create evidence, findings and deduplicated recommendation candidates.
 12. Pass every analysis completion invariant and write the immutable analysis
     package. End the skill.
@@ -123,6 +131,20 @@ simulated from documentation or tool names.
   or factual verification.
 - Dejan shows access configuration, not actual bot visits.
 - Never persist credentials in config, DuckDB, manifests, evidence or logs.
+
+## Deterministic on-page observations
+
+- Use the exact definitions and factor ownership in
+  `references/on-page-observables.md`; freeze selectors and extraction settings
+  before calculating a template's URL-level observations.
+- Record source hashes, root/element locators, normalized texts, counts, forms
+  and missing-data reasons. Store these details in existing evidence
+  `observed_value` objects and link their IDs from the owning factor result.
+- Treat presence, length, question markers and numeric cutoffs as descriptive
+  observations. Apply the frozen scoring policy to the existing canonical
+  metrics; do not create penalties, citation-uplift weights or a checklist score.
+- Distinguish an editorial summary from a native `<summary>` label, and text
+  present inside closed `<details>` from text absent in the initial DOM.
 
 ## Completion
 
