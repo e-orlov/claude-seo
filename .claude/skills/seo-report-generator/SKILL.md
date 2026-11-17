@@ -10,7 +10,7 @@ argument-hint: "[topic]"
 license: MIT
 metadata:
   version: "4.0.0"
-  category: seo-file-audit
+  category: seo-reporting
 ---
 
 # SEO Report Generator
@@ -115,7 +115,7 @@ CFG = {
     "date_slug":     "<YYYY-MM>",
     "data_sources":  "<source description>",
     "subtitle":      "<subtitle line for page 1>",
-    "baseline":      0,      # indexable HTML URL count — from file_inventory
+    "baseline":      0,      # indexable HTML URL count — from the current audit's crawl data
     "output_dir":    None,   # None = auto-resolve; only set if user specifies a path
 }
 
@@ -183,7 +183,7 @@ All supported block types. Use only these — the renderer raises an error on un
 
 ## Rules for CFG
 
-- `baseline` must come from the current audit's `file_inventory` (indexable HTML URL count).
+- `baseline` must come from the current audit's crawl data (indexable HTML URL count, e.g. a count query on the staged crawl table).
   If not yet available: stop, do not default to any number, ask the user.
 - `output_dir`: leave as `None` unless the user explicitly provides a path.
 - No hardcoded absolute paths anywhere in the script.
@@ -349,7 +349,7 @@ Evidenz: 4.0–6.0 cm   (always last column)
 - [ ] No E-NNN recycled for a different observation — each ID used only for the
       observation described in its registry entry
 - [ ] All cell values are pre-formatted strings — no calculations in cells
-- [ ] `baseline` in CFG from current `file_inventory` — not assumed
+- [ ] `baseline` in CFG from the current crawl data — not assumed
 - [ ] `output_dir` is `None` unless user specified a path
 - [ ] Column widths sum ≈ 26.1 cm per table
 - [ ] Section order follows default or explicitly agreed structure for this audit
@@ -368,9 +368,9 @@ Invoke when user asks to:
 - generate a cross-topic summary report (see below)
 
 Do NOT invoke for:
-- pure markdown SEO analysis (use diagnosis skills)
-- data processing / pandas (use file-based audit skills)
-- scoring only (use `seo-scoring-recommendations`)
+- analysis itself (run the analytical skill first; this skill only renders confirmed findings)
+- data processing / pandas (stage and query data in DuckDB)
+- GEO audits (`seo-geo-report-generator` renders those)
 
 ---
 
