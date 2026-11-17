@@ -4,15 +4,23 @@
 from __future__ import annotations
 
 import argparse
-import fcntl
 import json
 import os
 import sys
 from pathlib import Path
 from typing import Any, Iterable
 
+# Keep sibling imports working when the interpreter does not put the script
+# directory on sys.path (e.g. Windows Python with a ._pth file or -I/-P).
+import sys as _sys
+from pathlib import Path as _Path
+
+_sys.path.insert(0, str(_Path(__file__).resolve().parent))
+
 from extract_zip import extract as extract_zip
 from preflight_common import (
+    lock_exclusive,
+    unlock,
     FILE_SOURCES,
     SF_SOURCES,
     SISTRIX_SOURCES,
@@ -262,7 +270,7 @@ def main() -> int:
         lock_path = manifest_path.parent / ".preflight.lock"
         lock_path.parent.mkdir(parents=True, exist_ok=True)
         lock_handle = lock_path.open("a+", encoding="utf-8")
-        fcntl.flock(lock_handle.fileno(), fcntl.LOCK_EX)
+        lock_exclusive(lock_handle)
         manifest = load_manifest(manifest_path)
         if manifest["state"] in {"ANALYSIS_COMPLETE", "ANALYSIS_COMPLETE_WITH_GAPS"}:
             raise PreflightError("Completed runs are immutable")
@@ -432,7 +440,7 @@ def main() -> int:
         return 1
     finally:
         if lock_handle is not None:
-            fcntl.flock(lock_handle.fileno(), fcntl.LOCK_UN)
+            unlock(lock_handle)
             lock_handle.close()
 
 

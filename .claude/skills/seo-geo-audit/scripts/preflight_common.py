@@ -11,11 +11,39 @@ import json
 import os
 import re
 import tempfile
+import time
 from pathlib import Path
 from typing import Any
 from urllib.parse import urlsplit
 
 import yaml
+
+
+if os.name == "nt":
+    import msvcrt
+
+    def lock_exclusive(handle: Any) -> None:
+        """Block until an exclusive lock on the file handle is held (Windows)."""
+        handle.seek(0)
+        while True:
+            try:
+                msvcrt.locking(handle.fileno(), msvcrt.LK_NBLCK, 1)
+                return
+            except OSError:
+                time.sleep(0.1)
+
+    def unlock(handle: Any) -> None:
+        handle.seek(0)
+        msvcrt.locking(handle.fileno(), msvcrt.LK_UNLCK, 1)
+else:
+    import fcntl
+
+    def lock_exclusive(handle: Any) -> None:
+        """Block until an exclusive lock on the file handle is held (POSIX)."""
+        fcntl.flock(handle.fileno(), fcntl.LOCK_EX)
+
+    def unlock(handle: Any) -> None:
+        fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
 
 
 REPO_ROOT = Path(__file__).resolve().parents[4]

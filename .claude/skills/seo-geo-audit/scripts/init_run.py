@@ -6,7 +6,6 @@ from __future__ import annotations
 import argparse
 import contextlib
 import datetime as dt
-import fcntl
 import json
 import os
 import re
@@ -16,7 +15,16 @@ from typing import Any, Iterator
 
 import yaml
 
+# Keep sibling imports working when the interpreter does not put the script
+# directory on sys.path (e.g. Windows Python with a ._pth file or -I/-P).
+import sys as _sys
+from pathlib import Path as _Path
+
+_sys.path.insert(0, str(_Path(__file__).resolve().parent))
+
 from preflight_common import (
+    lock_exclusive,
+    unlock,
     PreflightError,
     atomic_write_json,
     canonical_sha256,
@@ -135,11 +143,11 @@ def run_lock(root: Path) -> Iterator[None]:
     root.mkdir(parents=True, exist_ok=True)
     lock_path = root / ".geo-run.lock"
     with lock_path.open("a+", encoding="utf-8") as handle:
-        fcntl.flock(handle.fileno(), fcntl.LOCK_EX)
+        lock_exclusive(handle)
         try:
             yield
         finally:
-            fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
+            unlock(handle)
 
 
 def iter_manifests(root: Path) -> Iterator[tuple[Path, dict[str, Any]]]:

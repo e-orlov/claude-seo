@@ -11,10 +11,9 @@ The established shared framework runs in **mixed mode**, not purely file-based:
 
 - **Screaming Frog** — crawl/technical data, either via a live connection to Screaming Frog's own built-in MCP server (`seospider`, port 11435 — the one sanctioned live source) or via uploaded exports. When the GSC, Analytics or PageSpeed Insights APIs are connected within Screaming Frog itself, that connector-enriched data (GSC, GA4, PSI/CrUX fields) rides along on the same crawl — live or exported, same as the rest of the crawl.
 - **Ahrefs** — backlink data via uploaded file exports
-- **Semrush AI Visibility** — GEO / AI-visibility data via uploaded `.mhtml` exports
 - **Standalone GSC / GA4 / WebPageTest / Lighthouse / HAR exports** — via uploaded file exports, when not already pulled in through a Screaming Frog connector above
 
-Infrastructure, not audit data sources: DuckDB MCP for staging/querying tabular data, Qdrant MCP for persistent memory and the SEO background-knowledge base.
+Infrastructure, not audit data sources: DuckDB MCP for staging/querying tabular data.
 
 chrome-devtools MCP is available but not part of the standard audit pipeline — the user invokes it explicitly for a specific one-off task (e.g. a live rendering/layout check), and its output only becomes audit evidence if the user asks for that.
 
@@ -35,12 +34,6 @@ and authoritative source list for the dedicated workflow.
 CLAUDE.md
 
 .claude/skills/
-  seo-file-audit-orchestrator/
-    SKILL.md
-
-  seo-data-foundation/
-    SKILL.md
-
   seo-url-clustering/
     SKILL.md
 
@@ -56,24 +49,6 @@ CLAUDE.md
   seo-helpful-content-audit/
     SKILL.md
     references/
-
-  seo-technical-file-diagnosis/
-    SKILL.md
-
-  seo-content-file-diagnosis/
-    SKILL.md
-
-  seo-backlink-file-diagnosis/
-    SKILL.md
-
-  seo-geo-file-diagnosis/
-    SKILL.md
-
-  seo-performance-file-diagnosis/
-    SKILL.md
-
-  seo-scoring-recommendations/
-    SKILL.md
 
   seo-report-generator/
     SKILL.md
@@ -103,14 +78,14 @@ seo-analysis-framework/
 
 ## Main Workflow
 
-1. Upload exports into an analysis folder (or connect Screaming Frog's MCP server for live crawl data).
-2. Ask Claude Code to use the SEO audit framework.
-3. The framework first inventories files.
-4. It maps fields, checks data quality and normalizes URLs.
-5. It joins sources only when join coverage is sufficient.
-6. It computes metrics only when data supports them.
-7. It produces diagnoses, scores and recommendations.
-8. It separates SEO health from audit coverage.
+The active skills are listed above; each has its own data contract (see
+`CLAUDE.md`, Skill Invocation Rules). The earlier shared file-audit pipeline
+(data foundation, orchestrator, diagnosis and scoring skills) is archived on
+branch `archive/legacy-file-audit-skills`.
+
+1. Stage uploaded exports or Screaming Frog MCP data in DuckDB.
+2. Invoke the skill that fits the task (e.g. `/seo-helpful-content-audit`, `/seo-geo-audit`, `/seo-url-clustering`, `/redirect-map-builder`).
+3. Render confirmed findings with `/seo-report-generator` (or `/seo-geo-report-generator` for GEO) as a separate, manual step.
 
 ## Standalone Helpful Content Audit
 

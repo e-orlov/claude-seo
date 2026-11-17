@@ -18,7 +18,7 @@ Allowed data basis:
 - Uploaded files and local files explicitly present in the project workspace
 - Derived intermediate artifacts created from those files
 - Live connection to Screaming Frog SEO Spider via its MCP server (`seospider`)
-- Within an explicitly invoked `/seo-geo-audit` only: SISTRIX MCP for the six `SX-*` source codes defined in `.claude/geo-audit/contracts/source-catalog.yaml`
+- The dedicated GEO workflow additionally permits SISTRIX MCP, but only within an explicitly invoked `/seo-geo-audit` and only for the six `SX-*` source codes defined in `.claude/geo-audit/contracts/source-catalog.yaml`
 
 Disallowed unless the user explicitly changes the rules for the current task:
 - Live crawling or scraping outside the Screaming Frog MCP connection
@@ -45,7 +45,7 @@ Active skills (all user-invocable; none runs another automatically unless stated
 
 Boundaries that must hold:
 - `seo-helpful-content-audit` ends with a SQL-validated `run_id` in skill-local DuckDB tables. It never invokes `seo-report-generator`, `seo-url-clustering` or any other skill, and writes neither to `clients/evidence_registry.md` nor to other skills' tables. The user may start `seo-report-generator` manually afterwards; that task then follows the report generator's own contract.
-- `seo-geo-audit` invokes `seo-url-clustering` automatically through its GEO Run Mode and never invokes the report skill. `seo-geo-report-generator` is started manually and reads only the analysis package. Semrush AI Visibility is not a source for this workflow.
+- `seo-geo-audit` and `seo-geo-report-generator` do not use `seo-data-foundation`, generic scoring or generic report orchestration. `seo-geo-audit` invokes `seo-url-clustering` automatically through its GEO Run Mode and never invokes the report skill. `seo-geo-report-generator` is started manually and reads only the analysis package. Semrush AI Visibility is not a source for this workflow.
 - Analytical skills never invoke `seo-report-generator` automatically.
 
 For ad hoc audits outside these skills, stage the data in DuckDB first (see Data Staging Rule) and apply the Evidence Discipline below.

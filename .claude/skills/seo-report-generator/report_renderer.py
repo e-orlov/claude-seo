@@ -60,7 +60,7 @@ CFG required keys
     date_slug     str   e.g. "2026-06"
     data_sources  str   e.g. "Screaming Frog MCP, Crawl Juni 2026"
     subtitle      str   shown below title on page 1
-    baseline      int   indexable HTML URL count — from file_inventory
+    baseline      int   indexable HTML URL count — from the current crawl data
     output_dir    None  or explicit path string — None triggers auto-resolve
 
 ---
