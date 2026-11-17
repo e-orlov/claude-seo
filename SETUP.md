@@ -7,8 +7,8 @@
 
 Du richtest auf diesem (neuen, frischen) Windows-Rechner dieselbe Arbeitsumgebung
 ein, die auf einem anderen Rechner bereits für datei-basierte SEO-Audits mit Claude
-Code produktiv läuft. Es gibt vier Bereiche: Software-Voraussetzungen, drei/vier
-MCP-Server, Skills, und CLAUDE.md-Policies. Arbeite die Phasen der Reihe nach ab.
+Code produktiv läuft. Es gibt vier Bereiche: Software-Voraussetzungen, drei
+MCP-Server (chrome-devtools, duckdb, seospider), Skills und CLAUDE.md-Policies. Arbeite die Phasen der Reihe nach ab.
 Prüfe nach jedem Schritt, ob er funktioniert hat, und behebe Fehler eigenständig,
 bevor du weitermachst — frage den Nutzer nur, wenn eine echte Entscheidung nötig ist
 (z. B. Lizenzdaten, Zugangsdaten, ob ein optionaler Schritt gewünscht ist), nicht bei
@@ -32,19 +32,22 @@ Ein Git-Repo mit dem kompletten Werkzeugkasten wurde bereits vorbereitet:
   Screaming Frog mitgeliefert). Keine sonstigen Live-APIs, kein OAuth, kein
   chrome-devtools als Standard-Datenquelle (nur wenn der Nutzer es explizit für
   eine konkrete Aufgabe anfragt).
-- `global/CLAUDE.md` — projektübergreifende Policy (Qdrant-Memory-Mechanik,
-  DuckDB-Staging-Regel, Humanizer-Pflicht für alle Texte)
+- `global/CLAUDE.md` — projektübergreifende Policy (DuckDB-Staging-Regel,
+  Humanizer-Pflicht für alle Texte; enthält noch Qdrant-Regeln, siehe Phase 1.7)
 - `global/skills/humanizer/SKILL.md` — Skill, der KI-typische Schreibmuster aus Texten entfernt
-- `.claude/skills/*` — zwölf SEO-Audit-Skills (Datenfundament, Clustering,
-  eigenständiges Helpful-Content-Audit, technische/Content-/Backlink-/GEO-/
-  Performance-Diagnose, Scoring, Report-Generator, Redirect-Map-Builder)
+- `.claude/skills/*` — sechs SEO-Skills: `seo-url-clustering`,
+  `seo-helpful-content-audit`, `seo-geo-audit`, `seo-geo-report-generator`,
+  `seo-report-generator`, `redirect-map-builder`. Die acht alten Skills des
+  gemischten Datei-Workflows (Datenfundament, Orchestrator, Diagnose, Scoring)
+  liegen nur noch auf dem Branch `archive/legacy-file-audit-skills`.
+- `.mcp.json` — Projekt-MCP-Server `chrome-devtools` und `duckdb`
 - `scripts/*.js` — Wissensbasis-Ingestion-Tooling (PDF-Extraktion, Chunking)
 - `.claude/skills/seo-report-generator/` — der einzige zulässige Report-Renderer
   (`report_renderer.py` + `docx_helpers.py` + `report_config.py`, Python/`python-docx`).
   Jedes `.docx`-Reporting läuft ausschließlich hierüber, kein eigenständiges
   Report-Script daneben (siehe CLAUDE.md "Report Infrastructure").
 - `global/scripts/qdrant_mcp_start.py`, `global/scripts/qdrant-server-config.yaml` —
-  Start-Skript und Config für den lokalen Qdrant-Vektor-Server
+  Start-Skript und Config für den lokalen Qdrant-Vektor-Server (derzeit stillgelegt)
 
 **Bewusst nicht im Repo** (und das ist beabsichtigt, nicht vergessen):
 - `clients/` — echte Kundendaten aus Audits. Bleiben pro Maschine lokal, nicht geteilt.
@@ -117,7 +120,7 @@ setx UV_TOOL_DIR "%USERPROFILE%\uv-tools"
 Neue Shell öffnen, dann testen:
 ```bash
 uv --version
-uv tool run --with "mcp<2.0.0" duckdb-mcp-server --help
+uvx --with "mcp<2" mcp-server-duckdb --help
 ```
 Wenn der zweite Befehl fehlschlägt oder hängt, ist das fast immer die
 Roaming-Falle — prüfe mit
@@ -221,7 +224,14 @@ dieses Limit hinaus brauchen eine aktive Lizenz (`Licence` → `Enter Licence Ke
 in der UI). Lizenzdaten dafür vom Nutzer erfragen, falls noch nicht hinterlegt —
 das ist eine echte Entscheidung/Zugangsdaten-Frage, kein technischer Fehler.
 
-### 1.7 Qdrant-Server (lokale Vektor-Datenbank für Memory + SEO-Wissensbasis)
+### 1.7 Qdrant-Server — derzeit stillgelegt, diesen Schritt überspringen
+Der MCP-Server `qdrant-memory` wurde am 2026-11-17 aus der Konfiguration entfernt
+(Verbindungs-Timeouts). Auf einem neuen Rechner nicht einrichten, solange der
+Nutzer es nicht ausdrücklich verlangt. Regeln in `global/CLAUDE.md` und Skills,
+die `qdrant-find`/`qdrant-store` nennen, laufen dann ins Leere; das ist erwartet.
+Die Anleitung unten bleibt nur als Referenz für eine spätere Reaktivierung.
+
+#### Referenz: Qdrant-Server (lokale Vektor-Datenbank für Memory + SEO-Wissensbasis)
 Lade das aktuelle Windows-Release von https://github.com/qdrant/qdrant/releases
 (Asset mit "windows" im Namen), entpacke `qdrant.exe` nach `%USERPROFILE%\uv-bin\qdrant.exe`.
 
@@ -281,9 +291,9 @@ Verifiziere:
 ```bash
 ls "$USERPROFILE/Claude-Projects/seo/.claude/skills"
 ```
-Erwartet: 12 Skill-Ordner (u. a. `seo-data-foundation`, `seo-file-audit-orchestrator`,
+Erwartet: 6 Skill-Ordner (`seo-geo-audit`, `seo-geo-report-generator`,
 `seo-helpful-content-audit`, `seo-report-generator`, `seo-url-clustering`,
-`redirect-map-builder`, ...).
+`redirect-map-builder`).
 
 Node-Abhängigkeiten installieren (für die Ingestion-Skripte in `scripts/`):
 ```bash
@@ -293,86 +303,58 @@ npm install
 
 ---
 
-## Phase 3 — MCP-Server konfigurieren
+## Phase 3 — MCP-Server konfigurieren (Claude Code)
 
-Finde zuerst die Claude-Konfigurationsdatei mit dem `mcpServers`-Block auf diesem
-Rechner — je nach installierter Claude-App-Variante liegt sie unter einem von:
-```
-%APPDATA%\Claude\claude_desktop_config.json
-%LOCALAPPDATA%\Claude-3p\claude_desktop_config.json
-```
-Öffne die vorhandene Datei und ergänze/merge im `mcpServers`-Objekt folgende vier
-Einträge (Pfade an den tatsächlichen `%USERPROFILE%` dieses Rechners anpassen —
-nicht wortwörtlich mit fremdem Nutzernamen übernehmen):
+Es gibt drei aktive MCP-Server. Zwei davon liegen im Repo, einer wird pro Benutzer
+registriert. (`qdrant-memory` ist stillgelegt, siehe Phase 1.7.)
 
-```json
-{
-  "mcpServers": {
-    "chrome-devtools": {
-      "command": "cmd",
-      "args": ["/c", "npx", "-y", "chrome-devtools-mcp@latest"],
-      "env": {
-        "PATH": "C:\\Program Files\\nodejs;C:\\Windows\\system32;C:\\Windows"
-      }
-    },
-    "seospider": {
-      "command": "cmd",
-      "args": ["/c", "npx", "mcp-remote", "http://localhost:11435/mcp"],
-      "env": {
-        "PATH": "C:\\Program Files\\nodejs;C:\\Windows\\system32;C:\\Windows"
-      }
-    },
-    "duckdb": {
-      "command": "<USERPROFILE>\\uv-bin\\uv.exe",
-      "args": [
-        "tool", "run", "--with", "mcp<2.0.0", "duckdb-mcp-server",
-        "--db-path", "<USERPROFILE>\\duckdb-data\\main.duckdb"
-      ],
-      "env": {
-        "UV_CACHE_DIR": "<USERPROFILE>\\uv-cache",
-        "UV_TOOL_DIR": "<USERPROFILE>\\uv-tools"
-      }
-    },
-    "qdrant-memory": {
-      "command": "<PATH-ZU-PYTHON>\\python.exe",
-      "args": ["<USERPROFILE>\\uv-bin\\qdrant_mcp_start.py"],
-      "env": {
-        "UV_CACHE_DIR": "<USERPROFILE>\\uv-cache"
-      }
-    }
-  }
-}
-```
+| Server | Wo konfiguriert | Wie |
+|---|---|---|
+| `chrome-devtools` | `.mcp.json` im Repo | kommt mit dem Klonen, nichts zu tun |
+| `duckdb` | `.mcp.json` im Repo | kommt mit dem Klonen, Ordner für die Datenbank anlegen |
+| `seospider` | Benutzer-Ebene (`~/.claude.json`) | einmalig per Befehl registrieren |
 
-Ersetze `<USERPROFILE>` durch den vollen Pfad (z. B. `C:\Users\Max`) und
-`<PATH-ZU-PYTHON>` durch den Pfad des installierten Python 3.12 (finde ihn mit
-`python -c "import sys; print(sys.executable)"`).
+Der Pfad zur DuckDB-Datei in `.mcp.json` nutzt `${USERPROFILE}` und passt sich
+damit automatisch an den Windows-Benutzer an. Nichts in `.mcp.json` ändern und
+nicht mit einem fremden Benutzernamen committen.
 
-Kopiere zuerst das Start-Skript für `qdrant-memory` aus dem geklonten Repo an seinen
-Zielort:
+### 3.1 DuckDB-Ordner anlegen
 ```bash
-mkdir -p "$USERPROFILE/uv-bin"
-cp "$USERPROFILE/Claude-Projects/seo/global/scripts/qdrant_mcp_start.py" "$USERPROFILE/uv-bin/qdrant_mcp_start.py"
+mkdir -p "$USERPROFILE/duckdb-data"
 ```
-(`qdrant.exe` liegt dort bereits aus Phase 1.7.)
+Die Datei `main.duckdb` legt der Server beim ersten Start selbst an. Sie ist
+absichtlich nicht im Repo, weil sie Kundendaten enthalten kann.
 
-Speichere die Config-Datei, starte die Claude-App neu (oder lade MCP-Server neu,
-falls die App das unterstützt, ohne kompletten Neustart), und teste jeden Server:
+### 3.2 seospider registrieren (Benutzer-Ebene)
+Screaming Frog spricht "streamable HTTP", Claude Code kann das direkt. Ein
+Zwischenprogramm wie `mcp-remote` ist nicht nötig.
+```bash
+claude mcp add --transport http --scope user seospider http://localhost:11435/mcp
+```
+Falls der Befehl `claude` in der Shell nicht gefunden wird: den Eintrag stattdessen
+in `%USERPROFILE%\.claude.json` unter `mcpServers` ergänzen:
+```json
+"seospider": { "type": "http", "url": "http://localhost:11435/mcp" }
+```
+Hat der Nutzer in Screaming Frog einen anderen Port gewählt, diesen Port eintragen.
 
-- **chrome-devtools**: rufe ein Tool wie `list_pages` auf — sollte eine (ggf. leere)
-  Liste liefern, kein Verbindungsfehler.
+### 3.3 Projekt-Server freigeben
+Beim ersten Start in `Claude-Projects\seo` fragt Claude Code, ob die Server aus
+`.mcp.json` vertraut werden. Der Nutzer muss das bestätigen. Das lässt sich nicht
+automatisieren.
+
+### 3.4 Testen
+Claude-Code-Session im Ordner `seo` neu starten und jeden Server prüfen:
+
+- **chrome-devtools**: Tool `list_pages` aufrufen. Eine (ggf. leere) Liste ist OK.
 - **seospider**: Screaming Frog muss laufen und der MCP-Server dort aktiv sein
-  (Phase 1.6); rufe `sf_list_allowed_base_directory` auf.
-- **duckdb**: rufe eine einfache Query auf, z. B. `SELECT 1`.
-- **qdrant-memory**: rufe `qdrant-find` mit einer beliebigen Testanfrage auf — beim
-  allerersten Aufruf lädt `mcp-server-qdrant` das Embedding-Modell
-  (`all-MiniLM-L6-v2`, ca. 90 MB) herunter, das braucht einmalig Internetzugang und
-  etwas Zeit.
+  (Phase 1.6). Tool `sf_allowed_base_directory` aufrufen.
+- **duckdb**: Query `SELECT 1` ausführen.
 
-Wenn ein Server nicht antwortet: prüfe zuerst, ob der zugrunde liegende Prozess/
-Port erreichbar ist (z. B. `curl` gegen den jeweiligen lokalen Port), dann ob Pfade
-in der Config zum tatsächlichen Dateisystem dieses Rechners passen, dann ob die
-zugehörige Software (Screaming Frog, uv, Python) aus Phase 1 tatsächlich funktioniert.
+Wenn ein Server nicht antwortet: zuerst prüfen, ob der zugrunde liegende Prozess
+oder Port erreichbar ist (z. B. `curl http://127.0.0.1:11435/mcp`), dann ob `uv`
+und Node.js (Phase 1) funktionieren, dann ob die Server in der Session überhaupt
+als verbunden gelistet sind.
 
 ---
 
@@ -395,8 +377,8 @@ Inhalt existiert: nicht blind überschreiben, sondern Inhalte zusammenführen un
 den Nutzer informieren, was ergänzt wurde.
 
 Test: starte eine neue Claude-Code-Session im Ordner `seo` und prüfe, dass die
-Skills in der Skill-Liste auftauchen (u. a. `seo-file-audit-orchestrator`,
-`seo-data-foundation`, `humanizer`). Ein einfacher Funktionstest:
+Skills in der Skill-Liste auftauchen (u. a. `seo-url-clustering`,
+`seo-report-generator`, `humanizer`). Ein einfacher Funktionstest:
 ```
 /humanizer
 ```
@@ -414,14 +396,12 @@ und alles andere unabhängig davon funktionieren muss:
 - [ ] `git`, `node`, `npm`, `python`, `uv` melden alle eine Version
 - [ ] `git clone` von `claude-seo` erfolgreich, Skills sichtbar
 - [ ] Screaming Frog installiert, lizenziert, MCP-Server antwortet auf Port 11435
-- [ ] Qdrant-Server läuft dauerhaft (Scheduled Task oder manuell gestartet),
-      antwortet auf Port 6333
-- [ ] Alle vier MCP-Server (`chrome-devtools`, `seospider`, `duckdb`, `qdrant-memory`)
-      sind in der Claude-Config eingetragen und antworten auf einen Testaufruf
+- [ ] Alle drei MCP-Server (`chrome-devtools`, `seospider`, `duckdb`) sind
+      verbunden und antworten auf einen Testaufruf (Phase 3.4)
 - [ ] `~/.claude/CLAUDE.md` (global) und `seo/CLAUDE.md` (Projekt) sind vorhanden
 - [ ] `/humanizer` funktioniert
-- [ ] Ein SEO-Skill (z. B. `seo-data-foundation`) lässt sich mit einer Testdatei
-      anstoßen und arbeitet die erwarteten Schritte ab
+- [ ] `seo-url-clustering` findet nach `SHOW TABLES` in DuckDB seine Basistabelle
+      (oder meldet sauber, dass noch keine Crawl-Tabelle gestaged ist)
 
 Berichte kurz, welche Punkte funktionieren, welche (falls vorhanden) noch offen
 sind (z. B. weil Screaming-Frog-Lizenzdaten fehlen), und was der Nutzer dafür
@@ -429,7 +409,9 @@ noch beisteuern muss.
 
 ---
 
-## Phase 6 — SEO-Wissensbasis in Qdrant einspielen (letzter Schritt)
+## Phase 6 — SEO-Wissensbasis in Qdrant einspielen (derzeit stillgelegt, überspringen)
+
+> Nur nötig, wenn `qdrant-memory` wieder aktiviert wird (siehe Phase 1.7).
 
 Die Skills rufen `qdrant-find` zu Beginn jeder Diagnose auf, um Hintergrundwissen
 aus "The Art of SEO" (4th Edition) und den Google Search Central Docs abzurufen.

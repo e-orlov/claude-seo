@@ -11,7 +11,7 @@
         "mcp<2",
         "mcp-server-duckdb",
         "--db-path",
-        "C:\\Users\\Evgeniy\\duckdb-data\\main.duckdb"
+        "${USERPROFILE}\\duckdb-data\\main.duckdb"
       ]
     }
   }
