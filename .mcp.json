@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "chrome-devtools": {
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "chrome-devtools-mcp@latest"]
+    },
+    "duckdb": {
+      "command": "uvx",
+      "args": [
+        "mcp-server-duckdb",
+        "--db-path",
+        "C:\\Users\\Evgeniy\\duckdb-data\\main.duckdb"
+      ]
+    }
+  }
+}
