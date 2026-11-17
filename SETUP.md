@@ -33,7 +33,7 @@ Ein Git-Repo mit dem kompletten Werkzeugkasten wurde bereits vorbereitet:
   chrome-devtools als Standard-Datenquelle (nur wenn der Nutzer es explizit für
   eine konkrete Aufgabe anfragt).
 - `global/CLAUDE.md` — projektübergreifende Policy (DuckDB-Staging-Regel,
-  Humanizer-Pflicht für alle Texte; enthält noch Qdrant-Regeln, siehe Phase 1.7)
+  Humanizer-Pflicht für alle Texte)
 - `global/skills/humanizer/SKILL.md` — Skill, der KI-typische Schreibmuster aus Texten entfernt
 - `.claude/skills/*` — sechs SEO-Skills: `seo-url-clustering`,
   `seo-helpful-content-audit`, `seo-geo-audit`, `seo-geo-report-generator`,
@@ -41,20 +41,13 @@ Ein Git-Repo mit dem kompletten Werkzeugkasten wurde bereits vorbereitet:
   gemischten Datei-Workflows (Datenfundament, Orchestrator, Diagnose, Scoring)
   liegen nur noch auf dem Branch `archive/legacy-file-audit-skills`.
 - `.mcp.json` — Projekt-MCP-Server `chrome-devtools` und `duckdb`
-- `scripts/*.js` — Wissensbasis-Ingestion-Tooling (PDF-Extraktion, Chunking)
 - `.claude/skills/seo-report-generator/` — der einzige zulässige Report-Renderer
   (`report_renderer.py` + `docx_helpers.py` + `report_config.py`, Python/`python-docx`).
   Jedes `.docx`-Reporting läuft ausschließlich hierüber, kein eigenständiges
   Report-Script daneben (siehe CLAUDE.md "Report Infrastructure").
-- `global/scripts/qdrant_mcp_start.py`, `global/scripts/qdrant-server-config.yaml` —
-  Start-Skript und Config für den lokalen Qdrant-Vektor-Server (derzeit stillgelegt)
 
 **Bewusst nicht im Repo** (und das ist beabsichtigt, nicht vergessen):
 - `clients/` — echte Kundendaten aus Audits. Bleiben pro Maschine lokal, nicht geteilt.
-- `knowledge/` — Buchauszüge ("The Art of SEO", 4th Ed.) und gescrapte Google-Docs-Inhalte,
-  die die SEO-Wissensbasis in Qdrant füttern. Urheberrechtlich nicht für Weitergabe per
-  öffentlichem Git-Repo geeignet — wird stattdessen separat als passwortgeschützte
-  `knowledge.zip` übertragen und lokal eingespielt (siehe Phase 6, letzter Schritt).
 
 ---
 
@@ -224,53 +217,6 @@ dieses Limit hinaus brauchen eine aktive Lizenz (`Licence` → `Enter Licence Ke
 in der UI). Lizenzdaten dafür vom Nutzer erfragen, falls noch nicht hinterlegt —
 das ist eine echte Entscheidung/Zugangsdaten-Frage, kein technischer Fehler.
 
-### 1.7 Qdrant-Server — derzeit stillgelegt, diesen Schritt überspringen
-Der MCP-Server `qdrant-memory` wurde am 2026-11-17 aus der Konfiguration entfernt
-(Verbindungs-Timeouts). Auf einem neuen Rechner nicht einrichten, solange der
-Nutzer es nicht ausdrücklich verlangt. Regeln in `global/CLAUDE.md` und Skills,
-die `qdrant-find`/`qdrant-store` nennen, laufen dann ins Leere; das ist erwartet.
-Die Anleitung unten bleibt nur als Referenz für eine spätere Reaktivierung.
-
-#### Referenz: Qdrant-Server (lokale Vektor-Datenbank für Memory + SEO-Wissensbasis)
-Lade das aktuelle Windows-Release von https://github.com/qdrant/qdrant/releases
-(Asset mit "windows" im Namen), entpacke `qdrant.exe` nach `%USERPROFILE%\uv-bin\qdrant.exe`.
-
-Lege die Server-Config an (Vorlage liegt im Repo unter `global/scripts/qdrant-server-config.yaml`):
-```bash
-mkdir -p /c/qdrant-server
-cp global/scripts/qdrant-server-config.yaml /c/qdrant-server/config.yaml
-```
-Storage-Pfad in der Config ist relativ (`./storage`) und liegt damit unter
-`C:\qdrant-server\storage`.
-
-Test manuell:
-```bash
-"$USERPROFILE/uv-bin/qdrant.exe" --config-path C:\qdrant-server\config.yaml
-```
-(in einem eigenen Terminal laufen lassen, dann in einem zweiten testen:)
-```bash
-curl -s http://127.0.0.1:6333/collections
-```
-Ein dauerhaft laufender Scheduled Task ist **nicht nötig** — auf der Referenzmaschine
-gibt es aktuell keinen, trotzdem läuft der Server zuverlässig, weil
-`qdrant_mcp_start.py` (aus Phase 3) bei jeder Verbindung selbst prüft, ob Port 6333
-schon offen ist, und `qdrant.exe` sonst automatisch startet. Nur falls du lieber
-einen dauerhaft laufenden Prozess ab Systemstart willst, richte optional einen
-Scheduled Task ein (`schtasks /create` oder Task Scheduler).
-
-**Bekannte Eigenheiten, kein Bug:**
-- Mehrere gleichzeitig offene Claude-Code-Sessions erzeugen jeweils einen eigenen
-  `mcp-server-qdrant.exe`-Prozess, die alle gegen denselben `qdrant.exe`-Server auf
-  Port 6333 sprechen. Das ist normal und kein Zombie-Prozess-Problem, solange der
-  Server selbst antwortet (`curl http://127.0.0.1:6333/collections`).
-- Die eigentliche Unzuverlässigkeit lag nicht am Server, sondern an einer nicht
-  umsetzbaren Regel im alten `global/CLAUDE.md`: "bei ~70% Kontext-Füllstand
-  proaktiv `/compact` aufrufen" — dafür gibt es kein Werkzeug und keine Anzeige des
-  Füllstands, die Regel konnte nie greifen. Das aktuelle `global/CLAUDE.md` in
-  diesem Repo hat das bereits korrigiert: Memories werden jetzt sofort beim
-  Entstehen gespeichert statt auf einen (nie eintretenden) Kompaktierungs-Hinweis
-  zu warten.
-
 ---
 
 ## Phase 2 — Git-Repo klonen
@@ -295,18 +241,13 @@ Erwartet: 6 Skill-Ordner (`seo-geo-audit`, `seo-geo-report-generator`,
 `seo-helpful-content-audit`, `seo-report-generator`, `seo-url-clustering`,
 `redirect-map-builder`).
 
-Node-Abhängigkeiten installieren (für die Ingestion-Skripte in `scripts/`):
-```bash
-cd "$USERPROFILE/Claude-Projects/seo"
-npm install
-```
 
 ---
 
 ## Phase 3 — MCP-Server konfigurieren (Claude Code)
 
 Es gibt drei aktive MCP-Server. Zwei davon liegen im Repo, einer wird pro Benutzer
-registriert. (`qdrant-memory` ist stillgelegt, siehe Phase 1.7.)
+registriert.
 
 | Server | Wo konfiguriert | Wie |
 |---|---|---|
@@ -390,8 +331,7 @@ zurückkommt.
 ## Phase 5 — Abschluss-Smoketest
 
 Führe an dieser Stelle einmal komplett durch und bestätige jeden Punkt — die
-Wissensbasis (Phase 6) folgt bewusst danach, weil sie optional/zeitaufwändig ist
-und alles andere unabhängig davon funktionieren muss:
+jeden Punkt der Liste:
 
 - [ ] `git`, `node`, `npm`, `python`, `uv` melden alle eine Version
 - [ ] `git clone` von `claude-seo` erfolgreich, Skills sichtbar
@@ -408,83 +348,6 @@ sind (z. B. weil Screaming-Frog-Lizenzdaten fehlen), und was der Nutzer dafür
 noch beisteuern muss.
 
 ---
-
-## Phase 6 — SEO-Wissensbasis in Qdrant einspielen (derzeit stillgelegt, überspringen)
-
-> Nur nötig, wenn `qdrant-memory` wieder aktiviert wird (siehe Phase 1.7).
-
-Die Skills rufen `qdrant-find` zu Beginn jeder Diagnose auf, um Hintergrundwissen
-aus "The Art of SEO" (4th Edition) und den Google Search Central Docs abzurufen.
-Dieser Inhalt liegt bewusst nicht im Git-Repo, auch nicht passwortgeschützt gezippt
-— das Repo ist öffentlich, und ein Passwort verschleiert nur den Inhalt, verhindert
-aber nicht, dass GitHub die Archiv-Datei selbst öffentlich hostet. Übertragen wird
-`knowledge.zip` deshalb ausschließlich außerhalb von Git.
-
-**Schritt A — Datei und Passwort beim Repo-Admin anfordern.** Sowohl `knowledge.zip`
-als auch das zugehörige Archiv-Passwort müssen direkt beim Admin/Betreiber des
-`claude-seo`-Repos erfragt werden (nicht aus dem Repo selbst — dort liegt keines
-von beidem). Prüfe zuerst, ob die Datei schon da ist:
-```bash
-ls "$USERPROFILE/Claude-Projects/seo/knowledge.zip"
-```
-Falls nicht vorhanden: bitte den Nutzer explizit, beim Repo-Admin sowohl die Datei
-(abzulegen unter `%USERPROFILE%\Claude-Projects\seo\`, z. B. per USB-Stick oder
-sicherer Dateiübertragung) als auch das Passwort zu erfragen. Erst weitermachen,
-wenn die Datei da ist.
-
-**Schritt B — Passwort sicherstellen.** Falls in Schritt A nur die Datei kam, aber
-noch kein Passwort genannt wurde: das ist eine echte Zugangsdaten-Frage, kein
-technischer Fehler — frag den Nutzer direkt danach, ebenfalls beim Repo-Admin zu
-erfragen, falls er es selbst nicht hat.
-
-**Schritt C — Entpacken.** Windows Explorer kann passwortgeschützte Zips nicht
-entpacken; nutze Python (aus Phase 1.3 bereits vorhanden):
-```bash
-cd "$USERPROFILE/Claude-Projects/seo"
-python -c "
-import zipfile, getpass
-pwd = input('Archiv-Passwort: ').encode()
-with zipfile.ZipFile('knowledge.zip') as z:
-    z.extractall('knowledge', pwd=pwd)
-print('Entpackt.')
-"
-```
-Falls das mit `NotImplementedError` oder einem Passwort-Fehler abbricht, ist das
-Archiv AES-verschlüsselt (z. B. 7-Zip-Standard) statt klassisch ZipCrypto-verschlüsselt
-— behebe das selbst, indem du `pyzipper` statt `zipfile` nutzt:
-```bash
-pip install pyzipper
-python -c "
-import pyzipper
-pwd = input('Archiv-Passwort: ').encode()
-with pyzipper.AESZipFile('knowledge.zip') as z:
-    z.extractall('knowledge', pwd=pwd)
-print('Entpackt.')
-"
-```
-
-**Schritt D — In Qdrant laden.** Das Archiv enthält bereits fertig gechunkte
-Dateien (u. a. `*-ingestion.ndjson`, `googledocs-chunks/*.json`) — nicht einzeln
-per `qdrant-store`-Tool-Aufruf laden (bei Tausenden Chunks viel zu langsam/teuer),
-sondern per Bulk-Loader-Skript aus dem Repo, das direkt gegen die Qdrant-REST-API
-embedded und schreibt:
-```bash
-pip install fastembed requests
-python global/scripts/bulk_load_qdrant.py knowledge
-```
-Das Skript meldet die Anzahl gefundener Dokumente und den Fortschritt in Batches.
-
-**Schritt E — Verifizieren.**
-```bash
-curl -s http://127.0.0.1:6333/collections/claude_code_memory | python -c "import sys,json; print(json.load(sys.stdin)['result']['points_count'])"
-```
-Erwartet: eine Punktzahl deutlich über 0 (Referenzmaschine: 3378). Optional einmal
-`qdrant-find` mit einer SEO-Fachfrage testen und prüfen, dass thematisch passende
-Treffer zurückkommen.
-
-Dieser Schritt ist nicht blockierend für alles davor — ohne ihn funktionieren alle
-Audit-Skills weiterhin, `qdrant-find` liefert dann nur weniger oder keine
-Hintergrundtreffer, bis das Archiv geliefert und eingespielt wurde.
 
 ## Hinweis zur Evidenz-Registry
 
