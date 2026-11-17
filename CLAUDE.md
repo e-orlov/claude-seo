@@ -379,6 +379,11 @@ Example:
 
 If multiple evidence entries are created in one session, write all of them to the registry in a single update before returning any IDs to the audit output.
 
+### Evidenz cell and Issue ID format
+
+- In report tables the Evidenz cell is `E-NNN | <source_file> | <field or calculation>`; several entries are comma-separated (`E-318, E-319 | …`). The Issue ID is not written into the cell — it lives in the registry row of the cited E-NNN.
+- New Issue IDs use `<AREA>-NNN` with a hyphen (`TECH-001`, `RANK-003`; sub-findings `RANK-003a`). Older rows without a hyphen and legacy `SRC…` / `SITE-…` rows stay unchanged.
+
 ### ID format
 
 - Format: `E-` followed by a zero-padded three-digit number, e.g. `E-001`, `E-042`, `E-123`.

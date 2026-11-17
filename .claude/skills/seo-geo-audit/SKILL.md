@@ -31,7 +31,8 @@ status, or render a client report.
 - Run only after the user explicitly invokes `/seo-geo-audit`.
 - Do not invoke `seo-data-foundation` or `seo-file-audit-orchestrator`.
 - Invoke `seo-url-clustering` automatically through the explicit run/table/field
-  contract after Screaming Frog staging succeeds.
+  contract (section "GEO Run Mode" of that skill) after Screaming Frog staging
+  succeeds.
 - Do not invoke the report skill automatically.
 
 ## Load first

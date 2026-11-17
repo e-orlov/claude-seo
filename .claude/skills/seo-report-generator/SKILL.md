@@ -171,11 +171,11 @@ All supported block types. Use only these — the renderer raises an error on un
     "columns": ["Col A", "Col B", "Col C", "Evidenz"],
     "widths":  [6.0, 8.0, 7.6, 4.5],
     "rows": [
-        {"bg": "LRED",   "cells": ["val1", "val2", "val3", "E001 | file.csv | field"]},
-        {"bg": "LYELL",  "cells": ["val4", "val5", "val6", "E002 | file.csv | field"]},
-        {"bg": "LGREEN", "cells": ["val7", "val8", "val9", "E003 | file.csv | field"]},
+        {"bg": "LRED",   "cells": ["val1", "val2", "val3", "E-101 | file.csv | field"]},
+        {"bg": "LYELL",  "cells": ["val4", "val5", "val6", "E-102 | file.csv | field"]},
+        {"bg": "LGREEN", "cells": ["val7", "val8", "val9", "E-103 | file.csv | field"]},
     ],
-    "summary": {"bg": "NAVY", "cells": ["Gesamt", "...", "...", "E001-E003 | file.csv"]},
+    "summary": {"bg": "NAVY", "cells": ["Gesamt", "...", "...", "E-101, E-102, E-103 | file.csv"]},
 }
 ```
 
@@ -221,11 +221,11 @@ from docx_helpers import pct
 # Correct — pre-formatted before assignment
 count = 1180
 baseline = 4866
-"cells": [pct(count, baseline), "Hoch", "E001 | internal.csv | count"]
+"cells": [pct(count, baseline), "Hoch", "E-101 | internal.csv | count"]
 # → "1180 (24,2 % von 4866 URLs)"
 
 # Also correct — inline f-string
-"cells": [f"{count} ({count/baseline*100:.1f} % von {baseline} URLs)", "Hoch", "E001 | internal.csv | count"]
+"cells": [f"{count} ({count/baseline*100:.1f} % von {baseline} URLs)", "Hoch", "E-101 | internal.csv | count"]
 ```
 
 This applies to all computed values:
@@ -259,15 +259,29 @@ Every table must have a final column named **"Evidenz"**.
 
 Format for every evidence cell:
 ```
-"<issue_id> | <source_file> | <field or calculation>"
+"E-NNN | <source_file> | <field or calculation>"
 ```
 
-Examples:
-- `"ITR001 | internal_redirection_(3xx)_inlinks.csv | count(Destination URL)"`
-- `"IBL004 | pyroweb.de-link-intersect.csv | DR >= 30, intersect=0"`
-- `"IHL001 | hreflang.csv | missing return link, rows 14-47"`
+Several registered evidence entries for one observation are comma-separated:
+`"E-318, E-319 | <source_file> | <field or calculation>"`.
 
-Never leave the Evidenz cell blank or use a generic string without an issue_id.
+The Issue ID is **not** written into the Evidenz cell. It lives in
+`clients/evidence_registry.md`, in the row of the cited E-NNN.
+
+Examples:
+- `"E-101 | internal_redirection_(3xx)_inlinks.csv | count(Destination URL)"`
+- `"E-204 | pyroweb.de-link-intersect.csv | DR >= 30, intersect=0"`
+- `"E-318, E-319 | hreflang.csv | missing return link, rows 14-47"`
+
+Never leave the Evidenz cell blank or use a string without a registered E-NNN.
+
+### Issue ID format
+
+Issue IDs follow `<AREA>-NNN` with a hyphen, e.g. `TECH-001`, `LINK-002`,
+`RANK-003`. Optional sub-findings add a lowercase letter (`RANK-003a`).
+Older registry rows without a hyphen (`ITECH001`, `IA11Y001`) and legacy `SRC…` /
+`SITE-…` rows stay as they are — do not rename them. Use the hyphenated form
+for every new Issue ID.
 
 ### Background color rule
 
@@ -331,7 +345,7 @@ Evidenz: 4.0–6.0 cm   (always last column)
 - [ ] Script saved to `clients/<domain>/<date_slug>/work/` — not to project root
 - [ ] All SECTIONS values derived from current audit data and confirmed with user
 - [ ] Every table has an "Evidenz" column as last column
-- [ ] Every evidence cell: `"<issue_id> | <file> | <field>"`
+- [ ] Every evidence cell: `"E-NNN | <file> | <field>"` (Issue ID stays in the registry)
 - [ ] No E-NNN recycled for a different observation — each ID used only for the
       observation described in its registry entry
 - [ ] All cell values are pre-formatted strings — no calculations in cells
@@ -387,7 +401,7 @@ These scripts contain the authoritative structured data behind every report:
 3. Collect all table rows where `bg in ("LRED", "LYELL")`.
 4. For each collected row, record:
    - `topic` from `CFG["report_title"]`
-   - `issue_id` from the Evidenz cell (first token before ` | `)
+   - `issue_id` looked up in `clients/evidence_registry.md` via the first E-NNN of the Evidenz cell
    - `issue_text` from the first cell
    - `affected` from the cell that contains a number or percentage (typically cell 2 or 3)
    - `priority` from the cell containing "Kritisch" / "Hoch" / or derived from `bg`
@@ -476,7 +490,7 @@ CFG = {
 
 - [ ] Source is `gen_*.py` scripts — not `.docx` files
 - [ ] `gen_summary_*.py` excluded from source glob (no recursion)
-- [ ] Every row traces back to an existing issue_id in an individual report
+- [ ] Every row traces back to an existing E-NNN (and its registry Issue ID) in an individual report
 - [ ] `bg` in summary table matches original priority (LRED / LYELL preserved)
 - [ ] "Warum hohe Priorität" column contains a concise 1–2 sentence rationale
 - [ ] No findings invented or inferred — strictly extracted from existing SECTIONS data

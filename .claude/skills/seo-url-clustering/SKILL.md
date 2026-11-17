@@ -6,14 +6,14 @@ description: >
   a fixed 3-way split. Horizontal clustering empirically probes URL structure
   and proposes semantic cross-variant groupings with mandatory full
   classification coverage. Works for any site — no site- or industry-specific
-  vocabulary is hardcoded. Run standalone via /seo-url-clustering, typically
-  after seo-data-foundation and before the diagnosis skills.
+  vocabulary is hardcoded. Run standalone via /seo-url-clustering on a crawl
+  table already staged in DuckDB.
 user-invokable: true
 argument-hint: "[crawl-table-or-folder]"
 license: MIT
 metadata:
   version: "1.0.0"
-  category: seo-file-audit
+  category: seo-clustering
 ---
 
 # SEO URL Clustering
@@ -25,16 +25,15 @@ cluster layers — **vertical** (technical state: status code / indexability)
 and **horizontal** (structural and topical: what kind of page, what
 region/language, what topic or category) — so that findings can be expressed
 as "this affects cluster X (n URLs, y%)" instead of only naming individual
-URLs. This is consistent with the project's existing Cluster Naming Rule
-(CLAUDE.md; `seo-technical-file-diagnosis`): report tables must name clusters
-by pattern, not by individual URL.
+URLs. This is consistent with the project rule in CLAUDE.md (Scoring
+Principles): URL cluster names in report tables use patterns, not individual
+URLs.
 
-This skill is standalone and user-invocable (`/seo-url-clustering`). It is
-typically run after `seo-data-foundation` (so `file_inventory` and
-`schema_registry` are available) and before the diagnosis skills (so findings
-can be scoped by cluster), but it is not a pipeline gate — running it is
-recommended when cluster-scoped findings add value (large crawls, multiple
-locales/languages, high page-type diversity), not mandatory for every audit.
+This skill is standalone and user-invocable (`/seo-url-clustering`). It needs
+only a Screaming Frog HTML crawl table staged in DuckDB. It is not a pipeline
+gate — running it is recommended when cluster-scoped findings add value (large
+crawls, multiple locales/languages, high page-type diversity), not mandatory
+for every audit.
 
 Vertical clustering is a fixed, generic 3-way split and works identically for
 any site. Horizontal clustering is a data-driven **methodology**, not a fixed
@@ -44,9 +43,9 @@ by the user, never assumed or hardcoded in this skill's own text.
 
 ## Datenbasis: DuckDB
 
-This skill reads exclusively from tables already staged in DuckDB (Phase 0 of
-`seo-file-audit-orchestrator`, or staged manually before invoking this
-skill) — typically the Screaming Frog "Internal"/"Intern" HTML export.
+This skill reads exclusively from tables already staged in DuckDB (staged per
+the global `CLAUDE.md` DuckDB rule before invoking this skill) — typically the
+Screaming Frog "Internal"/"Intern" HTML export.
 
 **Step 0 of this skill: discover the base table.**
 
@@ -57,10 +56,10 @@ DESCRIBE crawl_internal;
 
 Column names may be German or English depending on Screaming Frog's UI
 language (e.g. `Adresse`/`Address`, `Status-Code`/`Status Code`,
-`Indexierbarkeit`/`Indexability`, `Inhaltstyp`/`Content Type`). Resolve via
-the same canonical-field alias mechanism defined in `seo-data-foundation`
-Step 5 — do not hardcode a single language's column name anywhere in this
-skill's SQL. Use these canonical names throughout this skill's prose and SQL:
+`Indexierbarkeit`/`Indexability`, `Inhaltstyp`/`Content Type`). Resolve them
+with the alias table below (derived from `DESCRIBE`, headers over file names) —
+do not hardcode a single language's column name anywhere in this skill's SQL.
+Use these canonical names throughout this skill's prose and SQL:
 
 | Canonical name | Typical source column |
 |---|---|
@@ -101,15 +100,14 @@ resolve at the value level too, not only at the column-name level.
   segment value (e.g. `segment_value = "pd"`), never under an invented
   business label (e.g. "Produktseite") that the user has not confirmed.
 - Table names proposed in Step 7 are conventions, not mandatory names,
-  matching the project-wide rule in CLAUDE.md's Data Staging Rule — the
-  actual name used is recorded in `file_inventory`.
+  matching the project-wide rule in CLAUDE.md's Data Staging Rule — state the
+  actual names used in the final summary (Output section).
 - Do not load the full per-URL cluster table into context as a "summary".
   Export small aggregated tables per dimension instead (Output section).
 
 ## Status Taxonomy
 
-Two skill-local typed status fields, additional to (not replacing) Families
-A–F defined in `seo-data-foundation`.
+Two skill-local typed status fields. Use only the values listed here.
 
 ### `classification_status`
 
@@ -135,8 +133,9 @@ Describes the confirmation state of a proposed dominant folder/pattern (Step 4).
 
 ## Step 1: Scope to HTML and Discover the Base Table
 
-1. Identify the crawl table from `file_inventory` (field `duckdb_table`) or
-   via `SHOW TABLES` if `seo-data-foundation` was not run.
+1. Identify the crawl table via `SHOW TABLES` / the table named by the user, and
+   confirm its host column matches the audited domain (the DB is persistent and
+   may hold other clients' data).
 2. Filter to HTML-only using the canonical `content_type` signal. If no
    explicit content-type field is available, document the fallback used
    (e.g. inferring from URL/file-extension patterns) and flag reduced
@@ -300,7 +299,7 @@ its assigned canonical group must be identical in both places.
 
 Combine the vertical, horizontal-structural, and horizontal-semantic layers
 and materialize into DuckDB. Proposed table names (convention, not mandatory
-— record the actual name used in `file_inventory`):
+— state the actual names used in the final summary):
 
 | Table | Grain | Key fields |
 |---|---|---|
@@ -330,15 +329,78 @@ distribution, semantic group sizes) — never re-export the full per-URL
 table as the "summary." This matches the project's context-budget
 discipline: load better context, not more context.
 
-## Handoff to Diagnosis Skills
+## GEO Run Mode (only when called by `seo-geo-audit`)
 
-Diagnosis skills may join their findings against `url_clusters_vertical` /
+`seo-geo-audit` invokes this skill automatically after Screaming Frog staging
+and requires the interface below. Outside a GEO run this section does not
+apply; Steps 1–7 and the `url_clusters_*` tables stay unchanged. The
+authoritative DDL is `.claude/geo-audit/contracts/duckdb-schema.sql`; on any
+difference, the contract wins.
+
+### Input
+
+- `run_id`, and the staged crawl table `geo_sf_urls` filtered to that `run_id`
+  and `is_html = true`. Its key is `normalized_page_url`; use it instead of
+  `page_url` for every join and every output row.
+- The canonical fields (`status_code`, `indexability`, `content_type`) come
+  from the same table, so no alias resolution is needed.
+- Domain-wide `geo_cluster_label_mappings` (confirmed labels and criticality
+  from earlier runs of the same `domain`).
+
+### Output tables (all keyed by `run_id` + `cluster_run_id`)
+
+| Table | Content |
+|---|---|
+| `geo_cluster_runs` | One row: `schema_version`, `crawl_universe_sha256`, `source_table`, `html_url_count`, `unresolved_count` |
+| `geo_url_clusters_vertical` | Step 2 result per `normalized_page_url` |
+| `geo_url_clusters_horizontal` | Per URL: `structural_pattern`, `url_type`, `pattern_confirmation_status`, `semantic_label`, `business_criticality` |
+| `geo_url_prefix_clusters` | Path-prefix hierarchy: `cluster_id`, `normalized_prefix`, `depth`, `parent_cluster_id` |
+| `geo_url_cluster_memberships` | One row per URL and every prefix cluster it belongs to (parent and child) |
+| `geo_cluster_semantic_map` | Step 5 slug map (`canonical_group`, `classification_status`, `assignment_signal`) |
+
+`cluster_run_id` is new for every invocation. `crawl_universe_sha256` is the
+hash of the sorted `normalized_page_url` list of the HTML universe; write the
+same value to the run header, `geo_cluster_runs`, the prefix clusters and the
+memberships.
+
+### Additional rules
+
+1. **Path-prefix hierarchy.** Build a prefix cluster for every path prefix that
+   occurs in the HTML universe, depth 0 = site root, each with its
+   `parent_cluster_id`. Membership rows exist for every ancestor prefix, so a
+   URL has several memberships. Never add parent and child counts to get a
+   sitewide total; sitewide numbers use distinct `normalized_page_url`.
+2. **Recompute every run.** Rebuild all memberships from the current crawl.
+   Only labels may be reused, never memberships from an earlier run
+   (`recompute_memberships_each_run`).
+3. **Label reuse.** For a `normalized_pattern` with a confirmed row in
+   `geo_cluster_label_mappings` and an identical `pattern_definition_sha256`,
+   reuse `semantic_label` and `business_criticality` without asking again. A
+   changed definition or a new pattern is `proposed` and needs confirmation.
+4. **Confirmation scope.** The user confirms only `semantic_label` and
+   `business_criticality` (`critical|high|medium|low`) — not memberships or
+   counts. While confirmations are open the run state is
+   `WAITING_FOR_CLUSTER_CONFIRMATION`; do not continue silently with
+   `proposed` patterns (this tightens the Step 4 rule for GEO runs).
+5. **Completion.** `unresolved_count` must be exactly 0
+   (`require_zero_unresolved`): every URL has one vertical and one horizontal
+   row, and no semantic slug remains `unclassified_needs_review`. Otherwise
+   stop and report the open items; do not hand off.
+6. **Hand-off.** Return `cluster_run_id`, `crawl_universe_sha256`,
+   `html_url_count`, `vertical_row_count`, `horizontal_row_count`,
+   `prefix_membership_count`, `unresolved_count` and
+   `memberships_recomputed = true`. These map 1:1 to `clusteringResult` in
+   `analysis-package.schema.json`.
+7. **Boundaries.** Write only the tables above. No `url_clusters_*` tables, no
+   live calls, no other source than `geo_sf_urls` and the label mappings.
+
+## Reuse of the cluster tables
+
+Later analyses may join their findings against `url_clusters_vertical` /
 `url_clusters_horizontal` on `page_url` to express affected scope by cluster
-name (pattern-level, per the existing Cluster Naming Rule) instead of by
-individual URL, and to feed the Cross-Area Priority Matrix's "Affected
-Scope" dimension more precisely than a raw percentage alone. If this skill
-has not been run for a given audit, diagnosis skills fall back to ad hoc
-URL-pattern naming as today — this skill is recommended, not a hard gate.
+name (pattern-level) instead of by individual URL, and to feed the
+Cross-Area Priority Matrix's "Affected Scope" dimension more precisely than a
+raw percentage alone. Running this skill is recommended, not a hard gate.
 
 ## Basis für erweiterte Cluster mit weiteren Datenquellen
 
@@ -351,14 +413,14 @@ logic (Steps 1–6). Examples:
 - `url_clusters_horizontal` ⋈ `gsc_pages` on `page_url` → aggregate clicks /
   impressions per `url_type` / `canonical_group` (e.g. "which product
   category group drives the most clicks despite a high non-indexable rate").
-- `url_clusters_semantic_group_map` ⋈ `ahrefs_backlinks` via the join key
-  from `join_key_report` → backlink equity per semantic group instead of per
-  individual URL.
+- `url_clusters_semantic_group_map` ⋈ `ahrefs_backlinks` via a normalized
+  URL join key (document the normalization used) → backlink equity per
+  semantic group instead of per individual URL.
 - `url_clusters_vertical` ⋈ `ga4_landing_pages` → sessions/conversions per
   vertical cluster (e.g. traffic share landing on `non_200` URLs as a sign
   of misconfigured internal links).
 
 These joins are not performed by this skill itself — this skill only
 guarantees that its output tables are stably named and joinable on
-`page_url`, so diagnosis skills and later ad hoc analyses can build on them
-instead of recomputing cluster assignment for every new question.
+`page_url`, so later analyses can build on them instead of recomputing
+cluster assignment for every new question.
