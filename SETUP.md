@@ -266,6 +266,22 @@ mkdir -p "$USERPROFILE/duckdb-data"
 Die Datei `main.duckdb` legt der Server beim ersten Start selbst an. Sie ist
 absichtlich nicht im Repo, weil sie Kundendaten enthalten kann.
 
+**Bestehende Datenbank vom alten Rechner übernehmen:** `main.duckdb` nicht
+kopieren. Auf dem alten Rechner den Export erzeugen (über den `duckdb`-MCP oder
+die DuckDB-CLI) und den Ordner als ZIP mitbringen:
+
+```sql
+EXPORT DATABASE 'C:\Users\<Benutzer>\duckdb-data\export' (FORMAT PARQUET);
+```
+
+Auf dem neuen Rechner nach `%USERPROFILE%\duckdb-data\export` entpacken und laden:
+
+```sql
+IMPORT DATABASE 'C:\Users\<Benutzer>\duckdb-data\export';
+```
+
+Danach Tabellenanzahl und einige Zeilenzahlen mit dem alten Rechner vergleichen.
+
 ### 3.2 seospider registrieren (Benutzer-Ebene)
 Screaming Frog spricht "streamable HTTP", Claude Code kann das direkt. Ein
 Zwischenprogramm wie `mcp-remote` ist nicht nötig.
@@ -352,8 +368,7 @@ noch beisteuern muss.
 ## Hinweis zur Evidenz-Registry
 
 `clients/evidence_registry.md` (globaler Zähler für Evidenz-IDs `E-NNN`) ist bewusst
-nicht Teil des Repos. Auf diesem Rechner beginnt die Zählung unabhängig bei `E-001`,
-wenn der erste Audit hier startet. Falls eine gemeinsame, rechnerübergreifende
-Zählung gewünscht ist, müsste `clients/evidence_registry.md` zusätzlich versioniert
-und vor jedem Audit auf beiden Rechnern synchronisiert (`git pull`/`push`) werden —
-das ist eine bewusste Entscheidung des Nutzers, keine automatische Vorgabe.
+nicht Teil des Repos: Das Repo ist öffentlich und enthält nur Anleitungen, keine
+Kundendaten. Bei einem Umzug die Datei zusammen mit dem DuckDB-Export auf anderem
+Weg (ZIP, Laufwerk) auf den neuen Rechner bringen und nach `clients/` legen, sonst
+beginnt die Zählung dort bei `E-001` und die IDs kollidieren.

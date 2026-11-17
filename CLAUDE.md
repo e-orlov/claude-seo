@@ -90,6 +90,18 @@ See global `CLAUDE.md` for the base DuckDB staging rule (stage before analyze). 
 
 The DuckDB database is persistent and shared across clients: before using any table, check its host column against the audited domain.
 
+### Moving to another computer
+
+`main.duckdb` is not in the repo (it holds client data) and does not move with a `git clone`. Whenever the user mentions moving to a new machine, setting one up, or onboarding (see `SETUP.md`), say this before anything else:
+
+> Export the DuckDB database and give me the export folder (zipped). Run this query via the `duckdb` MCP (or in the DuckDB CLI), then zip the folder:
+>
+> `EXPORT DATABASE 'C:\Users\<user>\duckdb-data\export' (FORMAT PARQUET);`
+
+On the new machine, after unzipping to `<USERPROFILE>\duckdb-data\export`, load it with `IMPORT DATABASE '<USERPROFILE>\duckdb-data\export';`, then check the table count and a few row counts against the old machine. Do not copy `main.duckdb` itself between machines or versions.
+
+Also ask for `clients/evidence_registry.md` (the evidence counter; otherwise numbering restarts and IDs collide). Client data, the export and the registry travel out-of-band (zip, drive) and never go into the git repo, which is public and holds instructions only.
+
 ## Reporting Rules
 
 - Priority labels in client-facing reports are German: **Kritisch / Hoch / Mittel / Niedrig**. Analytical tables may keep stable English codes.
