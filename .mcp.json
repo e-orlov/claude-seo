@@ -7,6 +7,8 @@
     "duckdb": {
       "command": "uvx",
       "args": [
+        "--with",
+        "mcp<2",
         "mcp-server-duckdb",
         "--db-path",
         "C:\\Users\\Evgeniy\\duckdb-data\\main.duckdb"
