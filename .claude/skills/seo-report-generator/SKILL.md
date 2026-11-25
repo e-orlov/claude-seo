@@ -9,7 +9,7 @@ user-invokable: true
 argument-hint: "[topic]"
 license: MIT
 metadata:
-  version: "4.0.0"
+  version: "4.1.0"
   category: seo-reporting
 ---
 
@@ -52,6 +52,26 @@ The infrastructure lives in the same directory as this skill:
   report_config.py     ← stable — output path resolution
   report_renderer.py   ← stable — generic renderer
 ```
+
+---
+
+## Mandatory Report Mockup (blocking gate)
+
+**Before generating a report, show the user a mockup and wait for explicit approval.**
+A question such as "is the task clear?" is answered with the mockup, not with a finished report.
+
+The mockup is shown in the chat and lists:
+
+1. Sections, in order
+2. Tables per section, with their columns
+3. Row granularity of every table (per file type, per cluster, per URL), including the
+   final Handlungsempfehlungen table
+4. The percentage base and the resulting priority colors (see "Priority and color rule")
+5. The URL set the report covers: counts per file type and status or issue type,
+   reconciled against the totals of the source data, with every exclusion and its reason
+
+Evidence registration and the report script start only after the approval. If the
+structure or the URL set changes afterwards, show the changed mockup again.
 
 ---
 
@@ -203,7 +223,21 @@ After clustering and analysis, Claude decides:
 - how many rows each table has
 
 This means: two reports on the same topic may have different table structures
-if the data warrants it.
+if the data warrants it. These decisions are shown in the report mockup and approved
+before generation.
+
+### Percentage rule
+
+Every table that counts affected URLs shows both the number and the percentage in each
+count cell, e.g. `38 (5,0 %)`. State the base above the table. The default base is all
+URLs of the same file type in the audited URL set (all HTML URLs = 100 %, all PDF
+URLs = 100 %).
+
+### Column consistency rule
+
+Tables of the same kind within a report use the same set of columns in the same order
+(e.g. all cluster tables, all breakdown tables). A column does not appear in one of them
+and disappear in the next.
 
 ### Value formatting rule
 
@@ -236,19 +270,16 @@ This applies to all computed values:
 
 ### Handlungsempfehlung placement rule
 
-**Single-issue tables** (one issue per table, e.g. one sub-section heading covers exactly one issue ID):
-- Do **not** add a "Handlungsempfehlung" column to the table.
-- Place the recommendation as a `{"type": "bt", ...}` block directly below the table.
+Recommendations go into one separate table in the final "Handlungsempfehlungen" section.
+Findings tables carry no "Handlungsempfehlung" column. (Summary reports follow their own
+column structure, see below.)
 
-**Multi-issue tables** (two or more distinct issue IDs in the same table):
-- Add a **"Handlungsempfehlung"** column as the second-to-last column, immediately before "Evidenz".
-- Each row gets its own concise recommendation (1–2 sentences max).
-- Width allocation: give "Handlungsempfehlung" at least **6.5 cm** and at most **9.0 cm**.
-  Compensate by narrowing other columns (e.g. short label columns, numeric columns) so the
-  total stays ≈ 26.1 cm. If the table cannot fit with a minimum 6.5 cm recommendation column,
-  split it into two single-issue tables instead and apply the single-issue rule.
+- The row granularity (e.g. one row per file type, per cluster or per issue) is agreed in
+  the report mockup.
+- "Handlungsempfehlung" is the second-to-last column, immediately before "Evidenz".
+- Give it enough width for readable text; the table total stays ≈ 26.1 cm.
 
-Column order for multi-issue tables:
+Column order:
 ```
 [content columns...] | Handlungsempfehlung | Evidenz
 ```
@@ -283,20 +314,24 @@ Older registry rows without a hyphen (`ITECH001`, `IA11Y001`) and legacy `SRC…
 `SITE-…` rows stay as they are — do not rename them. Use the hyphenated form
 for every new Issue ID.
 
-### Background color rule
+### Priority and color rule
 
-Use these named values for `bg`:
+The priority of a finding is set by the share of affected URLs, measured against the base
+from the "Percentage rule". The number of inlinks does not change the priority.
 
-| Value    | Meaning                          |
-|----------|----------------------------------|
-| `LRED`   | Kritisch                         |
-| `LYELL`  | Hoch                             |
-| `LGREEN` | Mittel / OK / Positiv            |
-| `LGREY`  | Niedrig / alternating neutral    |
-| `WHITE`  | Default row background           |
-| `NAVY`   | Summary / total rows             |
+| Share of affected URLs | Priority | `bg`     |
+|------------------------|----------|----------|
+| more than 5 %          | Kritisch | `LRED`   |
+| 1 % to 5 % (inclusive) | Hoch     | `LYELL`  |
+| less than 1 %          | Mittel   | `LGREEN` |
 
-Or any 6-char hex string for custom backgrounds.
+- Compare the unrounded share with the limits.
+- The limits are percentages only; there is no minimum URL count.
+- Apply the colors the same way in every findings table.
+- No other priority levels, no custom hex colors, no gradients. `LGREY` is not a priority.
+- Source tables ("Datenbasis") use `WHITE` / `LGREY` as neutral backgrounds; summary and
+  total rows use `NAVY`.
+- State the limits once in a note below the first colored table.
 
 ---
 
@@ -340,6 +375,11 @@ Evidenz: 4.0–6.0 cm   (always last column)
 
 ## Pre-save checklist
 
+- [ ] **Report mockup shown and explicitly approved** — report matches it
+- [ ] Count cells show number and percentage; base stated above each table
+- [ ] Row colors follow the "Priority and color rule" (> 5 % `LRED`, 1–5 % `LYELL`, < 1 % `LGREEN`)
+- [ ] Tables of the same kind have identical columns; recommendations only in the final table
+      (not for summary reports)
 - [ ] **Mandatory Pre-Script Evidence Registration gate completed** — every Evidenz cell
       has a registered E-NNN whose description specifically and accurately covers that observation
 - [ ] Script saved to `clients/<domain>/<date_slug>/work/` — not to project root
