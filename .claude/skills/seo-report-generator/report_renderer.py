@@ -161,7 +161,8 @@ def _render_table(doc, block: dict, cfg: dict) -> None:
         bg  = _resolve_bg(row.get("bg", "WHITE"))
         tr  = tbl.add_row()
         for i, cell_value in enumerate(row["cells"]):
-            cp(tr.cells[i], cell_value, fs=block.get("font_size", 9))
+            cp(tr.cells[i], cell_value, bold=bg == NAVY, fs=block.get("font_size", 9),
+               col=WHITE if bg == NAVY else BLACK)
             set_bg(tr.cells[i], bg)
 
     # Optional summary row (NAVY background, white text)
