@@ -37,7 +37,7 @@ SECTIONS block types
  "columns": ["Col A", "Col B", ...],   # header labels — derived from analysis
  "widths":  [5.0, 8.5, ...],           # cm — must sum to ~26.1 cm
  "rows": [
-     {"bg": "LYELL", "cells": ["val1", "val2", ...]},
+     {"bg": "LORANGE", "cells": ["val1", "val2", ...]},
      {"bg": "WHITE", "cells": ["val3", "val4", ...]},
      ...
  ],
@@ -45,7 +45,7 @@ SECTIONS block types
 }
 
     Column count must match across columns, widths, every row's cells, and summary.
-    bg values: "LRED" | "LYELL" | "LGREEN" | "LGREY" | "MGREY" | "WHITE" | "NAVY" | any hex string
+    bg values: "LRED" | "LORANGE" | "LYELL" | "LGREEN" | "LGREY" | "MGREY" | "WHITE" | "NAVY" | any hex string
     All cell values must be pre-formatted strings. The renderer does no calculations.
     pct(), date formatting, number formatting — all done by Claude before writing SECTIONS.
 
@@ -78,7 +78,7 @@ from docx_helpers import (
     h, bt, note,
     hdr, cp, set_bg, scw,
     NAVY, LGREY, WHITE, BLACK,
-    LYELL, LGREEN, LRED, MGREY,
+    LYELL, LGREEN, LRED, LORANGE, MGREY,
 )
 from report_config import resolve_output_path
 
@@ -92,6 +92,7 @@ _BG_MAP = {
     "LYELL":  LYELL,
     "LGREEN": LGREEN,
     "LRED":   LRED,
+    "LORANGE": LORANGE,
     "MGREY":  MGREY,
     "BLACK":  BLACK,
 }

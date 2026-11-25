@@ -104,7 +104,7 @@ Also ask for `clients/evidence_registry.md` (the evidence counter; otherwise num
 
 ## Reporting Rules
 
-- Priority labels in client-facing reports are German: **Kritisch / Hoch / Mittel / Niedrig**. Analytical tables may keep stable English codes.
+- Priority labels in client-facing reports are German, three levels only: **Kritisch** (red) / **Hoch** (orange) / **Mittel** (yellow). There is no "Niedrig". Analytical tables may keep stable English codes.
 - Every client-facing report table has an **Evidenz** column as its last column. DuckDB tables and machine-readable exports are exempt.
 - URL cluster names in tables use patterns, not individual URLs (`index.php?page=`, not `index.php?page=18`).
 - Percentages must match numerator/denominator exactly; state the baseline above every table. Parameter URLs and no-parameter URLs are disjoint sets — never express one as a share of the other's baseline.

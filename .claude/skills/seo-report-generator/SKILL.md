@@ -9,7 +9,7 @@ user-invokable: true
 argument-hint: "[topic]"
 license: MIT
 metadata:
-  version: "4.1.0"
+  version: "4.2.0"
   category: seo-reporting
 ---
 
@@ -192,8 +192,8 @@ All supported block types. Use only these — the renderer raises an error on un
     "widths":  [6.0, 8.0, 7.6, 4.5],
     "rows": [
         {"bg": "LRED",   "cells": ["val1", "val2", "val3", "E-101 | file.csv | field"]},
-        {"bg": "LYELL",  "cells": ["val4", "val5", "val6", "E-102 | file.csv | field"]},
-        {"bg": "LGREEN", "cells": ["val7", "val8", "val9", "E-103 | file.csv | field"]},
+        {"bg": "LORANGE", "cells": ["val4", "val5", "val6", "E-102 | file.csv | field"]},
+        {"bg": "LYELL",  "cells": ["val7", "val8", "val9", "E-103 | file.csv | field"]},
     ],
     "summary": {"bg": "NAVY", "cells": ["Gesamt", "...", "...", "E-101, E-102, E-103 | file.csv"]},
 }
@@ -319,16 +319,19 @@ for every new Issue ID.
 The priority of a finding is set by the share of affected URLs, measured against the base
 from the "Percentage rule". The number of inlinks does not change the priority.
 
-| Share of affected URLs | Priority | `bg`     |
-|------------------------|----------|----------|
-| more than 5 %          | Kritisch | `LRED`   |
-| 1 % to 5 % (inclusive) | Hoch     | `LYELL`  |
-| less than 1 %          | Mittel   | `LGREEN` |
+| Share of affected URLs | Priority | `bg`      | Color  |
+|------------------------|----------|-----------|--------|
+| more than 5 %          | Kritisch | `LRED`    | red    |
+| 1 % to 5 % (inclusive) | Hoch     | `LORANGE` | orange |
+| less than 1 %          | Mittel   | `LYELL`   | yellow |
 
 - Compare the unrounded share with the limits.
 - The limits are percentages only; there is no minimum URL count.
+- A finding without a URL count (e.g. a domain-wide setting) counts as 100 % of URLs
+  affected and is therefore Kritisch.
 - Apply the colors the same way in every findings table.
-- No other priority levels, no custom hex colors, no gradients. `LGREY` is not a priority.
+- Exactly three levels. There is no low priority ("Niedrig"). No custom hex colors, no
+  gradients. `LGREY` and `LGREEN` are not priorities.
 - Source tables ("Datenbasis") use `WHITE` / `LGREY` as neutral backgrounds; summary and
   total rows use `NAVY`.
 - State the limits once in a note below the first colored table.
@@ -377,7 +380,7 @@ Evidenz: 4.0–6.0 cm   (always last column)
 
 - [ ] **Report mockup shown and explicitly approved** — report matches it
 - [ ] Count cells show number and percentage; base stated above each table
-- [ ] Row colors follow the "Priority and color rule" (> 5 % `LRED`, 1–5 % `LYELL`, < 1 % `LGREEN`)
+- [ ] Row colors follow the "Priority and color rule" (> 5 % `LRED`, 1–5 % `LORANGE`, < 1 % `LYELL`)
 - [ ] Tables of the same kind have identical columns; recommendations only in the final table
       (not for summary reports)
 - [ ] **Mandatory Pre-Script Evidence Registration gate completed** — every Evidenz cell
@@ -430,7 +433,9 @@ documents via `python-docx` is fragile and order-dependent.
 Instead, read all `gen_<topic>_<date_slug>.py` scripts in `clients/<domain>/<date_slug>/work/`.
 These scripts contain the authoritative structured data behind every report:
 - `CFG["report_title"]` → topic label
-- `SECTIONS` rows with `"bg": "LRED"` or `"bg": "LYELL"` → Kritisch / Hoch priority
+- `SECTIONS` rows with `"bg": "LRED"` or `"bg": "LORANGE"` → Kritisch / Hoch priority
+  (scripts written before skill version 4.2.0 use `LYELL` for Hoch — check the script's
+  priority cells before mapping)
 - `cells` values → issue text, affected URL count, recommendation
 - Last `cells` element (Evidenz column) → source evidence
 
@@ -438,7 +443,7 @@ These scripts contain the authoritative structured data behind every report:
 
 1. Glob all `gen_*.py` files in `work/` — exclude `gen_summary_*.py` to avoid recursion.
 2. For each script, parse `SECTIONS` in Python (import or `ast.literal_eval` the data structure).
-3. Collect all table rows where `bg in ("LRED", "LYELL")`.
+3. Collect all table rows where `bg in ("LRED", "LORANGE")`.
 4. For each collected row, record:
    - `topic` from `CFG["report_title"]`
    - `issue_id` looked up in `clients/evidence_registry.md` via the first E-NNN of the Evidenz cell
@@ -468,7 +473,7 @@ high_rows = [
     for block in sections
     if block.get("type") == "table"
     for row in block.get("rows", [])
-    if row.get("bg") in ("LRED", "LYELL")
+    if row.get("bg") in ("LRED", "LORANGE")
 ]
 ```
 
@@ -492,7 +497,7 @@ clients/<domain>/<date_slug>/output/summary_prio_<date_slug>.docx
 |---|---|
 | 1. Grundlage / Quellen | Table: which gen_*.py files were read, topic, date |
 | 2. Kritische Befunde | All LRED rows across all topics (omit if none) |
-| 3. Befunde mit hoher Priorität | All LYELL rows across all topics |
+| 3. Befunde mit hoher Priorität | All LORANGE rows across all topics |
 | 4. Handlungsempfehlungen | Consolidated action table, sorted by priority then topic |
 
 Use `"level": 1` for all four sections.
@@ -531,6 +536,6 @@ CFG = {
 - [ ] Source is `gen_*.py` scripts — not `.docx` files
 - [ ] `gen_summary_*.py` excluded from source glob (no recursion)
 - [ ] Every row traces back to an existing E-NNN (and its registry Issue ID) in an individual report
-- [ ] `bg` in summary table matches original priority (LRED / LYELL preserved)
+- [ ] `bg` in summary table matches original priority (LRED / LORANGE preserved)
 - [ ] "Warum hohe Priorität" column contains a concise 1–2 sentence rationale
 - [ ] No findings invented or inferred — strictly extracted from existing SECTIONS data

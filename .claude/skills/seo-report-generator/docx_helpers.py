@@ -18,29 +18,28 @@ from docx.oxml import OxmlElement
 # ── Color palette ─────────────────────────────────────────────────────────────
 # Single source of truth. All scripts use these hex strings.
 # Severity mapping:
-#   Kritisch  → LRED
-#   Hoch      → LYELL
-#   Mittel    → LGREEN
-#   Niedrig   → LGREY
-#   Positiv   → LGREEN
+#   Kritisch  → LRED     (red)
+#   Hoch      → LORANGE  (orange)
+#   Mittel    → LYELL    (yellow)
+#   Positiv   → LGREEN   (OK state, not a priority)
 #   Neutral   → WHITE or LGREY (alternating)
 
 NAVY   = "1F3864"   # table headers, primary headings
 DBLUE  = "2E5F8A"   # lv=2 sub-headings
-LGREY  = "F2F2F2"   # alternating row background / Niedrig
+LGREY  = "F2F2F2"   # alternating row background
 WHITE  = "FFFFFF"   # default row background
 BLACK  = "000000"   # body text
-LYELL  = "FFF2CC"   # Hoch / warning
-LGREEN = "E2EFDA"   # Mittel / ok
-LRED   = "FCE4D6"   # Kritisch / error
+LYELL   = "FFF2CC"  # Mittel
+LGREEN  = "E2EFDA"  # ok / positive
+LRED    = "F4A6A6"  # Kritisch
+LORANGE = "FBC98E"  # Hoch
 MGREY  = "595959"   # footer, captions, notes
 
 # Priority → background color mapping (keys match both German casing variants)
 PRIO_BG = {
     "Kritisch": LRED,   "KRITISCH": LRED,
-    "Hoch":     LYELL,  "HOCH":     LYELL,
-    "Mittel":   LGREEN, "MITTEL":   LGREEN,
-    "Niedrig":  LGREY,  "NIEDRIG":  LGREY,
+    "Hoch":     LORANGE, "HOCH":    LORANGE,
+    "Mittel":   LYELL,  "MITTEL":   LYELL,
 }
 
 
