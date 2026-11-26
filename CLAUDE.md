@@ -114,7 +114,7 @@ Also ask for `clients/evidence_registry.md` (the evidence counter; otherwise num
 
 Rendering lives in `.claude/skills/seo-report-generator/` (`report_renderer.py`, `docx_helpers.py`, `report_config.py`). Always use it for `.docx` reports; do not re-implement rendering. Before generating a report, read any example file the user provides (column names, cluster naming, table conventions).
 
-Report scripts are saved to `clients/<domain>/<date_slug>/work/`, generated `.docx` files to `clients/<domain>/<date_slug>/output/`.
+Report scripts are saved to `clients/<domain>/<date_slug>/work/`, each report and its exports to its own folder `clients/<domain>/<date_slug>/output/<report_name>/`.
 
 ### Report content
 

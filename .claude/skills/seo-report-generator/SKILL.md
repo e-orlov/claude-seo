@@ -9,7 +9,7 @@ user-invokable: true
 argument-hint: "[topic]"
 license: MIT
 metadata:
-  version: "4.2.0"
+  version: "4.3.0"
   category: seo-reporting
 ---
 
@@ -72,6 +72,24 @@ The mockup is shown in the chat and lists:
 
 Evidence registration and the report script start only after the approval. If the
 structure or the URL set changes afterwards, show the changed mockup again.
+
+---
+
+## One folder per report
+
+Each report and the exports that belong to it are saved together in their own folder,
+named after `CFG["report_name"]`:
+
+```
+clients/<domain>/<date_slug>/output/<report_name>/
+  <report_name>_<date_slug>.docx
+  <export files of this report>
+```
+
+- Nothing is saved directly into `output/`. The user must not have to sort files by hand.
+- The renderer creates the folder. Get the same folder for exports with
+  `resolve_report_dir(CFG)` from `report_config`; do not build the path by hand.
+- An export that two reports need is saved into both folders.
 
 ---
 
@@ -394,6 +412,7 @@ Evidenz: 4.0–6.0 cm   (always last column)
 - [ ] All cell values are pre-formatted strings — no calculations in cells
 - [ ] `baseline` in CFG from the current crawl data — not assumed
 - [ ] `output_dir` is `None` unless user specified a path
+- [ ] Report and all its exports are in `output/<report_name>/`, nothing directly in `output/`
 - [ ] Column widths sum ≈ 26.1 cm per table
 - [ ] Section order follows default or explicitly agreed structure for this audit
 - [ ] `level=1` headings for main sections, `level=2` for sub-sections
@@ -488,7 +507,7 @@ gen_summary_prio_<date_slug>.py
 Output `.docx`:
 
 ```
-clients/<domain>/<date_slug>/output/summary_prio_<date_slug>.docx
+clients/<domain>/<date_slug>/output/summary_prio/summary_prio_<date_slug>.docx
 ```
 
 ### Section structure for summary report
